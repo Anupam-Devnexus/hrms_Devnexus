@@ -1,8 +1,6 @@
 // Login.jsx
-import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import React, { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
 
 export default function Login() {
   const [formData, setFormData] = useState({
@@ -10,73 +8,61 @@ export default function Login() {
     password: "",
     role: "EMPLOYEE",
   });
+  const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  // 🔹 Remember last email & role for faster login next time
-  useEffect(() => {
-    const saved = JSON.parse(localStorage.getItem("lastLogin"));
-    if (saved) setFormData((prev) => ({ ...prev, ...saved }));
-  }, []);
+  function handleForgat() {
+    navigate('forgot-password')
+    console.log("Anupams")
+  }
 
-  useEffect(() => {
-    localStorage.setItem(
-      "lastLogin",
-      JSON.stringify({ email: formData.email, role: formData.role })
-    );
-  }, [formData.email, formData.role]);
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
 
-  // 🔹 Reusable fetch with retry
-  async function loginWithRetry(body, retries = 1) {
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
     try {
       const res = await fetch(
         "https://hrms-backend-9qzj.onrender.com/api/login",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body,
+          body: JSON.stringify({
+            Email: formData.email,
+            Password: formData.password,
+            Role: formData.role,
+          }),
         }
       );
-      if (!res.ok) throw new Error("Server error");
-      return res.json();
-    } catch (err) {
-      if (retries > 0) return loginWithRetry(body, retries - 1);
-      throw err;
-    }
-  }
 
-  // 🔹 Handle Login
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    const body = JSON.stringify({
-      Email: formData.email,
-      Password: formData.password,
-      Role: formData.role,
-    });
+      console.log(res)
 
-    try {
-      // preload dashboard bundle while logging in
-      const [data] = await Promise.all([
-        loginWithRetry(body, 1),
-        // import("/Dashboard"),
-      ]);
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.message || "Login failed");
+        setLoading(false);
+        return;
+      }
 
       localStorage.setItem("authUser", JSON.stringify(data));
-      toast.success("✅ Login successful!");
-      setTimeout(() => navigate("/dashboard", { replace: true }), 1000);
+      navigate("/dashboard");
     } catch (err) {
       console.error(err);
-      toast.error("❌ Login failed. Check your credentials.");
-    } finally {
+      setError("Something went wrong. Please try again.");
       setLoading(false);
     }
   };
 
   return (
-    <div className="flex h-screen bg-gray-50">
-      {/* Left Image */}
+    <div className="flex h-screen bg-gray-100">
+      {/* Left Side - Background Image */}
       <div className="hidden md:flex md:w-1/2 relative">
         <img
           src="https://images.pexels.com/photos/4391612/pexels-photo-4391612.jpeg"
@@ -90,30 +76,26 @@ export default function Login() {
         </div>
       </div>
 
-      {/* Right Form */}
+      {/* Right Side - Login Form */}
       <div className="flex w-full md:w-1/2 items-center justify-center p-6">
         <form
           onSubmit={handleLogin}
-          className="bg-white shadow-lg rounded-2xl p-8 w-full max-w-md border border-gray-200"
+          className="bg-white shadow-2xl rounded-2xl p-8 w-full max-w-md border border-gray-200"
         >
-          <div className="flex justify-center mb-4">
-            <img
-              src="https://res.cloudinary.com/dt4ohfuwc/image/upload/v1754378902/DevNexus_logo-2_gtgade.png"
-              alt="Logo"
-              className="h-20 w-20"
-            />
-          </div>
+          <img src="https://res.cloudinary.com/dt4ohfuwc/image/upload/v1754378902/DevNexus_logo-2_gtgade.png" alt="" className="h-20 w-20" />
 
-          {/* Role */}
+          {error && (
+            <p className="text-red-500 text-sm mb-4 text-center">{error}</p>
+          )}
+
+          {/* Role Dropdown */}
           <label className="block text-sm font-medium text-gray-700 mb-1">
             Select Role
           </label>
           <select
             name="role"
             value={formData.role}
-            onChange={(e) =>
-              setFormData((prev) => ({ ...prev, role: e.target.value }))
-            }
+            onChange={handleChange}
             className="w-full mb-4 px-3 py-2 rounded-lg border border-gray-300 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             <option value="HR">HR</option>
@@ -122,7 +104,7 @@ export default function Login() {
             <option value="EMPLOYEE">Employee</option>
           </select>
 
-          {/* Email */}
+          {/* Email Input */}
           <label className="block text-sm font-medium text-gray-700 mb-1">
             Email
           </label>
@@ -131,14 +113,12 @@ export default function Login() {
             name="email"
             placeholder="Enter your email"
             value={formData.email}
-            onChange={(e) =>
-              setFormData((prev) => ({ ...prev, email: e.target.value }))
-            }
+            onChange={handleChange}
             className="w-full mb-4 px-3 py-2 rounded-lg border border-gray-300 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
             required
           />
 
-          {/* Password */}
+          {/* Password Input */}
           <label className="block text-sm font-medium text-gray-700 mb-1">
             Password
           </label>
@@ -148,9 +128,7 @@ export default function Login() {
               name="password"
               placeholder="Enter your password"
               value={formData.password}
-              onChange={(e) =>
-                setFormData((prev) => ({ ...prev, password: e.target.value }))
-              }
+              onChange={handleChange}
               className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
             />
@@ -167,27 +145,25 @@ export default function Login() {
           <button
             type="submit"
             disabled={loading}
-            className={`w-full bg-blue-600 text-white py-2 rounded-lg font-medium hover:bg-blue-700 transition duration-200 shadow-md ${
-              loading ? "cursor-not-allowed opacity-70" : ""
-            }`}
+            className={`w-full bg-blue-600 text-white py-2 rounded-lg font-medium hover:bg-blue-700 transition duration-200 shadow-md ${loading ? "cursor-not-allowed opacity-70" : ""
+              }`}
           >
             {loading ? "Logging in..." : "Login"}
           </button>
 
           {/* Forgot Password */}
-          <div
-            className="text-center cursor-pointer mt-4"
-            onClick={() => navigate("/forgot-password")}
+          <div className="text-center cursor-pointer mt-4"
+            onClick={() => handleForgat()}
           >
-            <span className="text-sm text-blue-600 hover:underline hover:text-blue-800">
+            <span
+
+              className="text-sm text-blue-600 hover:underline hover:text-blue-800"
+            >
               Forgot Password?
             </span>
           </div>
         </form>
       </div>
-
-      {/* Toast Container */}
-      <ToastContainer position="top-right" autoClose={2000} hideProgressBar />
     </div>
   );
 }
