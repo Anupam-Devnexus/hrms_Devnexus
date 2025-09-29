@@ -1,0 +1,52 @@
+{
+  "common": [
+    { "label": "Dashboard", "icon": "Home", "path": "/dashboard" },
+    { "label": "Profile", "icon": "User", "path": "/dashboard/profile" },
+    { "label": "Attendance", "icon": "ClipboardList", "path": "/dashboard/attendance" },
+    { "label": "Leaves", "icon": "CheckSquare", "path": "/dashboard/leaves" },
+    { "label": "Tasks", "icon": "ClipboardList", "path": "/dashboard/tasks" },
+    { "label": "Notifications", "icon": "Bell", "path": "/dashboard/notifications" },
+    { "label": "Daily Updates", "icon": "FileText", "path": "/dashboard/daily-updates" }
+  ],
+
+  "tl": [
+    {
+      "label": "Team",
+      "icon": "Users",
+      "children": [
+        { "label": "View Team", "path": "/team" },
+        { "label": "Create Team", "path": "/create-team" }
+      ]
+    }
+  ],
+
+  "hr": [
+    {
+      "label": "HR Panel",
+      "icon": "Users",
+      "children": [
+        { "label": "User Management", "path": "/dashboard/user-management" },
+        { "label": "Mark Attendance", "path": "/dashboard/mark-attendance" },
+        { "label": "Policies", "path": "/dashboard/policies" },
+        { "label": "Leaves Approval", "path": "/dashboard/leaves-approval" },
+        { "label": "Administration", "path": "/dashboard/administration" },
+          { "label": "Payroll", "path": "/dashboard/payroll" }
+      ]
+    }
+  ],
+
+  "admin": [
+    {
+      "label": "Admin Panel",
+      "icon": "Settings",
+      "children": [
+        { "label": "User Management", "path": "/dashboard/user-management" },
+        { "label": "Policies", "path": "/dashboard/policies" },
+        { "label": "Leaves", "path": "/dashboard/leaves-admin" },
+        { "label": "Add User", "path": "/dashboard/add-user" },
+        { "label": "Sales", "path": "/dashboard/sales" }
+      ]
+    }
+  ]
+}
+    

@@ -1,0 +1,315 @@
+import React, { useState } from "react";
+import { Formik, Form, Field, ErrorMessage } from "formik";
+import * as Yup from "yup";
+import menuConfig from "../DataStore/NavBar.json";
+
+// ---------------- Validation Schema ----------------
+const validationSchema = Yup.object({
+  FirstName: Yup.string().required("First Name is required"),
+  LastName: Yup.string().required("Last Name is required"),
+  Email: Yup.string().email("Invalid email").required("Email is required"),
+  Phone: Yup.string()
+    .matches(/^[0-9]{10}$/, "Phone must be 10 digits")
+    .required("Phone is required"),
+  Salary: Yup.number()
+    .typeError("Salary must be a number")
+    .positive("Salary must be positive")
+    .required("Salary is required"),
+  Dob: Yup.date().required("Date of Birth is required"),
+  Department: Yup.string().required("Department is required"),
+  Designation: Yup.string().required("Designation is required"),
+  Role: Yup.string().required("Role is required"),
+  Password: Yup.string()
+    .min(6, "Password must be at least 6 characters")
+    .required("Password is required"),
+  EmergencyPhone: Yup.string().matches(
+    /^[0-9]{10}$/,
+    "Emergency phone must be 10 digits"
+  ),
+  EmergencyName: Yup.string(),
+  EmergencyRelation: Yup.string(),
+});
+
+// ---------------- Dropdown Options ----------------
+const roles = ["ADMIN", "HR", "TL", "EMPLOYEE"];
+const departments = ["IT", "HR", "Finance", "Sales", "Marketing", "Support"];
+const designations = [
+  "Software Engineer",
+  "Team Lead",
+  "Manager",
+  "HR Executive",
+  "Finance Executive",
+  "Sales Associate",
+];
+
+// ---------------- Reusable Input ----------------
+const InputField = ({ label, name, type = "text", ...props }) => (
+  <div className="flex flex-col gap-1">
+    <label className="text-gray-700 font-medium">{label}</label>
+    <Field
+      type={type}
+      name={name}
+      {...props}
+      className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+    />
+    <ErrorMessage
+      name={name}
+      component="div"
+      className="text-red-500 text-sm"
+    />
+  </div>
+);
+
+// ---------------- Main Component ----------------
+const AddUser = () => {
+  const [preview, setPreview] = useState(null);
+
+  const initialValues = {
+    FirstName: "",
+    LastName: "",
+    Email: "",
+    Phone: "",
+    Salary: "",
+    Dob: "",
+    Department: "",
+    Designation: "",
+    Role: "",
+    Permissions: [],
+    Address: "",
+    EmergencyPhone: "",
+    EmergencyName: "",
+    EmergencyRelation: "",
+    Password: "",
+    AllowedTabs: menuConfig.common.map((c) => c.label),
+    Profile: null,
+  };
+
+  const getRoleMenu = (role) =>
+    role ? menuConfig[role.toLowerCase()] || [] : [];
+
+  const handleImageUpload = (e, setFieldValue) => {
+    const file = e.target.files[0];
+    if (file) {
+      setFieldValue("Profile", file); // store File object directly
+      setPreview(URL.createObjectURL(file));
+    }
+  };
+
+  const handleSubmit = async (values, { resetForm }) => {
+    try {
+      const data = new FormData();
+      Object.entries(values).forEach(([key, val]) => {
+        if (["Permissions", "AllowedTabs"].includes(key)) {
+          data.append(key, JSON.stringify(val));
+        } else if (key === "Profile" && val) {
+          data.append("Profile", val);
+        } else {
+          data.append(key, val);
+        }
+      });
+
+      console.log("📦 Final Payload:", Object.fromEntries(data));
+
+      const response = await fetch(
+        "https://hrms-backend2.onrender.com/api/add-employee",
+        {
+          method: "POST",
+          body: data,
+        }
+      );
+
+      if (!response.ok) throw new Error("Failed to add employee");
+
+      const result = await response.json();
+      alert("✅ Employee added successfully!");
+      console.log("API Response:", result);
+
+      resetForm();
+      setPreview(null);
+    } catch (err) {
+      console.error("❌ Error:", err);
+      alert("Something went wrong!");
+    }
+  };
+
+  return (
+    <div className="min-h-screen flex justify-center items-center p-2">
+      <div className="bg-white rounded-2xl p-8 w-full max-w-5xl">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-2xl font-bold text-gray-800">Add New Employee</h2>
+          <button
+            onClick={() => window.history.back()}
+            className="text-blue-600 hover:underline"
+          >
+            Back
+          </button>
+        </div>
+
+        {/* Form */}
+        <Formik
+          initialValues={initialValues}
+          validationSchema={validationSchema}
+          onSubmit={handleSubmit}
+        >
+          {({ values, setFieldValue }) => (
+            <Form className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Basic Info */}
+              <InputField label="First Name *" name="FirstName" />
+              <InputField label="Last Name *" name="LastName" />
+              <InputField label="Email *" name="Email" type="email" />
+              <InputField label="Salary *" name="Salary" type="number" />
+              <InputField label="Phone *" name="Phone" />
+              <InputField label="Date of Birth *" name="Dob" type="date" />
+
+              {/* Dropdowns */}
+              <InputField as="select" label="Department *" name="Department">
+                <option value="">Select Department</option>
+                {departments.map((opt) => (
+                  <option key={opt} value={opt}>
+                    {opt}
+                  </option>
+                ))}
+              </InputField>
+
+              <InputField as="select" label="Designation *" name="Designation">
+                <option value="">Select Designation</option>
+                {designations.map((opt) => (
+                  <option key={opt} value={opt}>
+                    {opt}
+                  </option>
+                ))}
+              </InputField>
+
+              <InputField as="select" label="Role *" name="Role">
+                <option value="">Select Role</option>
+                {roles.map((opt) => (
+                  <option key={opt} value={opt}>
+                    {opt}
+                  </option>
+                ))}
+              </InputField>
+
+              {/* Allowed Tabs */}
+              <div className="md:col-span-2">
+                <label className="block text-gray-700 font-medium mb-2">
+                  Allowed Tabs (Common)
+                </label>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                  {menuConfig.common.map((item) => (
+                    <label key={item.label} className="flex items-center gap-2">
+                      <Field
+                        type="checkbox"
+                        name="AllowedTabs"
+                        value={item.label}
+                        className="accent-blue-600"
+                      />
+                      {item.label}
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              {/* Permissions */}
+              {values.Role && (
+                <div className="md:col-span-2">
+                  <label className="block text-gray-700 font-medium mb-2">
+                    Permissions ({values.Role})
+                  </label>
+                  <div className="space-y-2">
+                    {getRoleMenu(values.Role).map((item) => (
+                      <div key={item.label} className="border rounded-lg p-3">
+                        <label className="flex items-center gap-2 font-medium">
+                          <Field
+                            type="checkbox"
+                            name="Permissions"
+                            value={item.label}
+                            className="accent-blue-600"
+                          />
+                          {item.label}
+                        </label>
+                        {item.children && (
+                          <div className="ml-6 mt-2 space-y-1">
+                            {item.children.map((child) => (
+                              <label
+                                key={child.label}
+                                className="flex items-center gap-2"
+                              >
+                                <Field
+                                  type="checkbox"
+                                  name="Permissions"
+                                  value={`${item.label} > ${child.label}`}
+                                  className="accent-blue-600"
+                                />
+                                {child.label}
+                              </label>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Address */}
+              <div className="md:col-span-2 flex flex-col gap-1">
+                <label className="text-gray-700 font-medium">Address</label>
+                <Field
+                  as="textarea"
+                  name="Address"
+                  rows={2}
+                  className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              {/* Emergency Details */}
+              <h2 className="md:col-span-2 text-xl font-semibold text-gray-800 mt-4">
+                Emergency Details
+              </h2>
+              <InputField name="EmergencyPhone" label="Emergency Phone" />
+              <InputField name="EmergencyName" label="Emergency Contact Name" />
+              <InputField
+                name="EmergencyRelation"
+                label="Emergency Relation"
+              />
+
+              {/* Password */}
+              <InputField label="Password *" name="Password" type="password" />
+
+              {/* Profile Image */}
+              <div className="md:col-span-2 flex flex-col gap-2">
+                <label className="text-gray-700 font-medium">Profile Image</label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => handleImageUpload(e, setFieldValue)}
+                  className="border p-2 rounded-lg cursor-pointer"
+                />
+                {preview && (
+                  <img
+                    src={preview}
+                    alt="Preview"
+                    className="w-full h-48 rounded-md object-cover border"
+                  />
+                )}
+              </div>
+
+              {/* Submit */}
+              <div className="md:col-span-2 mt-3">
+                <button
+                  type="submit"
+                  className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
+                >
+                  Add Employee
+                </button>
+              </div>
+            </Form>
+          )}
+        </Formik>
+      </div>
+    </div>
+  );
+};
+
+export default AddUser;

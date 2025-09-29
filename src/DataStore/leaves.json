@@ -1,0 +1,160 @@
+{
+  "leaves": [
+    {
+      "EmployeeId": "EMP-ADMIN001",
+      "Name": "Ankit Sureka",
+      "Role": "ADMIN",
+      "Department": "Operations",
+      "LeaveBalance": {
+        "TotalAllowed": 30,
+        "Used": 8,
+        "Remaining": 22,
+        "LastLeaveTaken": {
+          "LeaveId": "LV-ANKIT-1003",
+          "Type": "Earned Leave",
+          "FromDate": "2025-09-01",
+          "ToDate": "2025-09-03",
+          "Reason": "Family Vacation",
+          "Status": "Approved"
+        }
+      },
+      "LeaveHistory": [
+        {
+          "LeaveId": "LV-ANKIT-1001",
+          "Type": "Casual Leave",
+          "FromDate": "2025-06-12",
+          "ToDate": "2025-06-12",
+          "Reason": "Bank Work",
+          "Status": "Approved"
+        },
+        {
+          "LeaveId": "LV-ANKIT-1002",
+          "Type": "Sick Leave",
+          "FromDate": "2025-07-20",
+          "ToDate": "2025-07-22",
+          "Reason": "Fever",
+          "Status": "Approved"
+        },
+        {
+          "LeaveId": "LV-ANKIT-1003",
+          "Type": "Earned Leave",
+          "FromDate": "2025-09-01",
+          "ToDate": "2025-09-03",
+          "Reason": "Family Vacation",
+          "Status": "Approved"
+        }
+      ]
+    },
+    {
+      "EmployeeId": "EMP-HR001",
+      "Name": "Divya Poriya",
+      "Role": "HR",
+      "Department": "Human Resources",
+      "LeaveBalance": {
+        "TotalAllowed": 24,
+        "Used": 5,
+        "Remaining": 19,
+        "LastLeaveTaken": {
+          "LeaveId": "LV-DIVYA-2002",
+          "Type": "Casual Leave",
+          "FromDate": "2025-08-15",
+          "ToDate": "2025-08-16",
+          "Reason": "Family Function",
+          "Status": "Approved"
+        }
+      },
+      "LeaveHistory": [
+        {
+          "LeaveId": "LV-DIVYA-2001",
+          "Type": "Sick Leave",
+          "FromDate": "2025-07-01",
+          "ToDate": "2025-07-02",
+          "Reason": "Fever",
+          "Status": "Approved"
+        },
+        {
+          "LeaveId": "LV-DIVYA-2002",
+          "Type": "Casual Leave",
+          "FromDate": "2025-08-15",
+          "ToDate": "2025-08-16",
+          "Reason": "Family Function",
+          "Status": "Approved"
+        }
+      ]
+    },
+    {
+      "EmployeeId": "EMP-EMP001",
+      "Name": "Abdul",
+      "Role": "EMPLOYEE",
+      "Department": "Sales",
+      "LeaveBalance": {
+        "TotalAllowed": 18,
+        "Used": 6,
+        "Remaining": 12,
+        "LastLeaveTaken": {
+          "LeaveId": "LV-ABDUL-3002",
+          "Type": "Sick Leave",
+          "FromDate": "2025-09-05",
+          "ToDate": "2025-09-06",
+          "Reason": "Cold & Fever",
+          "Status": "Approved"
+        }
+      },
+      "LeaveHistory": [
+        {
+          "LeaveId": "LV-ABDUL-3001",
+          "Type": "Casual Leave",
+          "FromDate": "2025-06-10",
+          "ToDate": "2025-06-11",
+          "Reason": "Urgent Work",
+          "Status": "Rejected"
+        },
+        {
+          "LeaveId": "LV-ABDUL-3002",
+          "Type": "Sick Leave",
+          "FromDate": "2025-09-05",
+          "ToDate": "2025-09-06",
+          "Reason": "Cold & Fever",
+          "Status": "Approved"
+        }
+      ]
+    },
+    {
+      "EmployeeId": "EMP-TL001",
+      "Name": "Naveen Kumar",
+      "Role": "TL",
+      "Department": "Development",
+      "LeaveBalance": {
+        "TotalAllowed": 20,
+        "Used": 4,
+        "Remaining": 16,
+        "LastLeaveTaken": {
+          "LeaveId": "LV-NAVEEN-4001",
+          "Type": "Casual Leave",
+          "FromDate": "2025-08-20",
+          "ToDate": "2025-08-20",
+          "Reason": "Bank Visit",
+          "Status": "Approved"
+        }
+      },
+      "LeaveHistory": [
+        {
+          "LeaveId": "LV-NAVEEN-4001",
+          "Type": "Casual Leave",
+          "FromDate": "2025-08-20",
+          "ToDate": "2025-08-20",
+          "Reason": "Bank Visit",
+          "Status": "Approved"
+        },
+        {
+          "LeaveId": "LV-NAVEEN-4002",
+          "Type": "Sick Leave",
+          "FromDate": "2025-07-15",
+          "ToDate": "2025-07-16",
+          "Reason": "Stomach Pain",
+          "Status": "Approved"
+        }
+      ]
+    }
+  ]
+}

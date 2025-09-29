@@ -1,0 +1,128 @@
+{
+  "users": [
+    {
+      "id": "u1",
+      "name": "John Doe",
+      "email": "john.doe@example.com",
+      "role": "Admin",
+      "department": "HR"
+    },
+    {
+      "id": "u2",
+      "name": "Alice Smith",
+      "email": "alice.smith@example.com",
+      "role": "Manager",
+      "department": "Finance"
+    },
+    {
+      "id": "u3",
+      "name": "Bob Johnson",
+      "email": "bob.johnson@example.com",
+      "role": "Employee",
+      "department": "IT"
+    },
+    {
+      "id": "u4",
+      "name": "Eva Williams",
+      "email": "eva.williams@example.com",
+      "role": "Employee",
+      "department": "Sales"
+    }
+  ],
+
+  "devices": [
+    {
+      "id": "d1",
+      "name": "Dell Latitude 7420",
+      "type": "Laptop",
+      "assignedTo": "u3",
+      "status": "Active",
+      "assignDate": "2025-09-01",
+      "returnDate": null
+    },
+    {
+      "id": "d2",
+      "name": "iPhone 14",
+      "type": "Phone",
+      "assignedTo": "u4",
+      "status": "Active",
+      "assignDate": "2025-08-15",
+      "returnDate": null
+    },
+    {
+      "id": "d3",
+      "name": "HP LaserJet Pro",
+      "type": "Printer",
+      "assignedTo": null,
+      "status": "Available",
+      "assignDate": null,
+      "returnDate": null
+    }
+  ],
+
+  "employeeExpenses": [
+    {
+      "id": "e1",
+      "employeeId": "u3",
+      "category": "Travel",
+      "amount": 120.5,
+      "description": "Taxi fare for client meeting",
+      "receiptUrl": "https://example.com/receipts/taxi1.png",
+      "status": "Pending",
+      "submittedOn": "2025-09-10",
+      "approvedBy": null,
+      "approvedOn": null
+    },
+    {
+      "id": "e2",
+      "employeeId": "u4",
+      "category": "Food",
+      "amount": 45.75,
+      "description": "Lunch with client",
+      "receiptUrl": "https://example.com/receipts/lunch1.png",
+      "status": "Approved",
+      "submittedOn": "2025-09-09",
+      "approvedBy": "u2",
+      "approvedOn": "2025-09-10"
+    },
+    {
+      "id": "e3",
+      "employeeId": "u3",
+      "category": "Office Supplies",
+      "amount": 60,
+      "description": "Stationery purchase",
+      "receiptUrl": "https://example.com/receipts/stationery1.png",
+      "status": "Rejected",
+      "submittedOn": "2025-09-08",
+      "approvedBy": "u2",
+      "approvedOn": "2025-09-09"
+    }
+  ],
+
+  "miscExpenses": [
+    {
+      "id": "m1",
+      "category": "Utilities",
+      "amount": 250,
+      "description": "Electricity bill for office",
+      "submittedBy": "u1",
+      "submittedOn": "2025-09-05"
+    },
+    {
+      "id": "m2",
+      "category": "Events",
+      "amount": 500,
+      "description": "Team outing lunch",
+      "submittedBy": "u1",
+      "submittedOn": "2025-09-07"
+    },
+    {
+      "id": "m3",
+      "category": "Repairs",
+      "amount": 120,
+      "description": "Printer maintenance",
+      "submittedBy": "u1",
+      "submittedOn": "2025-09-03"
+    }
+  ]
+}

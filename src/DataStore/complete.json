@@ -1,0 +1,308 @@
+{
+  "admin": {
+    "role": "admin",
+    "profile": {
+      "name": "Ananya Mehta",
+      "email": "ananya.mehta@company.com",
+      "employeeId": "ADM001",
+      "phone": "+91-9998887776",
+      "department": "Management",
+      "salary": 120000
+    },
+    "notifications": [
+      {
+        "id": "AN001",
+        "message": "Quarterly financial report generated.",
+        "type": "System",
+        "date": "2025-09-01"
+      },
+      {
+        "id": "AN002",
+        "message": "3 new employees joined the company.",
+        "type": "HR",
+        "date": "2025-09-03"
+      }
+    ],
+    "tasks": [
+      {
+        "taskId": "AT001",
+        "title": "Approve annual budget",
+        "deadline": "2025-09-15",
+        "status": "Pending",
+        "priority": "High"
+      },
+      {
+        "taskId": "AT002",
+        "title": "Review compliance policies",
+        "deadline": "2025-09-20",
+        "status": "In Progress",
+        "priority": "Medium"
+      }
+    ],
+    "dailyUpdates": [
+      {
+        "date": "2025-09-01",
+        "update": "Reviewed project cost estimations."
+      },
+      {
+        "date": "2025-09-02",
+        "update": "Met with HR to finalize hiring plans."
+      }
+    ]
+  },
+  "hr": {
+    "role": "hr",
+    "profile": {
+      "name": "Sonal Kapoor",
+      "email": "sonal.kapoor@company.com",
+      "employeeId": "HR101",
+      "phone": "+91-8887776665",
+      "department": "Human Resources",
+      "salary": 70000
+    },
+    "leaveApplications": [
+      {
+        "leaveId": "HL001",
+        "employeeId": "E202",
+        "employeeName": "Aman Gupta",
+        "type": "Sick Leave",
+        "from": "2025-09-07",
+        "to": "2025-09-08",
+        "status": "Pending"
+      },
+      {
+        "leaveId": "HL002",
+        "employeeId": "E203",
+        "employeeName": "Neha Singh",
+        "type": "Casual Leave",
+        "from": "2025-09-10",
+        "to": "2025-09-11",
+        "status": "Approved"
+      }
+    ],
+    "attendanceOverview": {
+      "presentToday": 42,
+      "absentToday": 3,
+      "lateComers": 5
+    },
+    "notifications": [
+      {
+        "id": "HN001",
+        "message": "Monthly attendance report available.",
+        "type": "System",
+        "date": "2025-09-01"
+      },
+      {
+        "id": "HN002",
+        "message": "Employee onboarding scheduled tomorrow.",
+        "type": "System",
+        "date": "2025-09-04"
+      }
+    ],
+    "tasks": [
+      {
+        "taskId": "HT001",
+        "title": "Conduct onboarding session",
+        "deadline": "2025-09-05",
+        "status": "Pending",
+        "priority": "High"
+      },
+      {
+        "taskId": "HT002",
+        "title": "Prepare salary slips",
+        "deadline": "2025-09-10",
+        "status": "In Progress",
+        "priority": "Medium"
+      }
+    ]
+  },
+  "team_lead": {
+    "role": "team_lead",
+    "profile": {
+      "name": "Ravi Sharma",
+      "email": "ravi.sharma@company.com",
+      "employeeId": "TL102",
+      "phone": "+91-9876543210",
+      "department": "Software Development",
+      "salary": 85000
+    },
+    "leaveData": [
+      {
+        "leaveId": "L001",
+        "type": "Casual Leave",
+        "from": "2025-09-05",
+        "to": "2025-09-06",
+        "status": "Approved",
+        "reason": "Family function"
+      },
+      {
+        "leaveId": "L002",
+        "type": "Sick Leave",
+        "from": "2025-09-15",
+        "to": "2025-09-16",
+        "status": "Pending",
+        "reason": "Fever and rest"
+      }
+    ],
+    "attendance": [
+      {
+        "date": "2025-09-01",
+        "punchIn": "09:15 AM",
+        "punchOut": "06:20 PM",
+        "status": "Present"
+      },
+      {
+        "date": "2025-09-02",
+        "punchIn": "09:45 AM",
+        "punchOut": "06:00 PM",
+        "status": "Late"
+      }
+    ],
+    "tasks": {
+      "assignedToTeam": [
+        {
+          "taskId": "T001",
+          "title": "Implement Authentication API",
+          "assignedTo": "E201",
+          "deadline": "2025-09-12",
+          "status": "In Progress",
+          "priority": "High"
+        },
+        {
+          "taskId": "T002",
+          "title": "UI Fixes on Dashboard",
+          "assignedTo": "E202",
+          "deadline": "2025-09-14",
+          "status": "Pending",
+          "priority": "Medium"
+        }
+      ],
+      "assignedToTL": [
+        {
+          "taskId": "T003",
+          "title": "Prepare Sprint Planning Report",
+          "assignedBy": "Admin",
+          "deadline": "2025-09-10",
+          "status": "Completed",
+          "priority": "High"
+        }
+      ]
+    },
+    "notifications": [
+      {
+        "id": "N001",
+        "message": "New HR policy on remote work updated.",
+        "type": "System",
+        "date": "2025-09-02"
+      },
+      {
+        "id": "N002",
+        "message": "Employee E203 submitted daily update.",
+        "type": "Team",
+        "date": "2025-09-04"
+      }
+    ],
+    "dailyUpdates": [
+      {
+        "date": "2025-09-01",
+        "update": "Reviewed module X, assigned bug fixes to team."
+      },
+      {
+        "date": "2025-09-02",
+        "update": "Worked on sprint planning and reviewed PRs."
+      }
+    ],
+    "teamDetails": {
+      "teamName": "Alpha Developers",
+      "members": [
+        {
+          "id": "E201",
+          "name": "Priya Verma",
+          "role": "Frontend Developer",
+          "status": "Active",
+          "currentTask": "Authentication API UI",
+          "progress": "60%"
+        },
+        {
+          "id": "E202",
+          "name": "Aman Gupta",
+          "role": "Backend Developer",
+          "status": "Active",
+          "currentTask": "Database Schema Fixes",
+          "progress": "40%"
+        },
+        {
+          "id": "E203",
+          "name": "Neha Singh",
+          "role": "QA Engineer",
+          "status": "Active",
+          "currentTask": "Dashboard Bug Testing",
+          "progress": "75%"
+        }
+      ]
+    }
+  },
+  "employee": {
+    "role": "employee",
+    "profile": {
+      "name": "Priya Verma",
+      "email": "priya.verma@company.com",
+      "employeeId": "E201",
+      "phone": "+91-7776665554",
+      "department": "Frontend Development",
+      "salary": 55000
+    },
+    "attendance": [
+      {
+        "date": "2025-09-01",
+        "punchIn": "09:20 AM",
+        "punchOut": "06:00 PM",
+        "status": "Present"
+      },
+      {
+        "date": "2025-09-02",
+        "punchIn": "09:40 AM",
+        "punchOut": "06:15 PM",
+        "status": "Late"
+      }
+    ],
+    "leaveData": [
+      {
+        "leaveId": "EL001",
+        "type": "Sick Leave",
+        "from": "2025-09-07",
+        "to": "2025-09-08",
+        "status": "Pending",
+        "reason": "Fever"
+      }
+    ],
+    "tasks": [
+      {
+        "taskId": "E-T001",
+        "title": "Authentication API UI",
+        "assignedBy": "TL102",
+        "deadline": "2025-09-12",
+        "status": "In Progress",
+        "priority": "High"
+      }
+    ],
+    "notifications": [
+      {
+        "id": "EN001",
+        "message": "Task deadline approaching in 2 days.",
+        "type": "Task",
+        "date": "2025-09-10"
+      }
+    ],
+    "dailyUpdates": [
+      {
+        "date": "2025-09-01",
+        "update": "Designed login page components."
+      },
+      {
+        "date": "2025-09-02",
+        "update": "Integrated API with frontend forms."
+      }
+    ]
+  }
+}

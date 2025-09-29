@@ -1,0 +1,32 @@
+[
+  {
+    "id": 1,
+    "title": "Login issue",
+    "description": "Unable to login with correct credentials",
+    "priority": "High",
+    "status": "Open",
+    "raisedBy": "John Doe",
+    "assignedTo": "Support Team",
+    "createdAt": "2025-09-25T10:30:00Z"
+  },
+  {
+    "id": 2,
+    "title": "Payment failure",
+    "description": "Payment gateway not responding",
+    "priority": "Medium",
+    "status": "In Progress",
+    "raisedBy": "Jane Smith",
+    "assignedTo": "Finance Team",
+    "createdAt": "2025-09-24T14:20:00Z"
+  },
+  {
+    "id": 3,
+    "title": "Feature request",
+    "description": "Add dark mode in dashboard",
+    "priority": "Low",
+    "status": "Open",
+    "raisedBy": "Alice Brown",
+    "assignedTo": "Product Team",
+    "createdAt": "2025-09-23T08:45:00Z"
+  }
+]

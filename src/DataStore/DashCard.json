@@ -1,0 +1,125 @@
+{
+  "admin": [
+    {
+      "label": "Total Users",
+      "value": 1245,
+      "icon": "users",
+      "color": "blue",
+      "description": "Total registered users in system"
+    },
+    {
+      "label": "Total Revenue",
+      "value": 87540,
+      "icon": "dollar-sign",
+      "color": "green",
+      "description": "Revenue generated this quarter"
+    },
+    {
+      "label": "Pending Approvals",
+      "value": 32,
+      "icon": "check-circle",
+      "color": "yellow",
+      "description": "Users, leaves, or policies awaiting admin action"
+    },
+    {
+      "label": "System Logs",
+      "value": 1432,
+      "icon": "file-text",
+      "color": "red",
+      "description": "Activities recorded in last 7 days"
+    }
+  ],
+
+  "hr": [
+    {
+      "label": "Total Employees",
+      "value": 248,
+      "icon": "users",
+      "color": "blue",
+      "description": "Active employees in company"
+    },
+    {
+      "label": "Attendance Rate",
+      "value": "92.5%",
+      "icon": "bar-chart",
+      "color": "green",
+      "description": "Company-wide average this month"
+    },
+    {
+      "label": "Leaves Pending",
+      "value": 18,
+      "icon": "calendar",
+      "color": "yellow",
+      "description": "Requests awaiting HR review"
+    },
+    {
+      "label": "Policies Updated",
+      "value": 4,
+      "icon": "file-text",
+      "color": "red",
+      "description": "Policies updated in the last 30 days"
+    }
+  ],
+
+  "tl": [
+    {
+      "label": "Team Members",
+      "value": 12,
+      "icon": "users",
+      "color": "blue",
+      "description": "Assigned to this team lead"
+    },
+    {
+      "label": "Tasks Completed",
+      "value": "87%",
+      "icon": "check-square",
+      "color": "green",
+      "description": "Completion rate this sprint"
+    },
+    {
+      "label": "Daily Updates",
+      "value": "42/48",
+      "icon": "file-text",
+      "color": "yellow",
+      "description": "Reports submitted by team"
+    },
+    {
+      "label": "Leaves in Team",
+      "value": 2,
+      "icon": "calendar",
+      "color": "red",
+      "description": "Team members currently on leave"
+    }
+  ],
+
+  "employee": [
+    {
+      "label": "My Attendance",
+      "value": "18/22",
+      "icon": "calendar",
+      "color": "blue",
+      "description": "Days present this month"
+    },
+    {
+      "label": "My Leaves",
+      "value": 6,
+      "icon": "sun",
+      "color": "green",
+      "description": "Balance of annual leave"
+    },
+    {
+      "label": "Tasks Assigned",
+      "value": "12 (9 done)",
+      "icon": "clipboard-list",
+      "color": "yellow",
+      "description": "Tasks assigned this sprint"
+    },
+    {
+      "label": "Notifications",
+      "value": 3,
+      "icon": "bell",
+      "color": "red",
+      "description": "New HR/TL messages"
+    }
+  ] 
+}

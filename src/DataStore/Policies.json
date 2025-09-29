@@ -1,0 +1,103 @@
+{
+  "HRPolicies": {
+    "EqualEmploymentOpportunity": {
+      "Policy": "We provide equal employment opportunities without regard to race, color, religion, sex (including pregnancy, sexual orientation, and gender identity), national origin, age, disability, veteran status, or genetic information.",
+      "KeyPoints": [
+        "No discrimination, harassment, or retaliation",
+        "Reasonable accommodations for disability and religion",
+        "Compliant with all applicable US laws (EEO, ADA, Title VII, ADEA)"
+      ]
+    },
+    "DiversityEquityInclusion": {
+      "Policy": "We celebrate diversity and commit to equity and inclusion in all aspects of our workplace.",
+      "KeyPoints": [
+        "Inclusive recruitment and hiring practices",
+        "Mandatory DEI training",
+        "Support for Employee Resource Groups (ERGs)",
+        "Respect for cultural, religious, and lifestyle differences"
+      ]
+    },
+    "RecruitmentAndHiring": {
+      "Policy": "Our hiring process ensures fairness, transparency, and equal access.",
+      "KeyPoints": [
+        "Inclusive job descriptions and postings",
+        "Structured and bias-free interview processes",
+        "Outreach to underrepresented groups",
+        "Equal opportunity internships and apprenticeships"
+      ]
+    },
+    "CompensationAndBenefits": {
+      "Policy": "We ensure fair and competitive compensation with inclusive benefits.",
+      "KeyPoints": [
+        "Regular pay equity audits",
+        "Comprehensive health and retirement benefits",
+        "Parental leave for all parents",
+        "Coverage for domestic partners and gender-affirming healthcare"
+      ]
+    },
+    "WorkplaceConductAndAntiHarassment": {
+      "Policy": "We maintain a safe and respectful workplace with zero tolerance for harassment or discrimination.",
+      "KeyPoints": [
+        "Multiple confidential reporting channels",
+        "Prompt and fair investigations",
+        "No retaliation against whistleblowers",
+        "Mandatory anti-harassment training"
+      ]
+    },
+    "FlexibleWorkAndWorkLifeBalance": {
+      "Policy": "We support flexibility to promote work-life balance.",
+      "KeyPoints": [
+        "Remote and hybrid work options where possible",
+        "Flexible schedules and compressed workweeks",
+        "Floating holidays for cultural/religious observances",
+        "Mental health and wellness days"
+      ]
+    },
+    "LearningAndDevelopment": {
+      "Policy": "We invest in continuous learning and leadership development.",
+      "KeyPoints": [
+        "Annual DEI and anti-bias training",
+        "Professional development stipends",
+        "Tuition reimbursement programs",
+        "Leadership pipelines for underrepresented employees"
+      ]
+    },
+    "ParentalAndCaregiverSupport": {
+      "Policy": "We provide strong support for parents and caregivers.",
+      "KeyPoints": [
+        "Paid parental leave for all genders",
+        "Gradual return-to-work options",
+        "Caregiver leave for elderly or disabled dependents",
+        "Childcare resources and referrals"
+      ]
+    },
+    "HealthSafetyAndWellbeing": {
+      "Policy": "We prioritize employee health, safety, and wellbeing.",
+      "KeyPoints": [
+        "OSHA-compliant workplace safety",
+        "Accommodations for health needs",
+        "Employee Assistance Program (EAP)",
+        "Wellness programs and resources"
+      ]
+    },
+    "CodeOfEthicsAndReporting": {
+      "Policy": "We act with integrity, fairness, and accountability in all business dealings.",
+      "KeyPoints": [
+        "Mandatory annual ethics training",
+        "Anonymous whistleblower protections",
+        "Clear process for reporting misconduct",
+        "Commitment to transparency and accountability"
+      ]
+    }
+  },
+  "Acknowledgement": {
+    "Statement": "I acknowledge that I have received, read, and understood the HR Policies. I agree to comply with these policies as a condition of my employment.",
+    "EmployeeSignature": "",
+    "EmployeeName": "",
+    "Date": "",
+    "DigitalAcceptance": {
+      "Accepted": false,
+      "AcceptedOn": ""
+    }
+  }
+}
