@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   Home,
   User,
@@ -19,16 +19,40 @@ const menuConfig = {
   common: [
     { label: "Dashboard", icon: <Home size={18} />, path: "/dashboard" },
     { label: "Profile", icon: <User size={18} />, path: "/dashboard/profile" },
-    { label: "Attendance", icon: <ClipboardList size={18} />, path: "/dashboard/attendance" },
-    { label: "Leaves", icon: <CheckSquare size={18} />, path: "/dashboard/leaves" },
-    { label: "Teams", icon: <ClipboardList size={18} />, path: "/dashboard/teams" },
-    { label: "Notifications", icon: <Bell size={18} />, path: "/dashboard/notifications" },
-    { label: "Daily Updates", icon: <FileText size={18} />, path: "/dashboard/daily-updates" },
+    {
+      label: "Attendance",
+      icon: <ClipboardList size={18} />,
+      path: "/dashboard/attendance",
+    },
+    {
+      label: "Leaves",
+      icon: <CheckSquare size={18} />,
+      path: "/dashboard/leaves",
+    },
+    {
+      label: "Teams",
+      icon: <ClipboardList size={18} />,
+      path: "/dashboard/teams",
+    },
+    {
+      label: "Notifications",
+      icon: <Bell size={18} />,
+      path: "/dashboard/notifications",
+    },
+    {
+      label: "Daily Updates",
+      icon: <FileText size={18} />,
+      path: "/dashboard/daily-updates",
+    },
   ],
 
   tl: [
     { label: "Sales", icon: <FileText size={18} />, path: "/dashboard/sales" },
-    { label: "Tasks", icon: <ClipboardList size={18} />, path: "/dashboard/tasks" },
+    {
+      label: "Tasks",
+      icon: <ClipboardList size={18} />,
+      path: "/dashboard/tasks",
+    },
     {
       label: "Team",
       icon: <Users size={18} />,
@@ -47,7 +71,6 @@ const menuConfig = {
         // { label: "Administration", path: "/dashboard/administration" },
         { label: "Payroll", path: "/dashboard/payroll" },
         { label: "Expenses", path: "/dashboard/expenses" },
-
       ],
     },
   ],
@@ -80,7 +103,10 @@ const Navbar = () => {
     setOpenMenus((prev) => ({ ...prev, [label]: !prev[label] }));
   };
 
-  const menuItems = [...menuConfig.common, ...(menuConfig[role.toLowerCase()] || [])];
+  const menuItems = [
+    ...menuConfig.common,
+    ...(menuConfig[role.toLowerCase()] || []),
+  ];
   const displayName = user?.user?.FirstName || user?.user?.Email || "User";
   const roleName = role.toUpperCase();
 
@@ -110,25 +136,35 @@ const Navbar = () => {
                            hover:bg-gray-700/60 transition-all duration-200 text-sm font-medium"
               >
                 <div className="flex items-center gap-3">
-                  <span className="p-2 bg-gray-700/40 rounded-lg">{item.icon}</span>
+                  <span className="p-2 bg-gray-700/40 rounded-lg">
+                    {item.icon}
+                  </span>
                   {item.label}
                 </div>
-                {openMenus[item.label] ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
+                {openMenus[item.label] ? (
+                  <ChevronDown size={16} />
+                ) : (
+                  <ChevronRight size={16} />
+                )}
               </button>
 
               {/* Submenu */}
               <div
-                className={`ml-8  flex flex-col gap-1 mb-4 transition-all duration-300 ${openMenus[item.label] ? "max-h-40 opacity-100" : "max-h-0 opacity-0"
-                  }`}
+                className={`ml-8  flex flex-col gap-1 mb-4 transition-all duration-300 ${
+                  openMenus[item.label]
+                    ? "max-h-40 opacity-100"
+                    : "max-h-0 opacity-0"
+                }`}
               >
                 {item.children.map((child, cidx) => (
                   <NavLink
                     key={cidx}
                     to={child.path}
                     className={({ isActive }) =>
-                      `px-2 py-1 rounded-md text-xs transition-all duration-200 ${isActive
-                        ? "bg-blue-600 text-white"
-                        : "hover:bg-gray-700 hover:text-blue-400"
+                      `px-2 py-1 rounded-md text-xs transition-all duration-200 ${
+                        isActive
+                          ? "bg-blue-600 text-white"
+                          : "hover:bg-gray-700 hover:text-blue-400"
                       }`
                     }
                   >
@@ -143,16 +179,16 @@ const Navbar = () => {
               to={item.path}
               end // ⬅️ important for exact match
               className={({ isActive }) =>
-                `flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${isActive
-                  ? "bg-blue-600 text-white shadow-md"
-                  : "hover:bg-gray-700 hover:text-blue-400"
+                `flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                  isActive
+                    ? "bg-blue-600 text-white shadow-md"
+                    : "hover:bg-gray-700 hover:text-blue-400"
                 }`
               }
             >
               <span className="p-2 bg-gray-700/40 rounded-lg">{item.icon}</span>
               {item.label}
             </NavLink>
-
           )
         )}
       </nav>

@@ -121,7 +121,7 @@ const SearchBarComp = () => {
   useEffect(() => {
     if (!authUser?.id) return;
 
-    socket.emit("join", authUser._id); // join user room for targeted notifications
+    socket.emit("register", { userId: authUser._id, Role: authUser.Role }); // join user room for targeted notifications
 
     socket.on("notification", (data) => {
       console.log("🔔 Notification received:", data);

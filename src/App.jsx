@@ -39,8 +39,6 @@ export default function App() {
         {/* Login Page */}
         <Route path="/" element={<Login />} />
         <Route path="forgot-password" element={<ForgotPass />} />
-
-
         {/* Protected Dashboard (common for all roles) */}
         <Route
           path="/dashboard/*"
