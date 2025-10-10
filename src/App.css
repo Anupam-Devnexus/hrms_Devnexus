@@ -130,3 +130,8 @@ button.primary:hover {
   scrollbar-width: thin;
   scrollbar-color: #374151 #1f2937;
 }
+
+.exp-table-desc {
+  max-height: 10px;
+  overflow-y: auto;
+}

@@ -14,6 +14,7 @@ export default function SalarySlipForm() {
     unPaidDays: "",
     specialAllowance: "",
     halfDay: "",
+    perDayAmount: "",
     advanceRecovery: "",
     PF: "",
     payDate: "",
@@ -111,6 +112,7 @@ export default function SalarySlipForm() {
           month: "",
           paidDays: "",
           unPaidDays: "",
+          perDayAmount: "",
           specialAllowance: "",
           halfDay: "",
           advanceRecovery: "",
@@ -205,6 +207,7 @@ export default function SalarySlipForm() {
             cursor: disable ? "text" : "not-allowed",
           }}
           disabled={!disable}
+          id="panno"
           type="text"
           name="PANCardNumber"
           value={form.PANCardNumber}
@@ -213,34 +216,44 @@ export default function SalarySlipForm() {
           className="border rounded-lg p-2"
         />
 
-        <input
-          style={{
-            cursor: disable ? "text" : "not-allowed",
-          }}
-          disabled={!disable}
-          type="month"
-          name="month"
-          max={new Date().toISOString().slice(0, 7)}
-          value={form.month}
-          onChange={handleChange}
-          placeholder="Select salary month"
-          required
-          className="w-full border border-gray-300 rounded-lg p-2"
-        />
-        <input
-          style={{
-            cursor: disable ? "text" : "not-allowed",
-          }}
-          disabled={!disable}
-          type="date"
-          name="payDate"
-          max={new Date().toISOString().slice(0, 7)}
-          value={form.payDate}
-          onChange={handleChange}
-          // placeholder="Select salary month"
-          required
-          className="w-full border border-gray-300 rounded-lg p-2"
-        />
+        <div>
+          <label htmlFor="mon">Month</label>
+
+          <input
+            style={{
+              cursor: disable ? "text" : "not-allowed",
+            }}
+            id="mon"
+            disabled={!disable}
+            type="month"
+            name="month"
+            max={new Date().toISOString().slice(0, 7)}
+            value={form.month}
+            onChange={handleChange}
+            placeholder="Select salary month"
+            required
+            className="w-full border border-gray-300 rounded-lg p-2"
+          />
+        </div>
+
+        <div>
+          <label htmlFor="paydate">Pay Date</label>
+          <input
+            id="paydate"
+            style={{
+              cursor: disable ? "text" : "not-allowed",
+            }}
+            disabled={!disable}
+            type="date"
+            name="payDate"
+            max={new Date().toISOString().slice(0, 7)}
+            value={form.payDate}
+            onChange={handleChange}
+            // placeholder="Select salary month"
+            required
+            className="w-full border border-gray-300 rounded-lg p-2"
+          />
+        </div>
       </div>
 
       {/* Salary Info */}
@@ -274,11 +287,19 @@ export default function SalarySlipForm() {
             cursor: disable ? "text" : "not-allowed",
           }}
           disabled={!disable}
-          type="number"
-          name="tax"
-          value={form.tax}
-          onChange={handleChange}
-          placeholder="Tax "
+          type="text"
+          name="specialAllowance"
+          value={form.specialAllowance}
+          // onChange={handleChange}
+          maxLength={12}
+          onChange={(e) => {
+            const value = e.target.value;
+            if (/^\d*$/.test(value)) {
+              handleChange(e);
+            }
+          }}
+          pattern="[0-9]"
+          placeholder="special Allowance"
           className="border rounded-lg p-2"
         />
       </div>
@@ -331,19 +352,11 @@ export default function SalarySlipForm() {
             cursor: disable ? "text" : "not-allowed",
           }}
           disabled={!disable}
-          type="text"
-          name="specialAllowance"
-          value={form.specialAllowance}
-          // onChange={handleChange}
-          maxLength={12}
-          onChange={(e) => {
-            const value = e.target.value;
-            if (/^\d*$/.test(value)) {
-              handleChange(e);
-            }
-          }}
-          pattern="[0-9]"
-          placeholder="special Allowance"
+          type="number"
+          name="tax"
+          value={form.tax}
+          onChange={handleChange}
+          placeholder="Tax "
           className="border rounded-lg p-2"
         />
         <input
@@ -404,6 +417,26 @@ export default function SalarySlipForm() {
           }}
           pattern="[0-9]"
           placeholder="Half days"
+          className="border rounded-lg p-2"
+        />
+        <input
+          style={{
+            cursor: disable ? "text" : "not-allowed",
+          }}
+          disabled={!disable}
+          type="text"
+          name="perDayAmount"
+          value={form.perDayAmount}
+          // onChange={handleChange}
+          maxLength={12}
+          onChange={(e) => {
+            const value = e.target.value;
+            if (/^\d*$/.test(value)) {
+              handleChange(e);
+            }
+          }}
+          pattern="[0-9]"
+          placeholder="Per day amount"
           className="border rounded-lg p-2"
         />
       </div>
