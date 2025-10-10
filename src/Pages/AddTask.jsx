@@ -53,11 +53,14 @@ const AddTask = () => {
     e.preventDefault();
 
     try {
-      const res = await fetch("http://localhost:4343/api/task/add-task", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
+      const res = await fetch(
+        "https://hrms-backend-9qzj.onrender.com/api/task/add-task",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(formData),
+        }
+      );
       console.log(res);
 
       if (!res.ok) throw new Error("Failed to add task");

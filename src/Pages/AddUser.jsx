@@ -124,7 +124,7 @@ const AddUser = () => {
       console.log(" Final Payload:", Object.fromEntries(data));
       // return;
       const { data: data1 } = await axios.post(
-        "http://localhost:4343/api/add-employee",
+        "https://hrms-backend-9qzj.onrender.com/api/add-employee",
         data,
         {
           headers: {

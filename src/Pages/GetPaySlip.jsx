@@ -21,7 +21,7 @@ const GetPaySlip = () => {
     (async () => {
       try {
         const { data } = await axios.get(
-          "http://localhost:4343/api/getAllSlips",
+          "https://hrms-backend-9qzj.onrender.com/api/getAllSlips",
           {
             headers: {
               Authorization: `Bearer ${accessToken}`,

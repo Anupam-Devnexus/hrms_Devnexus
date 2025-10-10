@@ -91,7 +91,7 @@ export default function SalarySlipForm() {
 
     try {
       const { data } = await axios.post(
-        "http://localhost:4343/api/generate",
+        "https://hrms-backend-9qzj.onrender.com/api/generate",
         form,
         {
           headers: {
@@ -136,7 +136,9 @@ export default function SalarySlipForm() {
   useEffect(() => {
     const fetchEmployees = async () => {
       try {
-        const { data } = await axios.get("http://localhost:4343/api/user");
+        const { data } = await axios.get(
+          "https://hrms-backend-9qzj.onrender.com/api/user"
+        );
         if (!data.success) throw new Error(data.message);
         setEmployees(data.Emps);
       } catch (err) {

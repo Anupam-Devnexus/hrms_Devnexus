@@ -54,7 +54,7 @@ const Notifications = () => {
         return toast.info("All notifications are already read");
 
       const { data } = await axios.patch(
-        "http://localhost:4343/api/notification/read",
+        "https://hrms-backend-9qzj.onrender.com/api/notification/read",
         { ids: unReadMessages.map((n) => n._id) },
         {
           headers: {
@@ -83,12 +83,15 @@ const Notifications = () => {
 
   useEffect(() => {
     (async () => {
-      const { data } = await axios("http://localhost:4343/api/notification/", {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const { data } = await axios(
+        "https://hrms-backend-9qzj.onrender.com/api/notification/",
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       // const data = await response.json();
 
       addPersonalNotification(data.notifications);
@@ -108,7 +111,7 @@ const Notifications = () => {
 
         if (unReadMessages.length > 0) {
           const { data } = await axios.patch(
-            "http://localhost:4343/api/notification/read",
+            "https://hrms-backend-9qzj.onrender.com/api/notification/read",
             { ids: unReadMessages }, // send only ids or whole objects
             {
               headers: {
