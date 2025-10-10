@@ -132,7 +132,7 @@ const Profile = () => {
             </div>
 
             {/* Status Button */}
-            <div className="mt-5 flex justify-center">
+            {/* <div className="mt-5 flex justify-center">
               <button
                 onClick={toggleStatus}
                 className={`flex items-center gap-2 px-5 py-2 rounded-full text-sm sm:text-base text-white font-medium shadow-md transition-colors duration-300 ${
@@ -144,7 +144,7 @@ const Profile = () => {
                 {isActive ? <CheckCircle size={18} /> : <XCircle size={18} />}
                 {isActive ? "Active" : "Inactive"}
               </button>
-            </div>
+            </div> */}
           </div>
 
           {/* Sections */}

@@ -43,8 +43,8 @@ const Payroll = () => {
 
           const result = await res.json();
           // ✅ result is already an array
-          setPaymentData(result);
-          console.log("✅ Payment Data for ADMIN:", result);
+          setPaymentData(result.data);
+          console.log("✅ Payment Data for ADMIN:", result.data);
         } catch (err) {
           console.error("❌ Error fetching payments:", err);
           setPaymentError(err.message);
@@ -105,9 +105,7 @@ const Payroll = () => {
     return <p className="text-center text-blue-500 mt-10">Loading...</p>;
   if (error || paymentError)
     return (
-      <p className="text-center text-red-500 mt-10">
-        {error || paymentError}
-      </p>
+      <p className="text-center text-red-500 mt-10">{error || paymentError}</p>
     );
 
   return (

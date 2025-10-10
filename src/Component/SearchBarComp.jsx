@@ -12,8 +12,6 @@ import {
   Users,
 } from "lucide-react";
 import { data, useNavigate } from "react-router-dom";
-import socket from "../socket";
-import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import useSocketStore from "../Zustand/NotificationAndOnlineUsers.jsx";
 
@@ -22,23 +20,16 @@ const SearchBarComp = () => {
   const authUser = JSON.parse(localStorage.getItem("authUser"));
   const { Role, _id } = authUser.user;
 
-  const {
-    addUserOnline,
-    addPersonalNotification,
-    addGeneralNotification,
-    generalNotifications,
-    toggle,
-  } = useSocketStore.getState();
+  const { generalNotifications } = useSocketStore.getState();
 
   const [menuItems, setMenuItems] = useState([]);
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
-  // const [toggleState, setToggleState] = useState(false);
-  const [notifications, setNotifications] = useState([]);
   const [showNotifications, setShowNotifications] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
 
   const notificationRef = useRef();
+
   const settingsRef = useRef();
 
   // Menu configuration
@@ -178,79 +169,80 @@ const SearchBarComp = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Socket.IO notifications
   useEffect(() => {
-    if (!_id) return;
+    console.log("searchbar general notification ", generalNotifications);
+  }, [generalNotifications]);
 
-    const handleGeneralNotification = (data) => {
-      console.log(" Notification received:", data);
-      if (Array.isArray(data)) {
-        const toastDuration = 4000; // or whatever your toast duration is
+  // Socket.IO notifications
+  // useEffect(() => {
+  //   if (!_id) return;
 
-        data.forEach((item, index) => {
-          setTimeout(() => {
-            toast.info(item.title);
-          }, index * toastDuration);
-        });
-      }
+  //   const handleGeneralNotification = (data) => {
+  //     console.log(" Notification received:", data);
+  //     if (Array.isArray(data)) {
+  //       const toastDuration = 4000;
 
-      addGeneralNotification(data);
-      toast.info(`${data.title}: ${data.message}`);
-      // setNotifications((prev) => [data, ...prev]);
-    };
+  //       data.forEach((item, index) => {
+  //         setTimeout(() => {
+  //           toast.info(item.title);
+  //         }, index * toastDuration);
+  //       });
+  //     }
 
-    const handlePersonalNotification = (data) => {
-      console.log(" Notification received:", data);
-      if (Array.isArray(data)) {
-        const toastDuration = 4000; // or whatever your toast duration is
+  //     addGeneralNotification(data);
+  //   };
 
-        data.forEach((item, index) => {
-          setTimeout(() => {
-            toast.info(item.title);
-          }, index * toastDuration);
-        });
-      }
+  //   const handlePersonalNotification = (data) => {
+  //     console.log("Personal Notification received:", data);
 
-      addPersonalNotification(data);
-      toast.info(`${data.title}: ${data.message}`);
-      // setNotifications((prev) => [data, ...prev]);
-    };
+  //     if (Array.isArray(data)) {
+  //       const toastDuration = 4000;
 
-    const handleUserOnline = (data) => {
-      if (data.userId === _id) return;
+  //       data.forEach((item, index) => {
+  //         setTimeout(() => {
+  //           toast.info(item.title);
+  //         }, index * toastDuration);
+  //       });
+  //     }
 
-      addUserOnline(data.userId);
+  //     addPersonalNotification(data);
+  //   };
 
-      toast.info(`${data.userId}   is online now`);
-      // toast.info(
-      //   `${data.userDetail.FirstName} ${data.userDetail.LastName} is online now`
-      // );
+  //   const handleUserOnline = (data) => {
+  //     if (data.userId === _id) return;
 
-      console.log(`${data.userId} is online now`);
-    };
+  //     addUserOnline(data.userId);
 
-    socket.emit("register", {
-      userId: _id,
-      Role,
-    }); // join user room for targeted notifications
+  //     toast.info(`${data.userId}   is online now`);
+  //     // toast.info(
+  //     //   `${data.userDetail.FirstName} ${data.userDetail.LastName} is online now`
+  //     // );
 
-    socket.on(_id, handlePersonalNotification);
+  //     console.log(`${data.userId} is online now`);
+  //   };
 
-    ["notification", Role].forEach((event) => {
-      socket.on(event, handleGeneralNotification);
-    });
+  //   socket.emit("register", {
+  //     userId: _id,
+  //     Role,
+  //   }); // join user room for targeted notifications
 
-    socket.on("userOnline", handleUserOnline);
+  //   // socket.on(_id, handlePersonalNotification);
 
-    // setToggleState(!toggleState);
+  //   socket.on("pendingNotifications", handlePersonalNotification);
 
-    return () => {
-      socket.off("notification", handleGeneralNotification);
-      socket.off(Role, handleGeneralNotification);
-      socket.off(_id, handleGeneralNotification);
-      socket.off("userOnline", handleUserOnline);
-    };
-  }, [_id]);
+  //   socket.on("notification", handleGeneralNotification);
+
+  //   socket.on("userOnline", handleUserOnline);
+
+  //   // setToggleState(!toggleState);
+
+  //   return () => {
+  //     socket.off("notification", handleGeneralNotification);
+  //     socket.off("pendingNotifications", handlePersonalNotification);
+  //     // socket.off(_id, handleGeneralNotification);
+  //     socket.off("userOnline", handleUserOnline);
+  //   };
+  // }, [_id]);
 
   return (
     <div className="flex items-center justify-between w-full px-4 gap-3 py-2 bg-white rounded-xl shadow-sm border border-gray-200">
@@ -290,15 +282,15 @@ const SearchBarComp = () => {
             onClick={() => setShowNotifications(!showNotifications)}
           />
           {/* )} */}
-          {generalNotifications.length == 0 && (
+          {generalNotifications.length > 0 && (
             <div className="absolute -top-1 -right-1 bg-red-500   w-2 h-2 font-bold  aspect-square  rounded-full"></div>
           )}
           {showNotifications && (
-            <div className="absolute right-0 mt-3 w-72 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
+            <div className="absolute  right-0 mt-3 w-72 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
               <h3 className="font-semibold p-3 border-b text-gray-700">
                 Notifications
               </h3>
-              <div className="max-h-56 overflow-y-auto">
+              <div className="max-h-56 border overflow-y-auto">
                 {generalNotifications.map((notif, i) => (
                   <div
                     key={i}
@@ -337,9 +329,6 @@ const SearchBarComp = () => {
           )}
         </div>
       </div>
-
-      {/* Toast Container */}
-      <ToastContainer position="top-right" autoClose={5000} newestOnTop />
     </div>
   );
 };

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import menuConfig from "../DataStore/NavBar.json"; // 👈 import nav config
+import menuConfig from "../DataStore/NavBar.json"; //  import nav config
 
 const EditProfile = () => {
   const { id } = useParams();
@@ -16,7 +16,7 @@ const EditProfile = () => {
       try {
         setLoading(true);
         const res = await fetch(
-          `https://hrms-backend2.onrender.com/api/user/${id}`
+          `https://hrms-backend-9qzj.onrender.com/api/user/${id}`
         );
         if (!res.ok) throw new Error("Failed to fetch employee data");
 
@@ -91,10 +91,7 @@ const EditProfile = () => {
 
     // merge common + role-specific
     if (menuConfig.common) {
-      roleTabs = [
-        ...roleTabs,
-        ...menuConfig.common.map((item) => item.label),
-      ];
+      roleTabs = [...roleTabs, ...menuConfig.common.map((item) => item.label)];
     }
 
     if (menuConfig[role]) {
@@ -114,7 +111,7 @@ const EditProfile = () => {
     try {
       setSaving(true);
       const res = await fetch(
-        `https://hrms-backend2.onrender.com/api/user/${id}`,
+        `https://hrms-backend-9qzj.onrender.com/api/user/${id}`,
         {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
@@ -153,7 +150,9 @@ const EditProfile = () => {
             className="w-24 h-24 rounded-full object-cover border"
           />
           <div>
-            <label className="block text-sm font-medium mb-2">Change Photo</label>
+            <label className="block text-sm font-medium mb-2">
+              Change Photo
+            </label>
             <input
               type="file"
               accept="image/*"
@@ -231,7 +230,9 @@ const EditProfile = () => {
             <input
               type="date"
               name="JoiningDate"
-              value={employee.JoiningDate ? employee.JoiningDate.split("T")[0] : ""}
+              value={
+                employee.JoiningDate ? employee.JoiningDate.split("T")[0] : ""
+              }
               onChange={handleChange}
               className="mt-1 w-full px-3 py-2 border rounded-lg"
             />

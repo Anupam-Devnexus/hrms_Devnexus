@@ -2,118 +2,118 @@
 
 /* ===== Reset & Base ===== */
 * {
-    box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 html,
 body {
-    height: 100%;
-    font-family: "Inter", Arial, sans-serif;
-   /* background:  #3d47a3; */
-    color: #1f2937;
-    margin: 0;
-    padding: 0;
-    line-height: 1.5;
+  height: 100%;
+  font-family: "Inter", Arial, sans-serif;
+  /* background:  #3d47a3; */
+  color: #1f2937;
+  margin: 0;
+  padding: 0;
+  line-height: 1.5;
 }
 
 /* ===== Layout ===== */
 .app-container {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
 
 .header {
-    /* background:; */
-    color: #fff;
-    padding: 1rem 2rem;
-    font-size: 1.25rem;
-    font-weight: 600;
+  /* background:; */
+  color: #fff;
+  padding: 1rem 2rem;
+  font-size: 1.25rem;
+  font-weight: 600;
 }
 
 .sidebar {
-    width: 240px;
-    background: #f3f4f6;
-    padding: 1rem;
-    border-right: 1px solid #e5e7eb;
+  width: 240px;
+  background: #f3f4f6;
+  padding: 1rem;
+  border-right: 1px solid #e5e7eb;
 }
 
 .main-content {
-    flex: 1;
-    padding: 2rem;
-    background: #fff;
+  flex: 1;
+  padding: 2rem;
+  background: #fff;
 }
 
 /* ===== UI Elements ===== */
 button {
-    padding: 0.6rem 1.2rem;
-    border: none;
-    border-radius: 0.5rem;
-    cursor: pointer;
-    font-weight: 500;
-    transition: all 0.2s ease;
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s ease;
 }
 
 button.primary {
-    background: #2563eb;
-    color: #fff;
+  background: #2563eb;
+  color: #fff;
 }
 
 button.primary:hover {
-    background: #1e40af;
+  background: #1e40af;
 }
 
 .table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 1rem;
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
 }
 
 .table th,
 .table td {
-    padding: 0.75rem;
-    border-bottom: 1px solid #e5e7eb;
-    text-align: left;
+  padding: 0.75rem;
+  border-bottom: 1px solid #e5e7eb;
+  text-align: left;
 }
 
 .table th {
-    background: #f9fafb;
-    font-weight: 600;
-    color: #374151;
+  background: #f9fafb;
+  font-weight: 600;
+  color: #374151;
 }
 
 .table tr:hover {
-    background: #f3f4f6;
+  background: #f3f4f6;
 }
 
 /* ===== Utilities ===== */
 .text-center {
-    text-align: center;
+  text-align: center;
 }
 
 .text-right {
-    text-align: right;
+  text-align: right;
 }
 
 .mt-1 {
-    margin-top: 0.25rem;
+  margin-top: 0.25rem;
 }
 
 .mt-2 {
-    margin-top: 0.5rem;
+  margin-top: 0.5rem;
 }
 
 .mt-4 {
-    margin-top: 1rem;
+  margin-top: 1rem;
 }
 
 /* Custom scrollbar for sidebar */
 ::-webkit-scrollbar {
-  width: 1px;              /* scrollbar width */
+  width: 1px; /* scrollbar width */
 }
 
 ::-webkit-scrollbar-track {
-  background: #1f2937;      /* bg-gray-800 */
+  background: #1f2937; /* bg-gray-800 */
 }
 
 ::-webkit-scrollbar-thumb {
@@ -122,7 +122,7 @@ button.primary:hover {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background-color: #4b5563; 
+  background-color: #4b5563;
 }
 
 /* For Firefox */

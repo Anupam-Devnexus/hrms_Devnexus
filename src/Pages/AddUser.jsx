@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import menuConfig from "../DataStore/NavBar.json";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 // ---------------- Validation Schema ----------------
 const validationSchema = Yup.object({
@@ -64,19 +66,28 @@ const InputField = ({ label, name, type = "text", ...props }) => (
 const AddUser = () => {
   const [preview, setPreview] = useState(null);
 
+  const { accessToken } = JSON.parse(localStorage.getItem("authUser"));
+
   const initialValues = {
     FirstName: "",
     LastName: "",
     Email: "",
     Phone: "",
-    Salary: "",
     Dob: "",
     Department: "",
     Designation: "",
+    PanNumber: "",
+    AadharNumber: "",
+    Salary: "",
+    BankName: "",
+    AccountNumber: "",
+    IFSC: "",
+    Branch: "",
     Role: "",
     Permissions: [],
     Address: "",
     EmergencyPhone: "",
+    JoiningDate: "",
     EmergencyName: "",
     EmergencyRelation: "",
     Password: "",
@@ -108,27 +119,34 @@ const AddUser = () => {
         }
       });
 
-      console.log("📦 Final Payload:", Object.fromEntries(data));
+      // console.log(accesstoken)
 
-      const response = await fetch(
-        "https://hrms-backend2.onrender.com/api/add-employee",
+      console.log(" Final Payload:", Object.fromEntries(data));
+      // return;
+      const { data: data1 } = await axios.post(
+        "http://localhost:4343/api/add-employee",
+        data,
         {
-          method: "POST",
-          body: data,
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
         }
       );
 
-      if (!response.ok) throw new Error("Failed to add employee");
+      console.log(data1);
 
-      const result = await response.json();
-      alert("✅ Employee added successfully!");
-      console.log("API Response:", result);
+      if (!data1.success) throw new Error("Failed to add employee");
+
+      // const result = await response.json();
+      toast.success(" Employee added successfully!");
+      // console.log("API Response:", result);
 
       resetForm();
       setPreview(null);
     } catch (err) {
       console.error("❌ Error:", err);
-      alert("Something went wrong!");
+      toast.error(err.response.data.message);
+      // alert("Something went wrong!");
     }
   };
 
@@ -161,25 +179,44 @@ const AddUser = () => {
               <InputField label="Salary *" name="Salary" type="number" />
               <InputField label="Phone *" name="Phone" />
               <InputField label="Date of Birth *" name="Dob" type="date" />
+              <InputField
+                label="Date of Joining *"
+                name="JoiningDate"
+                type="date"
+              />
+              <InputField label="Department *" name="Department" />
+              <InputField label="Designation *" name="Designation" />
+              <InputField label="PAN Number *" name="PanNumber" />
+              <InputField label="Aadhar Number *" name="AadharNumber" />
+
+              {/* <InputField label="Salary *" name="Salary" /> */}
+              <InputField label="BankName *" name="BankName" />
+              <InputField
+                label="Account Number *"
+                name="AccountNumber"
+                type="number"
+              />
+              <InputField label="IFSC Code*" name="IFSC" />
+              <InputField label="Branch *" name="Branch" />
 
               {/* Dropdowns */}
-              <InputField as="select" label="Department *" name="Department">
+              {/* <InputField as="select" label="Department *" name="Department">
                 <option value="">Select Department</option>
                 {departments.map((opt) => (
                   <option key={opt} value={opt}>
                     {opt}
                   </option>
                 ))}
-              </InputField>
+              </InputField> */}
 
-              <InputField as="select" label="Designation *" name="Designation">
+              {/* <InputField as="select" label="Designation *" name="Designation">
                 <option value="">Select Designation</option>
                 {designations.map((opt) => (
                   <option key={opt} value={opt}>
                     {opt}
                   </option>
                 ))}
-              </InputField>
+              </InputField> */}
 
               <InputField as="select" label="Role *" name="Role">
                 <option value="">Select Role</option>
@@ -269,17 +306,16 @@ const AddUser = () => {
               </h2>
               <InputField name="EmergencyPhone" label="Emergency Phone" />
               <InputField name="EmergencyName" label="Emergency Contact Name" />
-              <InputField
-                name="EmergencyRelation"
-                label="Emergency Relation"
-              />
+              <InputField name="EmergencyRelation" label="Emergency Relation" />
 
               {/* Password */}
               <InputField label="Password *" name="Password" type="password" />
 
               {/* Profile Image */}
               <div className="md:col-span-2 flex flex-col gap-2">
-                <label className="text-gray-700 font-medium">Profile Image</label>
+                <label className="text-gray-700 font-medium">
+                  Profile Image
+                </label>
                 <input
                   type="file"
                   accept="image/*"

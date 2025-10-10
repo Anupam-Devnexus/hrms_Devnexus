@@ -5,32 +5,36 @@ export const useUserStore = create((set) => ({
   loading: false,
   error: null,
 
-  
   fetchAllData: async () => {
     set({ loading: true, error: null });
     try {
-      const res = await fetch("https://hrms-backend-9qzj.onrender.com/api/user");
+      const res = await fetch(
+        "https://hrms-backend-9qzj.onrender.com/api/user"
+      );
       if (!res.ok) throw new Error("Failed to fetch users");
       const data = await res.json();
+
+      // console.log("all emp", data);
       set({ allData: data, loading: false });
     } catch (err) {
       set({ error: err.message, loading: false });
     }
   },
 
- 
   addUser: async (newUser) => {
     set({ loading: true, error: null });
     try {
-      const res = await fetch("https://hrms-backend-9qzj.onrender.com/api/user", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newUser),
-      });
+      const res = await fetch(
+        "https://hrms-backend-9qzj.onrender.com/api/user",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(newUser),
+        }
+      );
 
       if (!res.ok) throw new Error("Failed to add user");
       const addedUser = await res.json();
-
 
       set((state) => ({
         allData: {
@@ -57,7 +61,8 @@ export const useUserStore = create((set) => ({
       return;
     }
 
-    if (!window.confirm("⚠️ Are you sure you want to delete this user?")) return;
+    if (!window.confirm("⚠️ Are you sure you want to delete this user?"))
+      return;
 
     set({ loading: true, error: null });
     try {
@@ -73,7 +78,8 @@ export const useUserStore = create((set) => ({
           ...state.allData,
           data: {
             ...state.allData.data,
-            [role]: state.allData.data[role]?.filter((u) => u._id !== userId) || [],
+            [role]:
+              state.allData.data[role]?.filter((u) => u._id !== userId) || [],
           },
         },
         loading: false,

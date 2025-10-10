@@ -10,6 +10,7 @@ import {
   Settings,
   ChevronDown,
   ChevronRight,
+  ReceiptIndianRupee,
 } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { FaPowerOff } from "react-icons/fa";
@@ -44,6 +45,11 @@ const menuConfig = {
       icon: <FileText size={18} />,
       path: "/dashboard/daily-updates",
     },
+    {
+      label: "Payslips",
+      icon: <ReceiptIndianRupee size={18} />,
+      path: "/dashboard/payslips",
+    },
   ],
 
   tl: [
@@ -68,7 +74,7 @@ const menuConfig = {
         { label: "User Management", path: "/dashboard/user-management" },
         { label: "Policies", path: "/dashboard/policies" },
         { label: "Leaves Approval", path: "/dashboard/leaves-approval" },
-        // { label: "Administration", path: "/dashboard/administration" },
+        { label: "Generate Payslips", path: "/dashboard/generate-slip" },
         { label: "Payroll", path: "/dashboard/payroll" },
         { label: "Expenses", path: "/dashboard/expenses" },
       ],
