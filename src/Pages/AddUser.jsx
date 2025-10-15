@@ -4,22 +4,38 @@ import * as Yup from "yup";
 import menuConfig from "../DataStore/NavBar.json";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { CustomLoader } from "../Component/CustomLoader";
 
 // ---------------- Validation Schema ----------------
 const validationSchema = Yup.object({
   FirstName: Yup.string().required("First Name is required"),
-  LastName: Yup.string().required("Last Name is required"),
+  // LastName: Yup.string().required("Last Name is required"),
   Email: Yup.string().email("Invalid email").required("Email is required"),
   Phone: Yup.string()
     .matches(/^[0-9]{10}$/, "Phone must be 10 digits")
     .required("Phone is required"),
-  Salary: Yup.number()
-    .typeError("Salary must be a number")
-    .positive("Salary must be positive")
-    .required("Salary is required"),
+  // Salary: Yup.number()
+  //   .typeError("Salary must be a number")
+  //   .positive("Salary must be positive")
+  //   .required("Salary is required"),
+
+  Gender: Yup.string().required("Gender is required"),
+  BankName: Yup.string().required("BankName is required"),
+  AccountNumber: Yup.string()
+    // .matches(/^[0-9]${10}/, "Phone must be 10 digits")
+    .required("AccountNumber is required"),
+  IFSC: Yup.string().required("IFSC is required"),
+  Branch: Yup.string().required("Branch is required"),
   Dob: Yup.date().required("Date of Birth is required"),
+  PanNumber: Yup.string().required("PanNumber must be 10 characters"),
+  AadharNumber: Yup.string().matches(
+    /^[0-9]{12}$/,
+    "Aadhar Number must be 12 digits"
+  ),
   Department: Yup.string().required("Department is required"),
   Designation: Yup.string().required("Designation is required"),
+  PermanentAddress: Yup.string().required("PermanentAddress is required"),
+  CurrentAddress: Yup.string().required("CurrentAddress is required"),
   Role: Yup.string().required("Role is required"),
   Password: Yup.string()
     .min(6, "Password must be at least 6 characters")
@@ -31,7 +47,6 @@ const validationSchema = Yup.object({
   EmergencyName: Yup.string(),
   EmergencyRelation: Yup.string(),
 });
-
 // ---------------- Dropdown Options ----------------
 const roles = ["ADMIN", "HR", "TL", "EMPLOYEE"];
 const departments = ["IT", "HR", "Finance", "Sales", "Marketing", "Support"];
@@ -65,6 +80,7 @@ const InputField = ({ label, name, type = "text", ...props }) => (
 // ---------------- Main Component ----------------
 const AddUser = () => {
   const [preview, setPreview] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const { accessToken } = JSON.parse(localStorage.getItem("authUser"));
 
@@ -78,6 +94,7 @@ const AddUser = () => {
     Designation: "",
     PanNumber: "",
     AadharNumber: "",
+    Gender: "",
     Salary: "",
     BankName: "",
     AccountNumber: "",
@@ -85,7 +102,8 @@ const AddUser = () => {
     Branch: "",
     Role: "",
     Permissions: [],
-    Address: "",
+    PermanentAddress: "",
+    CurrentAddress: "",
     EmergencyPhone: "",
     JoiningDate: "",
     EmergencyName: "",
@@ -107,6 +125,7 @@ const AddUser = () => {
   };
 
   const handleSubmit = async (values, { resetForm }) => {
+    setLoading(true);
     try {
       const data = new FormData();
       Object.entries(values).forEach(([key, val]) => {
@@ -140,6 +159,7 @@ const AddUser = () => {
       // const result = await response.json();
       toast.success(" Employee added successfully!");
       // console.log("API Response:", result);
+      setLoading(false);
 
       resetForm();
       setPreview(null);
@@ -147,6 +167,8 @@ const AddUser = () => {
       console.error("❌ Error:", err);
       toast.error(err.response.data.message);
       // alert("Something went wrong!");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -176,9 +198,26 @@ const AddUser = () => {
               <InputField label="First Name *" name="FirstName" />
               <InputField label="Last Name *" name="LastName" />
               <InputField label="Email *" name="Email" type="email" />
-              <InputField label="Salary *" name="Salary" type="number" />
+              <InputField label="Salary " name="Salary" type="number" />
               <InputField label="Phone *" name="Phone" />
               <InputField label="Date of Birth *" name="Dob" type="date" />
+
+              <div className="flex items-center  gap-4">
+                <h2 className="font-semibold mb-2">Select Gender *</h2>
+                <label>
+                  <Field type="radio" name="Gender" value="Male" />
+                  Male
+                </label>
+                <label>
+                  <Field type="radio" name="Gender" value="Female" />
+                  Female
+                </label>
+                <label>
+                  <Field type="radio" name="Gender" value="Other" />
+                  Other
+                </label>
+              </div>
+
               <InputField
                 label="Date of Joining *"
                 name="JoiningDate"
@@ -194,7 +233,7 @@ const AddUser = () => {
               <InputField
                 label="Account Number *"
                 name="AccountNumber"
-                type="number"
+                type="text"
               />
               <InputField label="IFSC Code*" name="IFSC" />
               <InputField label="Branch *" name="Branch" />
@@ -291,10 +330,23 @@ const AddUser = () => {
 
               {/* Address */}
               <div className="md:col-span-2 flex flex-col gap-1">
-                <label className="text-gray-700 font-medium">Address</label>
+                <label className="text-gray-700 font-medium">
+                  Current Address
+                </label>
                 <Field
                   as="textarea"
-                  name="Address"
+                  name="CurrentAddress"
+                  rows={2}
+                  className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <div className="md:col-span-2 flex flex-col gap-1">
+                <label className="text-gray-700 font-medium">
+                  Permanent Address
+                </label>
+                <Field
+                  as="textarea"
+                  name="PermanentAddress"
                   rows={2}
                   className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
@@ -337,7 +389,7 @@ const AddUser = () => {
                   type="submit"
                   className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
                 >
-                  Add Employee
+                  Add Employee {loading && <CustomLoader />}
                 </button>
               </div>
             </Form>

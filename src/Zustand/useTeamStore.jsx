@@ -40,19 +40,22 @@ export const useTeamStore = create((set, get) => ({
     const id = JSON.parse(localStorage.getItem("authUser")).user._id;
     console.log(token)
     try {
-      const response = await fetch("https://hrms-backend-9qzj.onrender.com/api/team/create-team", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          name: teamName,
-          description: teamDescription,
-          members: selectedTeam,
-          lead: id
-        }),
-      });
+      const response = await fetch(
+        "https://hrms-backend-9qzj.onrender.com/api/team/create-team",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name: teamName,
+            description: teamDescription,
+            members: selectedTeam,
+            lead: id,
+          }),
+        }
+      );
 
       if (!response.ok) throw new Error("Failed to save team");
 

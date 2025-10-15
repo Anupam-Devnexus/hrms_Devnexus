@@ -131,7 +131,7 @@ const Expenses = () => {
                     placeholder="Due Date"
                     value={formData.dueDate}
                     onChange={(e) =>
-                      setFormData({ ...formData, amount: e.target.value })
+                      setFormData({ ...formData, dueDate: e.target.value })
                     }
                     required
                     className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[var(--primary-color)] outline-none"

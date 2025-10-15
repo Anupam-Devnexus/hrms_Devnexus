@@ -43,9 +43,11 @@ import useSocketStore from "./Zustand/NotificationAndOnlineUsers.jsx";
 import socket from "./socket.js";
 import PayslipForm from "./Pages/SalarySlip.jsx";
 import GetPaySlip from "./Pages/GetPaySlip.jsx";
+import axios from "axios";
+import CheckAuth from "./Auth/CheckAuth.js";
 
 export default function App() {
-  // const navigate  = useNavigate()
+  // const navigate = useNavigate();
   const authUser = JSON.parse(localStorage.getItem("authUser"));
 
   // console.log("App jsx", authUser);
@@ -55,8 +57,12 @@ export default function App() {
     generalNotifications,
     addPersonalNotification,
     addGeneralNotification,
-    addUserOnline,
+    // addUserOnline,
   } = useSocketStore();
+
+  // useEffect(() => {
+  //   CheckAuth(authUser.accessToken);
+  // }, []);
 
   useEffect(() => {
     if (!authUser) return;
@@ -86,22 +92,11 @@ export default function App() {
       if (newOnes.length) addPersonalNotification(newOnes);
     };
 
-    //  Handle user online status
-    // const handleUserOnline = (data) => {
-    //   if (data.userId === _id) return;
-    //   addUserOnline(data.userId);
-    //   toast.info(
-    //     `${data.userDetail.FirstName} ${data.userDetail.LastName} is online now`,
-    //     { autoClose: 3000 }
-    //   );
-    // };
-
     // --- Register socket & listeners ---
     socket.emit("register", { userId: _id, Role });
 
     socket.on("notification", handleGeneralNotification);
     socket.on("pendingNotifications", handlePersonalNotification);
-    // socket.on("userOnline", handleUserOnline);
 
     return () => {
       socket.off("notification", handleGeneralNotification);
@@ -116,6 +111,8 @@ export default function App() {
         {/* Login Page */}
         <Route path="/" element={<Login />} />
         <Route path="forgot-password" element={<ForgotPass />} />
+        {/* <Route path="/add-user" element={<AddUser />} /> */}
+
         {/* Protected Dashboard (common for all roles) */}
         <Route
           path="/dashboard/*"

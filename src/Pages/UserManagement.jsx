@@ -14,7 +14,7 @@ const UserManagement = () => {
   useEffect(() => {
     fetchAllData();
   }, []);
-console.log(allData)
+  console.log(allData);
   const authUser = JSON.parse(localStorage.getItem("authUser"));
   const currentUserRole = authUser?.user?.Role?.toUpperCase();
 
@@ -59,7 +59,9 @@ console.log(allData)
       {/* Header */}
       <div className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 text-white rounded-2xl shadow-lg p-6 mb-8 flex flex-col md:flex-row md:items-center md:justify-between">
         <div>
-          <h2 className="text-3xl font-extrabold tracking-wide">User Management</h2>
+          <h2 className="text-3xl font-extrabold tracking-wide">
+            User Management
+          </h2>
           <p className="mt-2 text-indigo-100">
             Manage admins, team leads, and employees
           </p>
@@ -81,7 +83,9 @@ console.log(allData)
           <p className="text-gray-500 font-medium">Admins</p>
         </div>
         <div className="bg-white rounded-2xl shadow-md p-4 text-center">
-          <h3 className="text-xl font-bold text-purple-600">{counts.TEAMLEAD}</h3>
+          <h3 className="text-xl font-bold text-purple-600">
+            {counts.TEAMLEAD}
+          </h3>
           <p className="text-gray-500 font-medium">Team Leads</p>
         </div>
         <div className="bg-white rounded-2xl shadow-md p-4 text-center">
@@ -100,14 +104,16 @@ console.log(allData)
           users.map((user) => (
             <div
               key={user._id}
-              className="relative bg-white rounded-2xl shadow-md hover:shadow-xl transition p-4"
+              className="relative   bg-white rounded-2xl shadow-md hover:shadow-xl transition p-4"
             >
               <EmployeeCard employee={user} />
 
               {currentUserRole === "ADMIN" && (
-                <div className="absolute bottom-18 right-3 flex gap-2">
+                <div className="flex gap-2">
                   <button
-                    onClick={() => navigate(`/dashboard/edit-profile/${user._id}`)}
+                    onClick={() =>
+                      navigate(`/dashboard/edit-profile/${user._id}`)
+                    }
                     className=" rounded-full bg-green-100 text-green-700 hover:bg-green-600 hover:text-white transition shadow"
                   >
                     <AiFillEdit size={18} />
@@ -125,10 +131,10 @@ console.log(allData)
           ))
         ) : (
           <div className="col-span-full text-center py-10">
-            <p className="text-gray-600 text-lg font-medium">🚀 No users found</p>
-            <p className="text-gray-400 text-sm">
-              Add users to see them here.
+            <p className="text-gray-600 text-lg font-medium">
+              🚀 No users found
             </p>
+            <p className="text-gray-400 text-sm">Add users to see them here.</p>
           </div>
         )}
       </div>
@@ -137,10 +143,15 @@ console.log(allData)
       {showDeleteModal && (
         <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
           <div className="bg-white rounded-2xl shadow-lg p-6 max-w-sm w-full text-center">
-            <h3 className="text-xl font-bold mb-4 text-red-600">Confirm Delete</h3>
+            <h3 className="text-xl font-bold mb-4 text-red-600">
+              Confirm Delete
+            </h3>
             <p className="mb-4">
               Are you sure you want to delete{" "}
-              <span className="font-semibold">{selectedUser.FirstName} {selectedUser.LastName}</span>?
+              <span className="font-semibold">
+                {selectedUser.FirstName} {selectedUser.LastName}
+              </span>
+              ?
             </p>
             <div className="flex justify-center gap-4">
               <button

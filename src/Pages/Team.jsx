@@ -34,7 +34,9 @@ const Team = () => {
           const token = JSON.parse(localStorage.getItem("authUser"))?.accessToken;
           const res = await fetch(
             "https://hrms-backend-9qzj.onrender.com/api/team/get-teams",
-            { headers: { Authorization: `Bearer ${token}` } }
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
           );
           if (!res.ok) throw new Error("Failed to fetch all teams");
           const data = await res.json();

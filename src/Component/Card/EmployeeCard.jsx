@@ -22,7 +22,8 @@ const EmployeeCard = ({ employee }) => {
   };
 
   const role = employee.Role?.toUpperCase();
-  const roleBadge = roleColors[role] || "bg-gray-100 text-gray-600 border-gray-300";
+  const roleBadge =
+    roleColors[role] || "bg-gray-100 text-gray-600 border-gray-300";
 
   return (
     <div className="transition p-2 flex flex-col">
@@ -62,7 +63,7 @@ const EmployeeCard = ({ employee }) => {
         </div>
         <div className="flex items-center gap-2">
           <MapPin size={16} className="text-pink-500" />
-          <span>{employee.Address}</span>
+          <span>{employee.CurrentAddress}</span>
         </div>
       </div>
 
@@ -99,19 +100,8 @@ const EmployeeCard = ({ employee }) => {
         </div>
       </div>
 
-      {/* Salary */}
-      <div className="mb-4">
-        <h3 className="text-sm font-semibold text-gray-700 flex items-center gap-1">
-          <Shield size={16} className="text-indigo-500" />
-          Salary
-        </h3>
-        <div className="flex flex-wrap gap-2 mt-2">
-        {employee?.Salary ? employee?.Salary : "N/A"}
-        </div>
-      </div>
-
       {/* Dates */}
-      <div className="flex justify-between text-xs text-gray-500 border-t pt-3 mt-auto">
+      <div className="flex  justify-between text-xs text-gray-500 border-t pt-3 mt-auto">
         <div className="flex items-center gap-1">
           <Calendar size={14} className="text-indigo-500" />
           <span>

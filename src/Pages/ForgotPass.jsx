@@ -14,11 +14,14 @@ export default function ForgotPass() {
         setLoading(true);
 
         try {
-           const res = await fetch("https://hrms-backend-9qzj.onrender.com/api/forgotpassword", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({ Email: email }),
-});
+           const res = await fetch(
+             "https://hrms-backend-9qzj.onrender.com/api/forgotpassword",
+             {
+               method: "POST",
+               headers: { "Content-Type": "application/json" },
+               body: JSON.stringify({ Email: email }),
+             }
+           );
 console.log(res)
 let data;
 try {

@@ -11,13 +11,16 @@ export const useHistory = create((set) => ({
 
         try {
             set({ loading: true, error: null })
-            const res = await fetch("https://hrms-backend-9qzj.onrender.com/api/payment", {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        });
+            const res = await fetch(
+              "https://hrms-backend-9qzj.onrender.com/api/payment",
+              {
+                method: "GET",
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                  "Content-Type": "application/json",
+                },
+              }
+            );
             if (!res.ok) {
                 console.log("error in respo", res)
             }

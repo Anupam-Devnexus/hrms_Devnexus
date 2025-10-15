@@ -47,7 +47,11 @@ const AddSales = () => {
 
     try {
       const xhr = new XMLHttpRequest();
-      xhr.open("POST", "https://hrms-backend-9qzj.onrender.com/api/sales/add", true);
+      xhr.open(
+        "POST",
+        "https://hrms-backend-9qzj.onrender.com/api/sales/",
+        true
+      );
       xhr.setRequestHeader("Authorization", `Bearer ${token}`);
 
       xhr.upload.onprogress = (event) => {
@@ -137,7 +141,7 @@ const AddSales = () => {
           {files.length > 0 && (
             <div className="flex flex-wrap gap-3 mt-4">
               {files.map((file, idx) => (
-                <div key={idx} className="flex flex-col items-center gap-2 bg-indigo-100 text-indigo-700 rounded-lg px-2 py-1 text-xs w-20">
+                <div key={idx} className="flex flex-col  items-center gap-2 bg-indigo-100 text-indigo-700 rounded-lg px-2 py-1 text-xs ">
                   {file.type.startsWith("image/") ? (
                     <img src={URL.createObjectURL(file)} alt={file.name} className="w-16 h-16 object-cover rounded" />
                   ) : (

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useUserStore } from "../Zustand/GetAllData";
 import { useNavigate } from "react-router-dom";
+import { useAttendance } from "../Zustand/PersonalAttendance";
 
 // Loader component
 const Loader = () => (
@@ -11,6 +12,8 @@ const Loader = () => (
 
 const Attendance = () => {
   const { allData, fetchAllData, loading, error } = useUserStore();
+  const { myAttendance, allAttendance, fetchAttendance, fetchAllAttendance } =
+    useAttendance();
   const [attendanceData, setAttendanceData] = useState([]);
   const [MyattendanceData, setMyAttendanceData] = useState([]);
   const [search, setSearch] = useState("");
@@ -32,6 +35,9 @@ const Attendance = () => {
 
   useEffect(() => {
     fetchAllData();
+    fetchAttendance();
+    fetchAllAttendance();
+    // console.log(allAttendance, myAttendance);
   }, []);
 
   useEffect(() => {

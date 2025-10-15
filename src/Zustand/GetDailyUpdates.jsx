@@ -19,12 +19,15 @@ export const useDailyupdate = create((set) => ({
 
       set({ loading: true, error: null });
 
-      const response = await fetch("https://hrms-backend-9qzj.onrender.com/api/daily-updates", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        method: "GET",
-      });
+      const response = await fetch(
+        "https://hrms-backend-9qzj.onrender.com/api/daily-updates",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          method: "GET",
+        }
+      );
 
       if (!response.ok) {
         throw new Error(`Failed to fetch: ${response.status}`);

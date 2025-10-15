@@ -8,8 +8,9 @@ const AddTask = () => {
   const name = authuser?.user?.FirstName || "User";
   const role = authuser?.user?.Role?.toUpperCase() || "EMPLOYEE";
 
-  const { loading, error, fetchAllData, allData } = useUserStore();
+  const { fetchAllData, allData } = useUserStore();
   const navigate = useNavigate();
+  const [loading, setloading] = useState(false);
 
   useEffect(() => {
     fetchAllData();
@@ -22,8 +23,8 @@ const AddTask = () => {
     description: "",
     dueDate: "",
     priority: "medium",
-    assignee: role === "EMPLOYEE" ? [{ id: userId, name }] : [],
-    assigner: { id: userId, name },
+    assignee: userId,
+    assigner: "",
   });
 
   // handle input changes
@@ -38,18 +39,14 @@ const AddTask = () => {
     if (selectedEmp) {
       setFormData({
         ...formData,
-        assignee: [
-          {
-            id: selectedEmp._id,
-            name: `${selectedEmp.FirstName} ${selectedEmp.LastName}`,
-          },
-        ],
+        assigner: selectedEmp._id,
       });
     }
   };
 
   // submit form
   const handleSubmit = async (e) => {
+    setloading(true);
     e.preventDefault();
 
     try {
@@ -61,11 +58,14 @@ const AddTask = () => {
           body: JSON.stringify(formData),
         }
       );
-      console.log(res);
+
+      const data = await res.json();
+      console.log(data);
 
       if (!res.ok) throw new Error("Failed to add task");
       console.log("✅ Task added successfully");
 
+      setloading(false);
       // reset
       setFormData({
         title: "",
@@ -78,7 +78,11 @@ const AddTask = () => {
 
       navigate("/dashboard/tasks");
     } catch (err) {
+      setloading(false);
+
       console.error("❌ Error adding task:", err);
+    } finally {
+      setloading(false);
     }
   };
 
@@ -109,6 +113,7 @@ const AddTask = () => {
             <input
               type="text"
               name="title"
+              disabled={loading && true}
               value={formData.title}
               onChange={handleChange}
               required
@@ -126,6 +131,7 @@ const AddTask = () => {
               name="description"
               value={formData.description}
               onChange={handleChange}
+              disabled={loading && true}
               required
               rows="4"
               className="w-full border border-gray-300 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -140,6 +146,7 @@ const AddTask = () => {
             </label>
             <input
               type="date"
+              disabled={loading && true}
               name="dueDate"
               value={formData.dueDate}
               onChange={handleChange}
@@ -156,6 +163,7 @@ const AddTask = () => {
               </label>
               <select
                 name="priority"
+                disabled={loading && true}
                 value={formData.priority}
                 onChange={handleChange}
                 className="w-full border border-gray-300 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -175,8 +183,9 @@ const AddTask = () => {
                 Assign To
               </label>
               <select
+                disabled={loading && true}
                 onChange={handleAssignTo}
-                value={formData.assignee[0]?.id || ""}
+                value={formData.assignee}
                 className="w-full border border-gray-300 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="">Select Employee</option>

@@ -19,11 +19,14 @@ export const useLeavePersonalDetails = create((set) => ({
         try {
             set({ loading: true, error: null });
 
-            const res = await axios.get("https://hrms-backend-9qzj.onrender.com/api/leave/get-all-requests", {
+            const res = await axios.get(
+              "https://hrms-backend-9qzj.onrender.com/api/leave/get-all-requests",
+              {
                 headers: {
-                    Authorization: `Bearer ${token}`, // sending token in header
+                  Authorization: `Bearer ${token}`, // sending token in header
                 },
-            });
+              }
+            );
 
             set({ personalLeave: res.data, loading: false });
         } catch (err) {

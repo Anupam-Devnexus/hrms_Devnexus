@@ -13,6 +13,7 @@ import {
   Activity,
   CheckCircle,
   XCircle,
+  Handshake,
 } from "lucide-react";
 
 // Spinner Component
@@ -27,7 +28,7 @@ const InfoItem = ({ label, value, icon: Icon }) => (
   <div className="flex items-center space-x-2 text-gray-600 text-sm">
     {Icon && <Icon className="w-5 h-5 text-indigo-400 shrink-0" />}
     <span className="font-semibold text-gray-800">{label}:</span>
-    <span className="truncate">{value || "N/A"}</span>
+    <span className="">{value || "N/A"}</span>
   </div>
 );
 
@@ -85,7 +86,9 @@ const Profile = () => {
   if (error)
     return <div className="text-center py-10 text-red-600">Error: {error}</div>;
   if (!currentUser)
-    return <div className="text-center py-10 text-gray-500">No user data found.</div>;
+    return (
+      <div className="text-center py-10 text-gray-500">No user data found.</div>
+    );
 
   const permissions =
     currentUser.Permissions && currentUser.Permissions.length > 0
@@ -130,21 +133,6 @@ const Profile = () => {
                 color={currentUser.Role === "ADMIN" ? "red" : "blue"}
               />
             </div>
-
-            {/* Status Button */}
-            {/* <div className="mt-5 flex justify-center">
-              <button
-                onClick={toggleStatus}
-                className={`flex items-center gap-2 px-5 py-2 rounded-full text-sm sm:text-base text-white font-medium shadow-md transition-colors duration-300 ${
-                  isActive
-                    ? "bg-green-500 hover:bg-green-600"
-                    : "bg-red-500 hover:bg-red-600"
-                }`}
-              >
-                {isActive ? <CheckCircle size={18} /> : <XCircle size={18} />}
-                {isActive ? "Active" : "Inactive"}
-              </button>
-            </div> */}
           </div>
 
           {/* Sections */}
@@ -153,8 +141,13 @@ const Profile = () => {
               <InfoItem label="Email" value={currentUser.Email} icon={Mail} />
               <InfoItem label="Phone" value={currentUser.Phone} icon={Phone} />
               <InfoItem
-                label="Address"
-                value={currentUser.Address}
+                label="Current Address"
+                value={currentUser.CurrentAddress}
+                icon={MapPin}
+              />
+              <InfoItem
+                label="Permanent Address"
+                value={currentUser.PermanentAddress}
                 icon={MapPin}
               />
             </Section>
@@ -164,6 +157,11 @@ const Profile = () => {
                 label="Name"
                 value={`${currentUser.EmergencyName} (${currentUser.EmergencyRelation})`}
                 icon={User}
+              />
+              <InfoItem
+                label="Relation"
+                value={currentUser.EmergencyRelation}
+                icon={Handshake}
               />
               <InfoItem
                 label="Phone"
@@ -178,11 +176,11 @@ const Profile = () => {
                 value={currentUser.EmployeeId}
                 icon={Shield}
               />
-              <InfoItem
+              {/* <InfoItem
                 label="Salary"
                 value={currentUser.Salary}
                 icon={FileText}
-              />
+              /> */}
               <InfoItem
                 label="Joining Date"
                 value={
@@ -229,11 +227,11 @@ const Profile = () => {
 
             <Section title="Tasks" icon={Settings}>
               {currentUser.Tasks?.length > 0 ? (
-                <ul className="list-disc pl-5 text-sm text-gray-600 space-y-1">
+                <ol className="list-disc pl-5 text-sm text-gray-600 space-y-1">
                   {currentUser.Tasks.map((task, idx) => (
-                    <li key={idx}>{task}</li>
+                    <li key={idx}>{task.title}</li>
                   ))}
-                </ul>
+                </ol>
               ) : (
                 <span className="text-gray-400 text-sm">No tasks assigned</span>
               )}

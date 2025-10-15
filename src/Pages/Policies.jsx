@@ -28,30 +28,30 @@ const Policies = () => {
     fetchPdf();
   }, []);
 
-  // const handleFileChange = (e) => { 
+  // const handleFileChange = (e) => {
   //   setpolicy(e.target.files[0])
-    
+
   //  }
-  
+
   // Handle PDF upload for admin
   const handleFileUpload = async (e) => {
-    setpolicy(e.target.files[0])
+    setpolicy(e.target.files[0]);
 
     if (!policy || policy.type !== "application/pdf") {
       alert("Please upload a valid PDF file");
       return;
     }
 
-    const formdata = new FormData()
+    const formdata = new FormData();
 
-    formdata.append("pdfUrl",policy)
-    
+    formdata.append("pdfUrl", policy);
+
     // console.log(formdata.pdfUrl)
 
     setLoading(true);
     setMessage("");
 
-    console.log(authUser?.accessToken)
+    console.log(authUser?.accessToken);
     try {
       const res = await fetch(
         "https://hrms-backend-9qzj.onrender.com/api/policy/add-policy",
@@ -61,7 +61,7 @@ const Policies = () => {
             Authorization: `Bearer ${authUser?.accessToken}`,
             // "Content-Type": "multipart/form-data",
           },
-          body: formdata ,
+          body: formdata,
         }
       );
       // console.log(pdfUrl)
@@ -81,7 +81,6 @@ const Policies = () => {
     } finally {
       setLoading(false);
     }
-    ;
   };
 
   return (

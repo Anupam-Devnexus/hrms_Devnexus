@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { FileDown, Plus, Trash } from "lucide-react";
 import { toast } from "react-toastify";
+import { CustomLoader } from "../Component/CustomLoader";
 
 export default function SalarySlipForm() {
   const [form, setForm] = useState({
@@ -150,14 +151,10 @@ export default function SalarySlipForm() {
     fetchEmployees();
   }, []);
 
-  const Loader = () => (
-    <div className="w-5 ml-2  absolute inline-block aspect-square rounded-full border-2 animate-spin  border-dashed border-white "></div>
-  );
-
   return (
     <div className="max-w-4xl mx-auto bg-white shadow-lg rounded-xl p-8 mt-10">
       <h2 className="text-2xl font-semibold text-gray-800 mb-6 border-b pb-2">
-        💼 Generate Employee Salary Slip
+        💼 Generate Employee Salary Slip Form
       </h2>
 
       {/* Employee Info */}
@@ -563,7 +560,7 @@ export default function SalarySlipForm() {
         }}
         className="w-full relative  bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition"
       >
-        Generate Salary Slip PDF {!disable && <Loader />}
+        Generate Salary Slip PDF {!disable && <CustomLoader />}
       </button>
     </div>
   );

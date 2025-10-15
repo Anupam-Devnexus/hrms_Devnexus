@@ -20,13 +20,13 @@ export const useTaskStore = create((set) => ({
 
 
             const res = await fetch(
-                `https://hrms-backend-9qzj.onrender.com/api/task/get-tasks`,
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        "Content-Type": "application/json",
-                    },
-                }
+              `https://hrms-backend-9qzj.onrender.com/api/task/get-tasks`,
+              {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                  "Content-Type": "application/json",
+                },
+              }
             );
             if (!res.ok) throw new Error("Failed to fetch tasks");
             // console.log(res);

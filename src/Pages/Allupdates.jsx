@@ -7,7 +7,7 @@ const Allupdates = ({ onBack }) => {
   const { list, loading, error, fetchUpdates } = useDailyupdate();
   const [search, setSearch] = useState("");
   const [dateFilter, setDateFilter] = useState("");
-const navigate = useNavigate();
+  const navigate = useNavigate();
   useEffect(() => {
     fetchUpdates();
   }, []);
@@ -17,6 +17,7 @@ const navigate = useNavigate();
   // Filtering logic
   const filteredUpdates = updates.filter((update) => {
     const matchesSearch =
+      update.employee.FirstName?.toLowerCase().includes(search.toLowerCase()) ||
       update.title?.toLowerCase().includes(search.toLowerCase()) ||
       update.description?.toLowerCase().includes(search.toLowerCase());
 
@@ -32,7 +33,7 @@ const navigate = useNavigate();
       {/* Header */}
       <div className="flex items-center mb-8">
         <button
-          onClick={()=>  navigate('/dashboard/daily-updates')}
+          onClick={() => navigate("/dashboard/daily-updates")}
           className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white border border-gray-200 shadow-sm hover:bg-gray-100 transition"
         >
           <ArrowLeft size={18} className="text-gray-600" />
@@ -91,18 +92,29 @@ const navigate = useNavigate();
       {/* Updates List */}
       <div className="grid gap-5">
         {filteredUpdates.map((update, index) => (
-          <div
-            key={update._id || index}
-            className="p-5 bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition"
-          >
-            <h3 className="font-semibold text-lg text-gray-800">
-              {update.title || "Untitled Update"}
-            </h3>
-            <p className="text-gray-600 mt-2">{update.description}</p>
-            <div className="flex items-center gap-2 mt-3 text-sm text-gray-500">
-              <Calendar size={16} />
-              {new Date(update.createdAt).toLocaleString()}
+          <div className="p-5 bg-white border flex justify-between border-gray-200 rounded-xl shadow-sm hover:shadow-md transition">
+            <div key={update._id || index}>
+              <h3 className="font-semibold text-lg text-gray-800">
+                {update.title || "Untitled Update"}
+              </h3>
+              <p className="text-gray-600 mt-2">{update.description}</p>
+              <div className="flex items-center gap-2 mt-3 text-sm text-gray-500">
+                <Calendar size={16} />
+                {new Date(update.createdAt).toLocaleString()}
+              </div>
             </div>
+            {update?.secure_url && (
+              <div>
+                <h3 className="font-semibold text-lg text-gray-900">Docs</h3>
+                <a
+                  className="text-blue-800 underline"
+                  target="_blank"
+                  href={update.secure_url}
+                >
+                  Open
+                </a>
+              </div>
+            )}
           </div>
         ))}
       </div>

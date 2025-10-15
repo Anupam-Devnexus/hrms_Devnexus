@@ -8,7 +8,9 @@ export const usePolicy = create((set) => ({
     fetchPolicy: async () => {
         try {
             set({ loading: true, error: null })
-            const resp = await fetch("https://hrms-backend-9qzj.onrender.com/api/policy/get-policy")
+            const resp = await fetch(
+              "https://hrms-backend-9qzj.onrender.com/api/policy/get-policy"
+            );
             if (!resp.ok) {
                 console.log("error in res", resp)
             }

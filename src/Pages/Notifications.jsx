@@ -146,14 +146,16 @@ const Notifications = () => {
     };
   }, []);
 
-  useEffect(() => {}, [personalNotifications]);
+  useEffect(() => {
+    // console.log("empty effect");
+  }, [personalNotifications]);
 
   return (
     <div className="max-w-4xl mx-auto mt-8 p-4 bg-white shadow-xl rounded-2xl border border-gray-100">
       <div className="flex justify-between my-4 w-full ">
         <h2 className="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
           <Bell className="w-6 h-6 text-indigo-600" /> Notifications for -{" "}
-          {role.toLowerCase()}
+          {user.user.FirstName}
         </h2>
 
         <button onClick={handleMarkAllRead} className="bg-blue-500 text-white ">

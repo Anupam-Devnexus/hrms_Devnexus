@@ -24,10 +24,12 @@ const Sales = () => {
 
   // Card Renderer per Role
   const renderCard = (item) => {
-    if (authUser?.Role === "SALES") {
+    if (authUser?.Department === "SALES" || authUser?.Role === "TL") {
       return (
         <div className="p-5 bg-white rounded-xl shadow-md border border-gray-200 hover:shadow-lg transition">
-          <h2 className="text-xl font-semibold text-gray-900">{item.heading}</h2>
+          <h2 className="text-xl font-semibold text-gray-900">
+            {item.heading}
+          </h2>
           <p className="text-gray-600 italic">{item.subHeading}</p>
           <p className="mt-3 text-gray-700 text-sm">{item.description}</p>
 
@@ -39,47 +41,67 @@ const Sales = () => {
           <p className="mt-3 text-xs text-gray-500">
             Created on {new Date(item.createdAt).toLocaleDateString()}
           </p>
+
+          <div className="mt-2 border-t pt-2">
+            <h3>Docs</h3>
+            {item.docs.map((doc, index) => (
+              <a
+                className="underline text-blue-700"
+                target="_blank"
+                href={doc.secure_url}
+              >
+                Link
+              </a>
+            ))}
+          </div>
         </div>
       );
     }
 
-    if (authUser?.Role === "TL") {
-      return (
-        <div className="p-5 bg-gradient-to-r from-blue-50 to-white rounded-xl shadow-md border hover:shadow-lg transition">
-          <h2 className="text-xl font-semibold text-gray-900">{item.heading}</h2>
-          <p className="text-gray-600">{item.subHeading}</p>
+    // if () {
+    //   return (
+    //     <div className="p-5 bg-gradient-to-r  from-blue-50 to-white rounded-xl shadow-md border hover:shadow-lg transition">
+    //       <h2 className="text-xl font-semibold text-gray-900">
+    //         {item.heading}
+    //       </h2>
+    //       <p className="text-gray-600">{item.subHeading}</p>
 
-          <p className="mt-2 text-sm text-gray-700">{item.description}</p>
+    //       <p className="mt-2 text-sm text-gray-700">{item.description}</p>
 
-          <div className="mt-4 flex flex-col gap-1 text-sm">
-            <span className="text-blue-700 font-medium">{item.type}</span>
-            <span className="text-yellow-700">Budget: {item.budget}</span>
-          </div>
+    //       <div className="mt-4 flex flex-col gap-1 text-sm">
+    //         <span className="text-blue-700 font-medium">{item.type}</span>
+    //         <span className="text-yellow-700">Budget: {item.budget}</span>
+    //       </div>
 
-          <div className="mt-4 p-3 bg-blue-50 rounded-lg border text-sm">
-            <p className="font-medium text-gray-800">
-              Employee: {item.employee?.FirstName} {item.employee?.LastName}
-            </p>
-            <p className="text-gray-600">{item.employee?.Email}</p>
-          </div>
+    //       <div className="mt-4 p-3 bg-blue-50 rounded-lg border text-sm">
+    //         <p className="font-medium text-gray-800">
+    //           Employee: {item.employee?.FirstName} {item.employee?.LastName}
+    //         </p>
+    //         <p className="text-gray-600">{item.employee?.Email}</p>
+    //       </div>
 
-          <p className="mt-2 text-xs text-gray-500">
-            Created on {new Date(item.createdAt).toLocaleString()}
-          </p>
-        </div>
-      );
-    }
+    //       <p className="mt-2 text-xs text-gray-500">
+    //         Created on {new Date(item.createdAt).toLocaleString()}
+    //       </p>
+
+    //     </div>
+    //   );
+    // }
 
     if (authUser?.Role === "ADMIN") {
       return (
         <div className="p-5 bg-gradient-to-r from-purple-50 to-white rounded-xl shadow-md border hover:shadow-lg transition">
-          <h2 className="text-xl font-semibold text-gray-900">{item.heading}</h2>
+          <h2 className="text-xl font-semibold text-gray-900">
+            {item.heading}
+          </h2>
           <p className="text-gray-600">{item.subHeading}</p>
 
           <p className="mt-3 text-sm text-gray-700">{item.description}</p>
 
           <div className="mt-3 flex flex-col gap-1 text-sm">
-            <span className="text-blue-800 font-semibold">Type: {item.type}</span>
+            <span className="text-blue-800 font-semibold">
+              Type: {item.type}
+            </span>
             <span className="text-yellow-700">Budget: {item.budget}</span>
           </div>
 
@@ -94,6 +116,18 @@ const Sales = () => {
             <p>Created: {new Date(item.createdAt).toLocaleString()}</p>
             <p>Updated: {new Date(item.updatedAt).toLocaleString()}</p>
             <p>Docs Attached: {item.docs?.length || 0}</p>
+          </div>
+          <div className="mt-2">
+            <h3>Docs</h3>
+            {item.docs.map((doc, index) => (
+              <a
+                className="underline text-blue-700"
+                target="_blank"
+                href={doc.secure_url}
+              >
+                Link
+              </a>
+            ))}
           </div>
         </div>
       );
