@@ -91,32 +91,49 @@ const Allupdates = ({ onBack }) => {
 
       {/* Updates List */}
       <div className="grid gap-5">
-        {filteredUpdates.map((update, index) => (
-          <div className="p-5 bg-white border flex justify-between border-gray-200 rounded-xl shadow-sm hover:shadow-md transition">
-            <div key={update._id || index}>
-              <h3 className="font-semibold text-lg text-gray-800">
-                {update.title || "Untitled Update"}
-              </h3>
-              <p className="text-gray-600 mt-2">{update.description}</p>
-              <div className="flex items-center gap-2 mt-3 text-sm text-gray-500">
-                <Calendar size={16} />
-                {new Date(update.createdAt).toLocaleString()}
+        {filteredUpdates.map((update, index) => {
+          const todaysDate = new Date().toLocaleDateString();
+
+          const taskDate = new Date(update.createdAt).toLocaleDateString();
+
+          const isToday = todaysDate == taskDate;
+
+          // console.log( );
+
+          return (
+            <div
+              className={`p-5   border flex justify-between border-gray-200 rounded-xl shadow-sm hover:shadow-md transition
+            ${isToday && "bg-[#D9E9CF]"}
+          `}
+            >
+              <div key={update._id || index}>
+                <h3 className="font-semibold text-lg text-gray-800">
+                  {update.title || "Untitled Update"}{" "}
+                  <span className="font-thin text-sm font-serif text-cyan-950 ">
+                   ~ {update.employee.FirstName} {update.employee.LastName}
+                  </span>
+                </h3>
+                <p className="text-gray-600 mt-2">{update.description}</p>
+                <div className="flex items-center gap-2 mt-3 text-sm text-gray-500">
+                  <Calendar size={16} />
+                  {isToday ? "Today" : taskDate}
+                </div>
               </div>
+              {update?.secure_url && (
+                <div>
+                  <h3 className="font-semibold text-lg text-gray-900">Docs</h3>
+                  <a
+                    className="text-blue-800 underline"
+                    target="_blank"
+                    href={update.secure_url}
+                  >
+                    Open
+                  </a>
+                </div>
+              )}
             </div>
-            {update?.secure_url && (
-              <div>
-                <h3 className="font-semibold text-lg text-gray-900">Docs</h3>
-                <a
-                  className="text-blue-800 underline"
-                  target="_blank"
-                  href={update.secure_url}
-                >
-                  Open
-                </a>
-              </div>
-            )}
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

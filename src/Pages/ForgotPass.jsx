@@ -2,105 +2,105 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 export default function ForgotPass() {
-    const [email, setEmail] = useState("");
-    const [status, setStatus] = useState(""); // "success" | "error" | ""
-    const [loading, setLoading] = useState(false);
+  const [email, setEmail] = useState("");
+  const [status, setStatus] = useState(""); // "success" | "error" | ""
+  const [loading, setLoading] = useState(false);
 
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setStatus("");
-        setLoading(true);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setStatus("");
+    setLoading(true);
 
-        try {
-           const res = await fetch(
-             "https://hrms-backend-9qzj.onrender.com/api/forgotpassword",
-             {
-               method: "POST",
-               headers: { "Content-Type": "application/json" },
-               body: JSON.stringify({ Email: email }),
-             }
-           );
-console.log(res)
-let data;
-try {
-  data = await res.json();
-} catch {
-  data = { message: "Invalid response from server" };
-}
-
-if (!res.ok) {
-  setStatus(data.message || "Failed to send reset link");
-} else {
-  setStatus("success");
-}
-
-        } catch (err) {
-            console.error(err);
-            setStatus("Something went wrong. Please try again.");
-        } finally {
-            setLoading(false);
+    try {
+      const res = await fetch(
+        "https://hrms-backend-9qzj.onrender.com/api/forgotpassword",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ Email: email }),
         }
-    };
+      );
+      console.log(res);
+      let data;
+      try {
+        data = await res.json();
+      } catch {
+        data = { message: "Invalid response from server" };
+      }
 
-    return (
-        <div className="flex h-screen items-center justify-center bg-gray-100">
-            <form
-                onSubmit={handleSubmit}
-                className="bg-white shadow-2xl rounded-2xl p-8 w-full max-w-md border border-gray-200"
-            >
-                <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">
-                    Forgot Password
-                </h2>
+      if (!res.ok) {
+        setStatus(data.message || "Failed to send reset link");
+      } else {
+        setStatus("success");
+      }
+    } catch (err) {
+      console.error(err);
+      setStatus("Something went wrong. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-                <p className="text-sm text-gray-600 mb-6 text-center">
-                    Enter your registered email and we’ll send you a password reset link.
-                </p>
+  return (
+    <div className="flex h-screen items-center justify-center bg-gray-100">
+      <form
+        onSubmit={handleSubmit}
+        className="bg-white shadow-2xl rounded-2xl p-8 w-full max-w-md border border-gray-200"
+      >
+        <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">
+          Forgot Password
+        </h2>
 
-                {/* Email Input */}
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Email Address
-                </label>
-                <input
-                    type="email"
-                    placeholder="Enter your registered email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="w-full mb-4 px-3 py-2 rounded-lg border border-gray-300 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    required
-                />
+        <p className="text-sm text-gray-600 mb-6 text-center">
+          Enter your registered email and we’ll send you a password reset link.
+        </p>
 
-                {/* Submit Button */}
-                <button
-                    type="submit"
-                    disabled={loading}
-                    className={`w-full bg-blue-600 text-white py-2 rounded-lg font-medium hover:bg-blue-700 transition duration-200 shadow-md ${loading ? "cursor-not-allowed opacity-70" : ""
-                        }`}
-                >
-                    {loading ? "Sending..." : "Send Reset Link"}
-                </button>
+        {/* Email Input */}
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          Email Address
+        </label>
+        <input
+          type="email"
+          placeholder="Enter your registered email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="w-full mb-4 px-3 py-2 rounded-lg border border-gray-300 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          required
+        />
 
-                {/* Status Messages */}
-                {status === "success" && (
-                    <p className="text-green-600 text-sm mt-4 text-center">
-                        ✅ Reset link sent! Please check your email.
-                    </p>
-                )}
-                {status && status !== "success" && (
-                    <p className="text-red-500 text-sm mt-4 text-center">{status}</p>
-                )}
+        {/* Submit Button */}
+        <button
+          type="submit"
+          disabled={loading}
+          className={`w-full bg-blue-600 text-white py-2 rounded-lg font-medium hover:bg-blue-700 transition duration-200 shadow-md ${
+            loading ? "cursor-not-allowed opacity-70" : ""
+          }`}
+        >
+          {loading ? "Sending..." : "Send Reset Link"}
+        </button>
 
-                {/* Back to Login */}
-                <div className="text-center mt-6">
-                    <a
-                        onClick={() => navigate('/')}
-                        className="text-sm text-blue-600 hover:underline hover:text-blue-800"
-                    >
-                        Back to Login
-                    </a>
-                </div>
-            </form>
+        {/* Status Messages */}
+        {status === "success" && (
+          <p className="text-green-600 text-sm mt-4 text-center">
+            ✅ Reset link sent! Please check your email.
+          </p>
+        )}
+        {status && status !== "success" && (
+          <p className="text-red-500 text-sm mt-4 text-center">{status}</p>
+        )}
+
+        {/* Back to Login */}
+        <div className="text-center mt-6">
+          <a
+            onClick={() => navigate("/")}
+            className="text-sm text-blue-600 cursor-pointer hover:underline hover:text-blue-800"
+          >
+            Back to Login
+          </a>
         </div>
-    );
-};
+      </form>
+    </div>
+  );
+}

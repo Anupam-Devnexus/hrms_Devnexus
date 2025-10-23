@@ -1,366 +1,312 @@
 import React, { useEffect, useState } from "react";
+import { Formik, Form, Field, ErrorMessage } from "formik";
+import * as Yup from "yup";
+import axios from "axios";
+import { toast } from "react-toastify";
 import { useParams, useNavigate } from "react-router-dom";
-import menuConfig from "../DataStore/NavBar.json"; //  import nav config
+import menuConfig from "../DataStore/NavBar.json";
+import { CustomLoader } from "../Component/CustomLoader";
 
-const EditProfile = () => {
-  const { id } = useParams();
-  const navigate = useNavigate();
-  const [employee, setEmployee] = useState(null);
+const validationSchema = Yup.object({
+  FirstName: Yup.string().required("First Name is required"),
+  Email: Yup.string().email("Invalid email").required("Email is required"),
+  Phone: Yup.string()
+    .matches(/^[0-9]{10}$/, "Phone must be 10 digits")
+    .required("Phone is required"),
+  Gender: Yup.string().required("Gender is required"),
+  BankName: Yup.string().required("Bank Name is required"),
+  AccountNumber: Yup.string().required("Account Number is required"),
+  IFSC: Yup.string().required("IFSC is required"),
+  Branch: Yup.string().required("Branch is required"),
+  Dob: Yup.date().required("Date of Birth is required"),
+  PanNumber: Yup.string().required("PAN Number is required"),
+  AadharNumber: Yup.string().matches(/^[0-9]{12}$/, "Aadhar must be 12 digits"),
+  Department: Yup.string().required("Department is required"),
+  Designation: Yup.string().required("Designation is required"),
+  PermanentAddress: Yup.string().required("Permanent Address is required"),
+  CurrentAddress: Yup.string().required("Current Address is required"),
+  Role: Yup.string().required("Role is required"),
+});
+
+const roles = ["ADMIN", "HR", "TL", "EMPLOYEE"];
+
+const InputField = ({ label, name, type = "text", ...props }) => (
+  <div className="flex flex-col gap-1">
+    <label className="text-gray-700 font-medium">{label}</label>
+    <Field
+      type={type}
+      name={name}
+      {...props}
+      className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+    />
+    <ErrorMessage
+      name={name}
+      component="div"
+      className="text-red-500 text-sm"
+    />
+  </div>
+);
+
+const EditUser = () => {
+  const [initialValues, setInitialValues] = useState(null);
+  const [preview, setPreview] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [saving, setSaving] = useState(false);
-  const [preview, setPreview] = useState(null); // for profile preview
 
-  // Fetch Employee Data
+  const { id } = useParams(); // user ID from URL
+  const navigate = useNavigate();
+  const { accessToken } = JSON.parse(localStorage.getItem("authUser"));
+
+  const getRoleMenu = (role) =>
+    role ? menuConfig[role.toLowerCase()] || [] : [];
+
+  // Fetch existing user details
   useEffect(() => {
-    const fetchEmployee = async () => {
+    const fetchUser = async () => {
       try {
         setLoading(true);
-        const res = await fetch(
-          `https://hrms-backend-9qzj.onrender.com/api/user/${id}`
+        const { data } = await axios.get(
+          `https://hrms-backend-9qzj.onrender.com/api/user/${id}`,
+          {
+            headers: { Authorization: `Bearer ${accessToken}` },
+          }
         );
-        if (!res.ok) throw new Error("Failed to fetch employee data");
 
-        const data = await res.json();
-        console.log("✅ Employee Data:", data);
-        setEmployee(data.user);
-        setPreview(data.user.Profile_url);
+        const user = data.user;
+        console.log(user);
+        setInitialValues({
+          ...user,
+          ...user.BankDetails,
+          Profile: null,
+        });
+        setPreview(user.Profile_url);
       } catch (err) {
-        console.error("❌ Error fetching employee:", err);
+        toast.error("Failed to fetch user data");
       } finally {
         setLoading(false);
       }
     };
-
-    if (id) fetchEmployee();
+    fetchUser();
   }, [id]);
 
-  // Handle Input Change
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setEmployee((prev) => ({ ...prev, [name]: value }));
-  };
-
-  // Handle File Upload (Profile Picture)
-  const handleImageUpload = async (e) => {
+  const handleImageUpload = (e, setFieldValue) => {
     const file = e.target.files[0];
-    if (!file) return;
+    if (file) {
+      setFieldValue("Profile", file);
+      setPreview(URL.createObjectURL(file));
+    }
+  };
 
-    setPreview(URL.createObjectURL(file));
-
-    // upload to Cloudinary or backend
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("upload_preset", "your_unsigned_preset"); // 👈 replace
-
+  const handleSubmit = async (values) => {
+    console.log("values", values);
+    setLoading(true);
     try {
-      const res = await fetch(
-        "https://api.cloudinary.com/v1_1/sahil-kumar/image/upload",
-        { method: "POST", body: formData }
-      );
-      const data = await res.json();
-      console.log("✅ Uploaded Image:", data);
-
-      setEmployee((prev) => ({
-        ...prev,
-        Profile_url: data.secure_url,
-        Profile_Public_id: data.public_id,
-      }));
-    } catch (err) {
-      console.error("❌ Error uploading image:", err);
-    }
-  };
-
-  // Handle Permission Checkbox Change
-  const handlePermissionToggle = (permission) => {
-    setEmployee((prev) => {
-      const exists = prev.Permissions.includes(permission);
-      return {
-        ...prev,
-        Permissions: exists
-          ? prev.Permissions.filter((p) => p !== permission)
-          : [...prev.Permissions, permission],
-      };
-    });
-  };
-
-  // Get available permissions from role
-  const getRolePermissions = () => {
-    if (!employee?.Role) return [];
-    let role = employee.Role.toLowerCase();
-    let roleTabs = [];
-
-    // merge common + role-specific
-    if (menuConfig.common) {
-      roleTabs = [...roleTabs, ...menuConfig.common.map((item) => item.label)];
-    }
-
-    if (menuConfig[role]) {
-      menuConfig[role].forEach((section) => {
-        if (section.label) roleTabs.push(section.label);
-        if (section.children) {
-          roleTabs = [...roleTabs, ...section.children.map((c) => c.label)];
+      const data = new FormData();
+      Object.entries(values).forEach(([key, val]) => {
+        if (key === "Profile" && val) {
+          data.append("Profile", val);
+        } else {
+          data.append(key, val);
         }
       });
-    }
-    return roleTabs;
-  };
+      console.log("data", data);
 
-  // Handle Form Submit (PATCH)
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      setSaving(true);
-      const res = await fetch(
-        `https://hrms-backend-9qzj.onrender.com/api/user/${id}`,
-        {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(employee),
-        }
+      const { data: res } = await axios.put(
+        `https://hrms-backend-9qzj.onrender.com/api/update-user/${id}`,
+        data,
+        { headers: { Authorization: `Bearer ${accessToken}` } }
       );
-      if (!res.ok) throw new Error("Failed to update employee");
 
-      const updated = await res.json();
-      console.log("✅ Updated Employee:", updated);
-      alert("Profile updated successfully!");
+      console.log("response", res);
+
+      if (!res.success) throw new Error("Failed to update employee");
+      toast.success("Employee updated successfully!");
       navigate("/employees");
     } catch (err) {
-      console.error("❌ Error updating employee:", err);
-      alert("Failed to update profile");
+      console.log(err);
+      toast.error(err.response?.data?.message || "Update failed");
     } finally {
-      setSaving(false);
+      setLoading(false);
     }
   };
 
-  if (loading) return <p className="p-6">Loading employee data...</p>;
-  if (!employee) return <p className="p-6 text-red-500">Employee not found</p>;
-
-  const rolePermissions = getRolePermissions();
+  if (!initialValues) return <CustomLoader />;
 
   return (
-    <div className="max-w-5xl mx-auto p-6 bg-white rounded-lg shadow-md">
-      <h1 className="text-2xl font-semibold mb-4">Edit Profile</h1>
-
-      <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Profile Image */}
-        <div className="flex items-center gap-6">
-          <img
-            src={preview}
-            alt="Profile"
-            className="w-24 h-24 rounded-full object-cover border"
-          />
-          <div>
-            <label className="block text-sm font-medium mb-2">
-              Change Photo
-            </label>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleImageUpload}
-              className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4
-              file:rounded-full file:border-0 file:text-sm file:font-semibold
-              file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-            />
-            <p className="text-xs text-gray-500 mt-1">
-              Employee ID: {employee.EmployeeId}
-            </p>
-          </div>
+    <div className="min-h-screen flex justify-center items-center p-2">
+      <div className="bg-white rounded-2xl p-8 w-full max-w-5xl">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-2xl font-bold text-gray-800">Edit Employee</h2>
+          <button
+            onClick={() => navigate(-1)}
+            className="text-blue-600 hover:underline"
+          >
+            Back
+          </button>
         </div>
 
-        {/* Grid Info */}
-        <div className="grid grid-cols-2 gap-4">
-          {/* Basic Info */}
-          <div>
-            <label className="block text-sm font-medium">First Name</label>
-            <input
-              type="text"
-              name="FirstName"
-              value={employee.FirstName || ""}
-              onChange={handleChange}
-              className="mt-1 w-full px-3 py-2 border rounded-lg"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium">Last Name</label>
-            <input
-              type="text"
-              name="LastName"
-              value={employee.LastName || ""}
-              onChange={handleChange}
-              className="mt-1 w-full px-3 py-2 border rounded-lg"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium">Email</label>
-            <input
-              type="email"
-              name="Email"
-              value={employee.Email || ""}
-              onChange={handleChange}
-              className="mt-1 w-full px-3 py-2 border rounded-lg"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium">Phone</label>
-            <input
-              type="text"
-              name="Phone"
-              value={employee.Phone || ""}
-              onChange={handleChange}
-              className="mt-1 w-full px-3 py-2 border rounded-lg"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium">Date of Birth</label>
-            <input
-              type="date"
-              name="Dob"
-              value={employee.Dob ? employee.Dob.split("T")[0] : ""}
-              onChange={handleChange}
-              className="mt-1 w-full px-3 py-2 border rounded-lg"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium">Joining Date</label>
-            <input
-              type="date"
-              name="JoiningDate"
-              value={
-                employee.JoiningDate ? employee.JoiningDate.split("T")[0] : ""
-              }
-              onChange={handleChange}
-              className="mt-1 w-full px-3 py-2 border rounded-lg"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium">Department</label>
-            <input
-              type="text"
-              name="Department"
-              value={employee.Department || ""}
-              onChange={handleChange}
-              className="mt-1 w-full px-3 py-2 border rounded-lg"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium">Designation</label>
-            <input
-              type="text"
-              name="Designation"
-              value={employee.Designation || ""}
-              onChange={handleChange}
-              className="mt-1 w-full px-3 py-2 border rounded-lg"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium">Role</label>
-            <select
-              name="Role"
-              value={employee.Role || ""}
-              onChange={handleChange}
-              className="mt-1 w-full px-3 py-2 border rounded-lg"
-            >
-              <option value="ADMIN">ADMIN</option>
-              <option value="HR">HR</option>
-              <option value="TL">TL</option>
-              <option value="EMPLOYEE">EMPLOYEE</option>
-            </select>
-          </div>
-
-          <div className="col-span-2">
-            <label className="block text-sm font-medium">Address</label>
-            <textarea
-              name="Address"
-              value={employee.Address || ""}
-              onChange={handleChange}
-              className="mt-1 w-full px-3 py-2 border rounded-lg"
-            />
-          </div>
-        </div>
-
-        {/* Permissions Section */}
-        <div>
-          <label className="block text-sm font-medium mb-2">Permissions</label>
-          <div className="grid grid-cols-2 gap-2 border p-3 rounded-lg">
-            {rolePermissions.map((perm) => (
-              <label key={perm} className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  checked={employee.Permissions?.includes(perm)}
-                  onChange={() => handlePermissionToggle(perm)}
-                />
-                {perm}
-              </label>
-            ))}
-          </div>
-        </div>
-
-        {/* Emergency Info */}
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium">Emergency Name</label>
-            <input
-              type="text"
-              name="EmergencyName"
-              value={employee.EmergencyName || ""}
-              onChange={handleChange}
-              className="mt-1 w-full px-3 py-2 border rounded-lg"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium">Relation</label>
-            <input
-              type="text"
-              name="EmergencyRelation"
-              value={employee.EmergencyRelation || ""}
-              onChange={handleChange}
-              className="mt-1 w-full px-3 py-2 border rounded-lg"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium">Emergency Phone</label>
-            <input
-              type="text"
-              name="EmergencyPhone"
-              value={employee.EmergencyPhone || ""}
-              onChange={handleChange}
-              className="mt-1 w-full px-3 py-2 border rounded-lg"
-            />
-          </div>
-        </div>
-
-        {/* Active Status */}
-        <div className="flex items-center gap-2">
-          <input
-            type="checkbox"
-            name="IsActive"
-            checked={employee.IsActive}
-            onChange={(e) =>
-              setEmployee((prev) => ({ ...prev, IsActive: e.target.checked }))
-            }
-          />
-          <label className="text-sm">Active</label>
-        </div>
-
-        {/* Submit */}
-        <button
-          type="submit"
-          disabled={saving}
-          className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition disabled:opacity-50"
+        <Formik
+          enableReinitialize
+          initialValues={initialValues}
+          validationSchema={validationSchema}
+          onSubmit={handleSubmit}
         >
-          {saving ? "Saving..." : "Update Profile"}
-        </button>
-      </form>
+          {({ values, setFieldValue }) => (
+            <Form className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Profile Image */}
+              <div className="md:col-span-2 flex flex-col gap-2">
+                <label className="text-gray-700 font-medium">
+                  Profile Image
+                </label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => handleImageUpload(e, setFieldValue)}
+                  className="border p-2 rounded-lg cursor-pointer"
+                />
+                {preview && (
+                  <img
+                    src={preview}
+                    alt="Preview"
+                    className="w-full h-48 rounded-md object-cover border"
+                  />
+                )}
+              </div>
+
+              {/* Basic Info */}
+              <InputField label="First Name *" name="FirstName" />
+              <InputField label="Last Name" name="LastName" />
+              <InputField label="Email *" name="Email" type="email" />
+              <InputField label="Phone *" name="Phone" />
+              <InputField label="Date of Birth *" name="Dob" type="date" />
+
+              <div className="flex items-center gap-4">
+                <h2 className="font-semibold mb-2">Gender *</h2>
+                {["Male", "Female", "Other"].map((g) => (
+                  <label key={g}>
+                    <Field type="radio" name="Gender" value={g} />
+                    {g}
+                  </label>
+                ))}
+              </div>
+
+              <InputField label="Department *" name="Department" />
+              <InputField label="Designation *" name="Designation" />
+              <InputField label="PAN Number *" name="PanNumber" />
+              <InputField label="Aadhar Number *" name="AadharNumber" />
+              <InputField label="Bank Name *" name="BankName" />
+              <InputField label="Account Number *" name="AccountNumber" />
+              <InputField label="IFSC Code *" name="IFSC" />
+              <InputField label="Branch *" name="Branch" />
+
+              <InputField as="select" label="Role *" name="Role">
+                <option value="">Select Role</option>
+                {roles.map((opt) => (
+                  <option key={opt} value={opt}>
+                    {opt}
+                  </option>
+                ))}
+              </InputField>
+
+              {/* Allowed Tabs
+              <div className="md:col-span-2">
+                <label className="block text-gray-700 font-medium mb-2">
+                  Allowed Tabs (Common)
+                </label>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                  {menuConfig.common.map((item) => (
+                    <label key={item.label} className="flex items-center gap-2">
+                      <Field
+                        type="checkbox"
+                        name="AllowedTabs"
+                        value={item.label}
+                        className="accent-blue-600"
+                      />
+                      {item.label}
+                    </label>
+                  ))}
+                </div>
+              </div> */}
+
+              {/* Permissions */}
+              {/* {values.Role && (
+                <div className="md:col-span-2">
+                  <label className="block text-gray-700 font-medium mb-2">
+                    Permissions ({values.Role})
+                  </label>
+                  <div className="space-y-2">
+                    {getRoleMenu(values.Role).map((item) => (
+                      <div key={item.label} className="border rounded-lg p-3">
+                        <label className="flex items-center gap-2 font-medium">
+                          <Field
+                            type="checkbox"
+                            name="Permissions"
+                            value={item.label}
+                            className="accent-blue-600"
+                          />
+                          {item.label}
+                        </label>
+                        {item.children && (
+                          <div className="ml-6 mt-2 space-y-1">
+                            {item.children.map((child) => (
+                              <label
+                                key={child.label}
+                                className="flex items-center gap-2"
+                              >
+                                <Field
+                                  type="checkbox"
+                                  name="Permissions"
+                                  value={`${item.label} > ${child.label}`}
+                                  className="accent-blue-600"
+                                />
+                                {child.label}
+                              </label>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )} */}
+
+              {/* Address */}
+              <div className="md:col-span-2 flex flex-col gap-1">
+                <label className="text-gray-700 font-medium">
+                  Current Address
+                </label>
+                <Field
+                  as="textarea"
+                  name="CurrentAddress"
+                  rows={2}
+                  className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <div className="md:col-span-2 flex flex-col gap-1">
+                <label className="text-gray-700 font-medium">
+                  Permanent Address
+                </label>
+                <Field
+                  as="textarea"
+                  name="PermanentAddress"
+                  rows={2}
+                  className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div className="md:col-span-2 mt-3">
+                <button
+                  type="submit"
+                  className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
+                >
+                  Update Employee {loading && <CustomLoader />}
+                </button>
+              </div>
+            </Form>
+          )}
+        </Formik>
+      </div>
     </div>
   );
 };
 
-export default EditProfile;
+export default EditUser;

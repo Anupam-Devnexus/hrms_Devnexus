@@ -267,7 +267,7 @@ const AddUser = () => {
               </InputField>
 
               {/* Allowed Tabs */}
-              <div className="md:col-span-2">
+              {/* <div className="md:col-span-2">
                 <label className="block text-gray-700 font-medium mb-2">
                   Allowed Tabs (Common)
                 </label>
@@ -284,10 +284,10 @@ const AddUser = () => {
                     </label>
                   ))}
                 </div>
-              </div>
+              </div> */}
 
               {/* Permissions */}
-              {values.Role && (
+              {/* {values.Role && (
                 <div className="md:col-span-2">
                   <label className="block text-gray-700 font-medium mb-2">
                     Permissions ({values.Role})
@@ -326,7 +326,7 @@ const AddUser = () => {
                     ))}
                   </div>
                 </div>
-              )}
+              )} */}
 
               {/* Address */}
               <div className="md:col-span-2 flex flex-col gap-1">

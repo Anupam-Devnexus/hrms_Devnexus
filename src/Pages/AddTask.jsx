@@ -185,7 +185,7 @@ const AddTask = () => {
               <select
                 disabled={loading && true}
                 onChange={handleAssignTo}
-                value={formData.assignee}
+                // value={formData.assignee}
                 className="w-full border border-gray-300 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="">Select Employee</option>

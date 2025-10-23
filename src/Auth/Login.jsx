@@ -14,8 +14,8 @@ export default function Login() {
   const navigate = useNavigate();
 
   function handleForgat() {
-    navigate('forgot-password')
-    console.log("Anupams")
+    navigate("forgot-password");
+    // console.log("Anupams");
   }
 
   const handleChange = (e) => {
@@ -41,9 +41,8 @@ export default function Login() {
         }
       );
 
-      console.log(res)
-
       const data = await res.json();
+      console.log(data);
 
       if (!res.ok) {
         setError(data.message || "Login failed");
@@ -66,6 +65,7 @@ export default function Login() {
       <div className="hidden md:flex md:w-1/2 relative">
         <img
           src="https://images.pexels.com/photos/4391612/pexels-photo-4391612.jpeg"
+          // draggable={false}
           alt="Office workspace"
           className="object-cover w-full h-full"
         />
@@ -82,7 +82,11 @@ export default function Login() {
           onSubmit={handleLogin}
           className="bg-white shadow-2xl rounded-2xl p-8 w-full max-w-md border border-gray-200"
         >
-          <img src="https://res.cloudinary.com/dt4ohfuwc/image/upload/v1754378902/DevNexus_logo-2_gtgade.png" alt="" className="h-20 w-20" />
+          <img
+            src="https://res.cloudinary.com/dt4ohfuwc/image/upload/v1754378902/DevNexus_logo-2_gtgade.png"
+            alt=""
+            className="h-20 w-20"
+          />
 
           {error && (
             <p className="text-red-500 text-sm mb-4 text-center">{error}</p>
@@ -145,20 +149,19 @@ export default function Login() {
           <button
             type="submit"
             disabled={loading}
-            className={`w-full bg-blue-600 text-white py-2 rounded-lg font-medium hover:bg-blue-700 transition duration-200 shadow-md ${loading ? "cursor-not-allowed opacity-70" : ""
-              }`}
+            className={`w-full bg-blue-600 text-white py-2 rounded-lg font-medium hover:bg-blue-700 transition duration-200 shadow-md ${
+              loading ? "cursor-not-allowed opacity-70" : ""
+            }`}
           >
             {loading ? "Logging in..." : "Login"}
           </button>
 
           {/* Forgot Password */}
-          <div className="text-center cursor-pointer mt-4"
+          <div
+            className="text-center cursor-pointer mt-4"
             onClick={() => handleForgat()}
           >
-            <span
-
-              className="text-sm text-blue-600 hover:underline hover:text-blue-800"
-            >
+            <span className="text-sm text-blue-600 hover:underline hover:text-blue-800">
               Forgot Password?
             </span>
           </div>

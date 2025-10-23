@@ -1,4 +1,6 @@
+import axios from "axios";
 import { useState, useEffect } from "react";
+import { toast } from "react-toastify";
 
 const Policies = () => {
   const authUser = JSON.parse(localStorage.getItem("authUser"));
@@ -8,50 +10,69 @@ const Policies = () => {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
 
-  const [policy, setpolicy] = useState("")
-
+  const [policy, setpolicy] = useState("");
 
   // Fetch the latest uploaded PDF
   useEffect(() => {
+    setLoading(true);
     const fetchPdf = async () => {
       try {
-        const res = await fetch(
+        const { data } = await axios.get(
           "https://hrms-backend-9qzj.onrender.com/api/policy/get-policy"
         );
-        if (!res.ok) throw new Error("Failed to fetch PDF");
-        const data = await res.json();
-        setPdf(data.pdf || "");
+        // if (!res.ok) throw new Error("Failed to fetch PDF");
+        console.log(data);
+        setPdf(data.policy);
       } catch (error) {
-        console.error("Failed to fetch PDF:", error);
+        console.error(error);
+      } finally {
+        setLoading(false);
       }
     };
     fetchPdf();
   }, []);
 
-  // const handleFileChange = (e) => {
-  //   setpolicy(e.target.files[0])
+  const handleFileDelete = async () => {
+    setLoading(true);
+    try {
+      const { data } = await axios.delete(
+        `https://hrms-backend-9qzj.onrender.com/api/policy/delete-policy/${pdf._id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${authUser.accessToken}`,
+          },
+        }
+      );
 
-  //  }
+      if (data.success) {
+        toast.success("Policy Deleted");
+        setPdf("");
+        setMessage("Policy Deleted");
+      }
+    } catch (error) {
+      toast.error(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Handle PDF upload for admin
   const handleFileUpload = async (e) => {
-    setpolicy(e.target.files[0]);
+    const file = e.target.files[0];
 
-    if (!policy || policy.type !== "application/pdf") {
+    setLoading(true);
+    if (!file || file.type !== "application/pdf") {
       alert("Please upload a valid PDF file");
       return;
     }
 
     const formdata = new FormData();
 
-    formdata.append("pdfUrl", policy);
+    formdata.append("pdfUrl", file);
 
-    // console.log(formdata.pdfUrl)
-
-    setLoading(true);
+    // setLoading(true);
     setMessage("");
 
-    console.log(authUser?.accessToken);
     try {
       const res = await fetch(
         "https://hrms-backend-9qzj.onrender.com/api/policy/add-policy",
@@ -64,7 +85,7 @@ const Policies = () => {
           body: formdata,
         }
       );
-      // console.log(pdfUrl)
+
       if (!res.ok) {
         const errorData = await res.json().catch(() => ({}));
         throw new Error(
@@ -73,7 +94,9 @@ const Policies = () => {
       }
 
       const data = await res.json();
-      setPdf(data.pdf); // update preview immediately
+      console.log(data);
+      toast.success("File Uploaded");
+      setPdf(data.policy); // update preview immediately
       setMessage("PDF uploaded successfully!");
     } catch (error) {
       console.error("Upload error:", error);
@@ -105,30 +128,51 @@ const Policies = () => {
         </div>
 
         {/* Admin Upload */}
-        {role === "ADMIN" && (
+        {role === "ADMIN" && !pdf ? (
           <div className="flex flex-col items-center mb-6">
             <label className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg cursor-pointer transition">
               {loading ? "Uploading..." : "Upload PDF"}
               <input
                 type="file"
+                disabled={loading}
+                style={{
+                  cursor: loading && "not-allowed",
+                }}
                 accept="application/pdf"
                 onChange={handleFileUpload}
                 className="hidden"
               />
             </label>
             {message && (
-              <p className="mt-3 text-sm font-medium text-gray-600">{message}</p>
+              <p className="mt-3 text-sm font-medium text-gray-600">
+                {message}
+              </p>
             )}
           </div>
+        ) : (
+          role == "ADMIN" && (
+            <div className="my-4">
+              <button
+                disabled={loading}
+                style={{
+                  cursor: loading && "not-allowed",
+                }}
+                onClick={handleFileDelete}
+                className="bg-red-600   hover:bg-red-700 text-white px-6 py-2 rounded-lg cursor-pointer transition"
+              >
+                {loading ? "Deleting..." : "Delete Policy"}
+              </button>
+            </div>
+          )
         )}
 
         {/* PDF Preview */}
         {pdf ? (
-          <div className="space-y-4">
-            <div className="w-full h-[75vh] border rounded-xl overflow-hidden shadow">
+          <div className="space-y-4 ">
+            <div className="w-full h-[90vh]  rounded-xl overflow-hidden shadow">
               <iframe
-                src={pdf}
-                title="Policy PDF"
+                src={pdf.secure_url}
+                title="Devnexus solutions Pvt. Ltd. Policy PDF"
                 width="100%"
                 height="100%"
                 className="rounded-lg"
@@ -136,17 +180,6 @@ const Policies = () => {
             </div>
 
             {/* Download Button */}
-            <div className="flex justify-center">
-              <a
-                href={pdf}
-                download="HR-Policies.pdf"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg transition"
-              >
-                Download PDF
-              </a>
-            </div>
           </div>
         ) : (
           <p className="text-gray-500 text-center mt-10">

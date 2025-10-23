@@ -55,6 +55,10 @@ export default function Dashboard() {
   const { allData, fetchAllData } = useUserStore();
   const { tasks, fetchTasks } = useTaskStore();
   const { teamList, fetchTeams } = useTeams();
+  const [cardValue, setCardValue] = useState({
+    appliedLeaves: 0,
+    approvedleaves: 0,
+  });
 
   useEffect(() => {
     Promise.all([fetchAllData(), fetchTasks(), fetchTeams()]).finally(() =>
@@ -80,13 +84,18 @@ export default function Dashboard() {
   }, [tasks, role, userId]);
 
   // Stats
+
+  // console.log(allData);
+
   const cardData = [
     {
       label: "Leaves Taken",
       value: userData?.Leaves?.length ?? 0,
+      // value: 0,
       icon: "calendar",
       color: "blue",
       description: "Total leaves applied",
+      // totalLeaveApplied: userData?.Leaves?.length ?? 0,
     },
     {
       label: "Tasks Assigned",
@@ -148,7 +157,9 @@ export default function Dashboard() {
           <i className="text-md sm:text-lg text-indigo-600 font-medium">
             {userData.Designation}
           </i>
-          <p className="text-sm sm:text-base text-gray-500">{userData.Department}</p>
+          <p className="text-sm sm:text-base text-gray-500">
+            {userData.Department}
+          </p>
         </div>
       </div>
 
@@ -157,7 +168,8 @@ export default function Dashboard() {
         {cardData.map((card, index) => {
           const Icon = iconMap[card.icon] || FaClipboardList;
           const colorClass =
-            colorMap[card.color] || "from-gray-500/20 to-gray-500/5 text-gray-600";
+            colorMap[card.color] ||
+            "from-gray-500/20 to-gray-500/5 text-gray-600";
 
           return (
             <div

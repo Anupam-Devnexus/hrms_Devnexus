@@ -11,6 +11,7 @@ import {
   ChevronDown,
   ChevronRight,
   ReceiptIndianRupee,
+  Scale,
 } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { FaPowerOff } from "react-icons/fa";
@@ -50,6 +51,11 @@ const menuConfig = {
       icon: <ReceiptIndianRupee size={18} />,
       path: "/dashboard/payslips",
     },
+    {
+      label: "Policies",
+      icon: <Scale size={18} />,
+      path: "/dashboard/policies",
+    },
   ],
 
   tl: [
@@ -72,7 +78,7 @@ const menuConfig = {
       icon: <Users size={18} />,
       children: [
         { label: "User Management", path: "/dashboard/user-management" },
-        { label: "Policies", path: "/dashboard/policies" },
+        // { label: "Policies", path: "/dashboard/policies" },
         { label: "Leaves Approval", path: "/dashboard/leaves-approval" },
         { label: "Generate Payslips", path: "/dashboard/generate-slip" },
         { label: "Payroll", path: "/dashboard/payroll" },
@@ -87,7 +93,7 @@ const menuConfig = {
       icon: <Settings size={18} />,
       children: [
         { label: "User Management", path: "/dashboard/user-management" },
-        { label: "Policies", path: "/dashboard/policies" },
+        // { label: "Policies", path: "/dashboard/policies" },
         { label: "Add User", path: "/dashboard/add-user" },
         { label: "Leaves Approval", path: "/dashboard/leaves-approval" },
         { label: "Sales", path: "/dashboard/sales" },
@@ -183,7 +189,7 @@ const Navbar = () => {
             <NavLink
               key={idx}
               to={item.path}
-              end // ⬅️ important for exact match
+              end //  important for exact match
               className={({ isActive }) =>
                 `flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
                   isActive

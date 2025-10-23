@@ -48,6 +48,7 @@ const GetPaySlip = () => {
 
   //  Filter slips by selected month
   const handleSearch = () => {
+    setLoading(true);
     if (!month) {
       setFilteredSlips(allSlips);
       toast.info("Showing all payslips");
@@ -63,6 +64,7 @@ const GetPaySlip = () => {
     }
 
     setFilteredSlips(filtered);
+    setLoading(false);
   };
 
   //  Download PDF by URL
@@ -116,11 +118,11 @@ const GetPaySlip = () => {
             <table className="w-full border-collapse">
               <thead className="bg-gray-100">
                 <tr>
-                  <th className="border p-3 text-left text-sm font-medium text-gray-700">
+                  <th className="border-b border-r p-3 text-left text-sm font-medium text-gray-700">
                     Month
                   </th>
 
-                  <th className="border p-3 text-center text-sm font-medium text-gray-700">
+                  <th className=" border-b p-3 text-center text-sm font-medium text-gray-700">
                     Action
                   </th>
                 </tr>
@@ -128,11 +130,11 @@ const GetPaySlip = () => {
               <tbody>
                 {filteredSlips.map((slip, index) => (
                   <tr key={index} className="hover:bg-gray-50">
-                    <td className="border p-3 text-sm text-gray-700">
+                    <td className=" border-r p-3 text-sm text-gray-700">
                       {slip.month}
                     </td>
 
-                    <td className="border p-3 text-center">
+                    <td className="  p-3 flex justify-center items-center text-center">
                       <button
                         onClick={() =>
                           handleDownload(slip.secure_url, slip.month)

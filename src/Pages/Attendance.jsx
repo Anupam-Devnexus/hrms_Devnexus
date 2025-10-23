@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useUserStore } from "../Zustand/GetAllData";
 import { useNavigate } from "react-router-dom";
 import { useAttendance } from "../Zustand/PersonalAttendance";
@@ -12,8 +12,13 @@ const Loader = () => (
 
 const Attendance = () => {
   const { allData, fetchAllData, loading, error } = useUserStore();
-  const { myAttendance, allAttendance, fetchAttendance, fetchAllAttendance } =
-    useAttendance();
+  const {
+    myAttendance,
+    allAttendance,
+    attendanceByUser,
+    fetchAttendance,
+    fetchAllAttendance,
+  } = useAttendance();
   const [attendanceData, setAttendanceData] = useState([]);
   const [MyattendanceData, setMyAttendanceData] = useState([]);
   const [search, setSearch] = useState("");
@@ -25,19 +30,11 @@ const Attendance = () => {
   const email = authUser?.user?.Email || "";
   const role = authUser?.user?.Role?.toUpperCase() || "EMPLOYEE";
 
-  // const MarkAttendence = async () => {
-  //   try {
-
-  //   } catch (error) {
-
-  //   }
-  // }
-
   useEffect(() => {
     fetchAllData();
     fetchAttendance();
     fetchAllAttendance();
-    // console.log(allAttendance, myAttendance);
+    // console.log(attendanceByUser);
   }, []);
 
   useEffect(() => {
@@ -110,7 +107,7 @@ const Attendance = () => {
       </div>
 
       {/* Table */}
-      {!toggle ? (
+      {(role === "HR" || role === "ADMIN") && !toggle ? (
         filteredData.length > 0 ? (
           <div className="overflow-x-auto rounded-2xl shadow-lg border border-gray-200">
             <table className="min-w-full bg-white rounded-2xl overflow-hidden">
@@ -165,26 +162,49 @@ const Attendance = () => {
 
                     {/* Status */}
                     <td className="px-4 py-3">
-                      {user.IsActive ? (
-                        <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs sm:text-sm font-semibold">
-                          ✅ Present
-                        </span>
+                      {attendanceByUser[user._id]?.attendance[0]?.status ? (
+                        attendanceByUser[user._id]?.attendance[0]?.status ===
+                        "Present" ? (
+                          <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs sm:text-sm font-semibold">
+                            Present
+                          </span>
+                        ) : (
+                          <span className="bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs sm:text-sm font-semibold">
+                            {attendanceByUser[user._id]?.attendance[0]?.status}
+                          </span>
+                        )
                       ) : (
                         <span className="bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs sm:text-sm font-semibold">
-                          ❌ Absent
+                          No record
                         </span>
                       )}
                     </td>
 
                     {/* Last Updated */}
                     <td className="px-4 py-3 text-gray-500 text-sm sm:text-base">
-                      {new Date(user.updatedAt).toLocaleString()}
+                      {attendanceByUser[user._id]
+                        ? `${
+                            attendanceByUser[user._id]?.attendance[0]
+                              ?.checkInDate
+                          }, ${
+                            attendanceByUser[user._id]?.attendance[0]
+                              ?.checkInTime
+                          }`
+                        : "No record"}
+                      {/* {
+                        console.log(attendanceByUser[user._id].attendance[0].date)
+                      } */}
+                      {/* {attendanceByUser[user._id].attendance[0].date} */}
                     </td>
 
                     {/* Actions */}
                     {(role === "ADMIN" || role === "HR") && (
                       <td className="px-4 py-3">
                         <button
+                          disabled={role !== "HR"}
+                          style={{
+                            cursor: role !== "HR" && "not-allowed",
+                          }}
                           onClick={() =>
                             navigate(`/dashboard/mark-attendance/${user._id}`)
                           }
@@ -204,7 +224,7 @@ const Attendance = () => {
             No attendance records found.
           </p>
         )
-      ) : MyattendanceData.length > 0 ? (
+      ) : myAttendance.length > 0 ? (
         <div className="overflow-x-auto rounded-2xl shadow-lg border border-gray-200">
           <table className="min-w-full bg-white rounded-2xl overflow-hidden">
             <thead className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white">
@@ -213,31 +233,31 @@ const Attendance = () => {
                 <th className="px-4 py-3 text-left">Role</th>
                 <th className="px-4 py-3 text-left">Department</th>
                 <th className="px-4 py-3 text-left">Status</th>
-                <th className="px-4 py-3 text-left">Last Updated</th>
+                <th className="px-4 py-3 text-left">Date</th>
                 {(role === "ADMIN" || role === "HR") && (
                   <th className="px-4 py-3 text-left">Actions</th>
                 )}
               </tr>
             </thead>
             <tbody>
-              {MyattendanceData.map((user) => (
+              {myAttendance.map((attend) => (
                 <tr
-                  key={user._id}
+                  key={attend._id}
                   className="border-b last:border-none hover:bg-gray-50 transition "
                 >
                   {/* Employee */}
                   <td className="px-4 py-3 flex items-center gap-3">
                     <img
-                      src={user.Profile_url || "/default-avatar.png"}
+                      src={authUser.user.Profile_url || "/default-avatar.png"}
                       alt="profile"
                       className="w-10 h-10 rounded-full border border-gray-200 object-cover"
                     />
                     <div>
                       <p className="font-semibold text-gray-800">
-                        {user.FirstName} {user.LastName}
+                        {authUser.user.FirstName} {authUser.user.LastName}
                       </p>
                       <p className="text-xs text-gray-500">
-                        ID: {user.EmployeeId}
+                        ID: {authUser.user.EmployeeId}
                       </p>
                     </div>
                   </td>
@@ -245,33 +265,34 @@ const Attendance = () => {
                   {/* Role */}
                   <td className="px-4 py-3">
                     <span className="bg-blue-100 text-blue-700 text-xs sm:text-sm px-2 py-1 rounded-full font-medium">
-                      {user.Role}
+                      {authUser.user.Role}
                     </span>
                   </td>
 
                   {/* Department */}
                   <td className="px-4 py-3">
                     <span className="bg-purple-100 text-purple-700 text-xs sm:text-sm px-2 py-1 rounded-full font-medium">
-                      {user.Department || "N/A"}
+                      {authUser.user.Department || "N/A"}
                     </span>
                   </td>
 
                   {/* Status */}
                   <td className="px-4 py-3">
-                    {user.IsActive ? (
+                    {attend.status === "Present" ? (
                       <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs sm:text-sm font-semibold">
-                        ✅ Present
+                        Present
                       </span>
                     ) : (
                       <span className="bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs sm:text-sm font-semibold">
-                        ❌ Absent
+                        {attend.status}
                       </span>
                     )}
                   </td>
 
                   {/* Last Updated */}
                   <td className="px-4 py-3 text-gray-500 text-sm sm:text-base">
-                    {new Date(user.updatedAt).toLocaleString()}
+                    {new Date(attend.date).toLocaleString()}
+                    {}
                   </td>
 
                   {/* Actions */}

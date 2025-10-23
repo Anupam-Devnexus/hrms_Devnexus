@@ -16,7 +16,7 @@ const MarkAttendance = () => {
   const now = new Date().toISOString().slice(11, 16);
 
   const [date, setDate] = useState(today);
-  const [time, setTime] = useState(today);
+  const [time, setTime] = useState(now);
 
   useEffect(() => {
     fetchAllData();
@@ -121,8 +121,7 @@ const MarkAttendance = () => {
           <option value="Present">✅ Present</option>
           <option value="Absent">❌ Absent</option>
           <option value="Half-Day">🌓 Half-Day</option>
-          <option value="Work From Home">🏠 WFH</option>
-          <option value="Leave">📝 Leave</option>
+          <option value="WFH">🏠 WFH</option>
         </select>
       </div>
 

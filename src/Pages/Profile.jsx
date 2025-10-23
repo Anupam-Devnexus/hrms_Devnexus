@@ -25,7 +25,7 @@ const Loader = () => (
 
 // Info item
 const InfoItem = ({ label, value, icon: Icon }) => (
-  <div className="flex items-center space-x-2 text-gray-600 text-sm">
+  <div className="flex items-center overflow-auto space-x-2 text-gray-600 text-sm">
     {Icon && <Icon className="w-5 h-5 text-indigo-400 shrink-0" />}
     <span className="font-semibold text-gray-800">{label}:</span>
     <span className="">{value || "N/A"}</span>
@@ -137,7 +137,7 @@ const Profile = () => {
 
           {/* Sections */}
           <div className="mt-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <Section title="Contact" icon={Phone}>
+            <Section    title="Contact" icon={Phone}>
               <InfoItem label="Email" value={currentUser.Email} icon={Mail} />
               <InfoItem label="Phone" value={currentUser.Phone} icon={Phone} />
               <InfoItem
