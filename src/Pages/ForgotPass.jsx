@@ -22,10 +22,10 @@ export default function ForgotPass() {
           body: JSON.stringify({ Email: email }),
         }
       );
-      console.log(res);
       let data;
+      data = await res.json();
+      console.log(data);
       try {
-        data = await res.json();
       } catch {
         data = { message: "Invalid response from server" };
       }
@@ -34,6 +34,7 @@ export default function ForgotPass() {
         setStatus(data.message || "Failed to send reset link");
       } else {
         setStatus("success");
+        setEmail("");
       }
     } catch (err) {
       console.error(err);

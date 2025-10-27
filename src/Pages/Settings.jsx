@@ -1,13 +1,17 @@
 import React, { useState, useEffect } from "react";
-import Data from "../DataStore/ticketData.json";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 const Settings = () => {
   // Get logged-in user
-  const user = JSON.parse(localStorage.getItem("authUser"))?.user;
-  const Role = user?.Role;
+  const {
+    user,
+    user: { Role },
+    accessToken,
+  } = JSON.parse(localStorage.getItem("authUser"));
+  // const Role = user?.Role;
 
-  console.log("User Role:", Role, user);
+  // console.log("User Role:", accessToken );
 
   // State for ticket form
   const [formData, setFormData] = useState({
@@ -17,6 +21,7 @@ const Settings = () => {
   });
 
   // State for API call feedback
+  const [tickets, setTicket] = useState([]);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
 
@@ -33,16 +38,21 @@ const Settings = () => {
 
     try {
       // Replace with your API endpoint
-      const response = await axios.post("/api/tickets", {
-        ...formData,
-        raisedBy: `${user.FirstName} ${user.LastName}`,
-        status: "Open",
-        createdAt: new Date().toISOString(),
-      });
+      const { data } = await axios.post(
+        "https://hrms-backend-9qzj.onrender.com/api/ticket/",
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
 
+      console.log(data);
+      const newTicket = data.newTicket;
       setMessage("Ticket Raised Successfully!");
-      console.log("API Response:", response.data);
-
+      // console.log("API Response:", data);
+      setTicket((prev) => ({ ...prev, newTicket }));
       // Reset form
       setFormData({ title: "", description: "", priority: "Low" });
     } catch (error) {
@@ -67,6 +77,58 @@ const Settings = () => {
     }
   };
 
+  const ackTicket = async (_id) => {
+    setLoading(true);
+    try {
+      const { data } = await axios.patch(
+        `https://hrms-backend-9qzj.onrender.com/api/ticket/${_id}`,
+        { status: "Acknowledged" },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+      console.log(data);
+
+      setTicket((prev) =>
+        prev.map((ticket) => {
+          if (ticket._id === _id) {
+            ticket.status = "Acknowledged";
+            return ticket;
+          } else {
+            return ticket;
+          }
+        })
+      );
+    } catch (error) {
+      console.log(error);
+      toast.error(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const { data } = await axios.get(
+          "https://hrms-backend-9qzj.onrender.com/api/ticket/",
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
+        console.log(data);
+        setTicket(data.tickets);
+      } catch (error) {
+        console.log(error);
+        toast.error(error.message);
+      }
+    })();
+  }, []);
+
   return (
     <div className="p-2 max-w-6xl mx-auto space-y-8">
       <h2 className="text-4xl font-bold text-center mb-6">Settings Page</h2>
@@ -76,33 +138,50 @@ const Settings = () => {
         <div className="space-y-4">
           <h3 className="text-2xl font-semibold">All Tickets</h3>
           <div className="grid md:grid-cols-2 gap-4">
-            {Data.map((ticket) => (
-              <div
-                key={ticket.id}
-                className="p-4 border rounded-lg shadow hover:shadow-lg transition bg-white"
-              >
-                <div className="flex justify-between items-center mb-2">
-                  <h4 className="font-semibold text-lg">{ticket.title}</h4>
-                  <span
-                    className={`px-2 py-1 rounded-full text-sm font-medium ${priorityColor(
-                      ticket.priority
-                    )}`}
+            {tickets.length !== 0 &&
+              tickets.map((ticket) => (
+                <div
+                  key={ticket._id}
+                  className="p-4 border rounded-lg shadow hover:shadow-lg transition bg-white"
+                >
+                  <div className="flex justify-between items-center mb-2">
+                    <h4 className="font-semibold text-lg">{ticket.title}</h4>
+                    <span
+                      className={`px-2 py-1 rounded-full text-sm font-medium ${priorityColor(
+                        ticket.priority
+                      )}`}
+                    >
+                      {ticket.priority}
+                    </span>
+                  </div>
+                  <p className="text-gray-700 mb-2">{ticket.description}</p>
+                  {/* <p className="text-sm text-gray-500 mb-1">
+                    Status: <span className="font-medium">{ticket.status}</span>
+                  </p> */}
+                  <p className="text-sm text-gray-500 mb-1">
+                    Raised By: {ticket.createdBy.FirstName}{" "}
+                    {ticket.createdBy.LastName}
+                  </p>
+                  <p className="text-xs text-gray-400">
+                    Created At: {new Date(ticket.createdAt).toLocaleString()}
+                  </p>
+
+                  <button
+                    disabled={loading || ticket.status === "Acknowledged"}
+                    onClick={() => ackTicket(ticket._id)}
+                    style={{
+                      cursor:
+                        ticket.status === "Acknowledged" || loading
+                          ? "not-allowed"
+                          : "pointer",
+                      background: ticket.status === "Acknowledged" && "green",
+                    }}
+                    className="bg-blue-700 my-2 text-white"
                   >
-                    {ticket.priority}
-                  </span>
+                    {ticket.status !== "Acknowledged" ? "Ack" : "Acknowledged"}
+                  </button>
                 </div>
-                <p className="text-gray-700 mb-2">{ticket.description}</p>
-                <p className="text-sm text-gray-500 mb-1">
-                  Status: <span className="font-medium">{ticket.status}</span>
-                </p>
-                <p className="text-sm text-gray-500 mb-1">
-                  Raised By: {ticket.raisedBy} | Assigned To: {ticket.assignedTo}
-                </p>
-                <p className="text-xs text-gray-400">
-                  Created At: {new Date(ticket.createdAt).toLocaleString()}
-                </p>
-              </div>
-            ))}
+              ))}
           </div>
         </div>
       ) : (
@@ -112,8 +191,11 @@ const Settings = () => {
 
           {message && (
             <div
-              className={`p-2 rounded text-center ${message.includes("Successfully") ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
-                }`}
+              className={`p-2 rounded text-center ${
+                message.includes("Successfully")
+                  ? "bg-green-100 text-green-800"
+                  : "bg-red-100 text-red-800"
+              }`}
             >
               {message}
             </div>
@@ -165,6 +247,43 @@ const Settings = () => {
               {loading ? "Submitting..." : "Submit Ticket"}
             </button>
           </form>
+
+          <div>
+            <h3 className="text-2xl font-semibold my-3 ">
+              Your Ticket History
+            </h3>
+            <div className="grid md:grid-cols-2 gap-4">
+              {tickets.map((ticket) => (
+                <div
+                  key={ticket._id}
+                  className="p-4 border rounded-lg shadow hover:shadow-lg transition bg-white"
+                >
+                  <div className="flex justify-between items-center mb-2">
+                    <h4 className="font-semibold text-lg">{ticket.title}</h4>
+                    <span
+                      className={`px-2 py-1 rounded-full text-sm font-medium ${priorityColor(
+                        ticket.priority
+                      )}`}
+                    >
+                      {ticket.priority}
+                    </span>
+                  </div>
+                  <p className="text-gray-700 mb-2">{ticket.description}</p>
+                  <p className="text-sm text-gray-500 mb-1">
+                    Status: <span className="font-medium">{ticket.status}</span>
+                  </p>
+                  {/* <p className="text-sm text-gray-500 mb-1">
+                    Raised By: {ticket.createdBy.FirstName}{" "}
+                    {ticket.createdBy.LastName}
+                    {ticket.raisedBy}
+                  </p> */}
+                  <p className="text-xs text-gray-400">
+                    Created At: {new Date(ticket.createdAt).toLocaleString()}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       )}
 

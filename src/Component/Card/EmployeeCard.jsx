@@ -1,5 +1,8 @@
 import React from "react";
 import { User, Mail, Phone, MapPin, Shield, Calendar } from "lucide-react";
+import { IoGitBranchOutline } from "react-icons/io5";
+import { AiTwotoneBank } from "react-icons/ai";
+import { MdAccountBalanceWallet } from "react-icons/md";
 
 const EmployeeCard = ({ employee }) => {
   // Parse permissions safely
@@ -78,6 +81,27 @@ const EmployeeCard = ({ employee }) => {
         <p className="text-sm text-gray-500">📞 {employee.EmergencyPhone}</p>
       </div>
 
+      <div className="space-y-2 text-sm text-gray-600 mb-4">
+        <h3 className="text-sm font-semibold text-gray-700 mb-1">
+          Bank Details
+        </h3>
+        <div className="flex items-center gap-2">
+          {/* <AiTwotoneBank size={16} className="text-indigo-500" /> */}
+          <span>{employee.BankDetails.BankName}</span>
+        </div>
+        <div className="flex items-center gap-2">
+          {/* <MdAccountBalanceWallet size={16} className="text-green-500" /> */}
+          <span>{employee.BankDetails.AccountNumber}</span>
+        </div>
+        <div className="flex items-center gap-2">
+          {/* <MapPin size={16} className="text-pink-500" /> */}
+          <span>{employee.BankDetails.IFSC}</span>
+        </div>
+        <div className="flex items-center gap-2">
+          {/* <IoGitBranchOutline size={16} className="text-pink-500" /> */}
+          <span>{employee.BankDetails.Branch}</span>
+        </div>
+      </div>
       {/* Permissions */}
       <div className="mb-4">
         <h3 className="text-sm font-semibold text-gray-700 flex items-center gap-1">
