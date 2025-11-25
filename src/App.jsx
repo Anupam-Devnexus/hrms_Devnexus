@@ -45,6 +45,7 @@ import PayslipForm from "./Pages/SalarySlip.jsx";
 import GetPaySlip from "./Pages/GetPaySlip.jsx";
 import axios from "axios";
 import CheckAuth from "./Auth/CheckAuth.js";
+import ResetPassword from "./Pages/ResetPassword.jsx";
 
 export default function App() {
   // const navigate = useNavigate();
@@ -111,7 +112,7 @@ export default function App() {
         {/* Login Page */}
         <Route path="/" element={<Login />} />
         <Route path="forgot-password" element={<ForgotPass />} />
-        {/* <Route path="/add-user" element={<AddUser />} /> */}
+        <Route path="/reset-password" element={<ResetPassword />} />
 
         {/* Protected Dashboard (common for all roles) */}
         <Route
