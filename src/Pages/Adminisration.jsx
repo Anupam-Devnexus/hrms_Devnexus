@@ -35,7 +35,7 @@ export default function PayrollManager() {
     console.log("📤 Before Posting Data:", salaryForm);
 
     try {
-      const res = await axios.post("http://localhost:5000/api/salary", salaryForm);
+      const res = await axios.post("https://hrms-backend-9qzj.onrender.com/api/salary", salaryForm);
       console.log("✅ API Response:", res.data);
     } catch (err) {
       console.error("❌ API Error:", err.response?.data || err.message);

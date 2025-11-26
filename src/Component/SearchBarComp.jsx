@@ -10,6 +10,9 @@ import {
   CheckSquare,
   FileText,
   Users,
+  ReceiptIndianRupee,
+  Scale,
+  Settings,
 } from "lucide-react";
 import { data, useNavigate } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
@@ -35,7 +38,6 @@ const SearchBarComp = () => {
   // Menu configuration
   const menuConfig = {
     common: [
-      { label: "Dashboard", icon: <Home size={18} />, path: "/dashboard" },
       {
         label: "Profile",
         icon: <User size={18} />,
@@ -66,17 +68,23 @@ const SearchBarComp = () => {
         icon: <FileText size={18} />,
         path: "/dashboard/daily-updates",
       },
-    ],
-    tl: [
       {
         label: "Team",
         icon: <Users size={18} />,
-        children: [
-          { label: "View Team", path: "/team" },
-          { label: "Create Team", path: "/create-team" },
-        ],
+        path: "/dashboard/teams",
+      },
+      {
+        label: "Payslips",
+        icon: <ReceiptIndianRupee size={18} />,
+        path: "/dashboard/payslips",
+      },
+      {
+        label: "Policies",
+        icon: <Scale size={18} />,
+        path: "/dashboard/policies",
       },
     ],
+
     hr: [
       {
         label: "HR Panel",
@@ -92,16 +100,17 @@ const SearchBarComp = () => {
     ],
     admin: [
       {
-        label: "Admin Panel",
-        icon: <CiSettings size={18} />,
+        label: "Administration",
+        icon: <Settings size={18} />,
         children: [
           { label: "User Management", path: "/dashboard/user-management" },
-          { label: "Attendance", path: "/dashboard/attendance-admin" },
-          { label: "Policies", path: "/dashboard/policies" },
-          { label: "Leaves", path: "/dashboard/leaves-admin" },
+          // { label: "Policies", path: "/dashboard/policies" },
           { label: "Add User", path: "/dashboard/add-user" },
+          { label: "Leaves Approval", path: "/dashboard/leaves-approval" },
           { label: "Sales", path: "/dashboard/sales" },
-          { label: "Administration", path: "/dashboard/administration" },
+          { label: "Payroll", path: "/dashboard/payroll" },
+          { label: "Expenses", path: "/dashboard/expenses" },
+          // { label: "Administration", path: "/dashboard/administration" },
         ],
       },
     ],
@@ -109,7 +118,7 @@ const SearchBarComp = () => {
 
   // Initialize menu based on role
   useEffect(() => {
-    const roleMenus = menuConfig[Role] || [];
+    const roleMenus = menuConfig[Role.toLowerCase()] || [];
     setMenuItems([...menuConfig.common, ...roleMenus]);
   }, [Role]);
 
@@ -172,77 +181,6 @@ const SearchBarComp = () => {
   useEffect(() => {
     console.log("searchbar general notification ", generalNotifications);
   }, [generalNotifications]);
-
-  // Socket.IO notifications
-  // useEffect(() => {
-  //   if (!_id) return;
-
-  //   const handleGeneralNotification = (data) => {
-  //     console.log(" Notification received:", data);
-  //     if (Array.isArray(data)) {
-  //       const toastDuration = 4000;
-
-  //       data.forEach((item, index) => {
-  //         setTimeout(() => {
-  //           toast.info(item.title);
-  //         }, index * toastDuration);
-  //       });
-  //     }
-
-  //     addGeneralNotification(data);
-  //   };
-
-  //   const handlePersonalNotification = (data) => {
-  //     console.log("Personal Notification received:", data);
-
-  //     if (Array.isArray(data)) {
-  //       const toastDuration = 4000;
-
-  //       data.forEach((item, index) => {
-  //         setTimeout(() => {
-  //           toast.info(item.title);
-  //         }, index * toastDuration);
-  //       });
-  //     }
-
-  //     addPersonalNotification(data);
-  //   };
-
-  //   const handleUserOnline = (data) => {
-  //     if (data.userId === _id) return;
-
-  //     addUserOnline(data.userId);
-
-  //     toast.info(`${data.userId}   is online now`);
-  //     // toast.info(
-  //     //   `${data.userDetail.FirstName} ${data.userDetail.LastName} is online now`
-  //     // );
-
-  //     console.log(`${data.userId} is online now`);
-  //   };
-
-  //   socket.emit("register", {
-  //     userId: _id,
-  //     Role,
-  //   }); // join user room for targeted notifications
-
-  //   // socket.on(_id, handlePersonalNotification);
-
-  //   socket.on("pendingNotifications", handlePersonalNotification);
-
-  //   socket.on("notification", handleGeneralNotification);
-
-  //   socket.on("userOnline", handleUserOnline);
-
-  //   // setToggleState(!toggleState);
-
-  //   return () => {
-  //     socket.off("notification", handleGeneralNotification);
-  //     socket.off("pendingNotifications", handlePersonalNotification);
-  //     // socket.off(_id, handleGeneralNotification);
-  //     socket.off("userOnline", handleUserOnline);
-  //   };
-  // }, [_id]);
 
   return (
     <div className="flex items-center justify-between w-full px-4 gap-3 py-2 bg-white rounded-xl shadow-sm border border-gray-200">

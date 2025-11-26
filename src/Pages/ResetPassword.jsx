@@ -7,7 +7,9 @@ const ResetPassword = () => {
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const BASE_URL = import.meta.env.VITE_BASE_URL || "http://localhost:5000";
+  const BASE_URL =
+    import.meta.env.VITE_BASE_URL ||
+    "https://hrms-backend-9qzj.onrender.com/api";
 
   const handleSubmit = async (e) => {
     e.preventDefault();

@@ -16,13 +16,6 @@ const PersonalLeaveCard = ({ leave }) => {
     updatedAt,
   } = leave;
 
-  // Status colors
-  const statusClasses = {
-    Approved: "bg-green-100 text-green-700 border-green-200",
-    Pending: "bg-yellow-100 text-yellow-700 border-yellow-200",
-    Rejected: "bg-red-100 text-red-700 border-red-200",
-  };
-
   return (
     <div className="relative shadow-lg rounded-2xl p-6 w-full max-w-md border border-gray-100 hover:shadow-xl transition duration-300 overflow-hidden">
       {/* Watermark Text */}
@@ -86,8 +79,8 @@ const PersonalLeaveCard = ({ leave }) => {
         </div>
 
         <div className="mt-6 flex justify-between text-xs text-gray-400 border-t pt-3">
-          <p>Created: {new Date(createdAt).toLocaleDateString()}</p>
-          <p>Updated: {new Date(updatedAt).toLocaleDateString()}</p>
+          <p>Applied on: {new Date(createdAt).toLocaleDateString()}</p>
+          <p>Updated on: {new Date(updatedAt).toLocaleDateString()}</p>
         </div>
       </div>
     </div>

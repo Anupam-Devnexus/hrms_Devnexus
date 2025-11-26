@@ -102,7 +102,6 @@ export default function App() {
     return () => {
       socket.off("notification", handleGeneralNotification);
       socket.off("pendingNotifications", handlePersonalNotification);
-      // socket.off("userOnline", handleUserOnline);
     };
   }, [authUser, personalNotifications, generalNotifications]);
 

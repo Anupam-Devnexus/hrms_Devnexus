@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useTeams } from "../Zustand/GetTeams";
 import TeamCard from "../Component/Card/TeamCardforLead";
+import axios from "axios";
 
 // Loader component
 const Loader = ({ count = 3 }) => (
@@ -31,16 +32,17 @@ const Team = () => {
         setAdminLoading(true);
         setAdminError(null);
         try {
-          const token = JSON.parse(localStorage.getItem("authUser"))?.accessToken;
-          const res = await fetch(
+          const token = JSON.parse(
+            localStorage.getItem("authUser")
+          )?.accessToken;
+          const { data } = await axios.get(
             "https://hrms-backend-9qzj.onrender.com/api/team/get-teams",
             {
               headers: { Authorization: `Bearer ${token}` },
             }
           );
-          if (!res.ok) throw new Error("Failed to fetch all teams");
-          const data = await res.json();
-          setAdminTeams(data);
+
+          setAdminTeams(data.teams);
         } catch (err) {
           setAdminError(err.message);
         } finally {
@@ -54,8 +56,8 @@ const Team = () => {
   }, [role, fetchTeams]);
 
   const totalCount =
-    role === "ADMIN" ? adminTeams?.count || 0 : teamList?.count || 0;
-  const list = role === "ADMIN" ? adminTeams?.teams || [] : teamList?.teams || [];
+    role === "ADMIN" ? adminTeams?.length || 0 : teamList?.count || 0;
+  const list = role === "ADMIN" ? adminTeams || [] : teamList?.teams || [];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 p-2">
@@ -93,7 +95,9 @@ const Team = () => {
             list.map((team) => <TeamCard key={team._id} team={team} />)
           ) : (
             <div className="col-span-full text-center py-20">
-              <p className="text-gray-600 text-xl font-semibold">🚀 No teams found</p>
+              <p className="text-gray-600 text-xl font-semibold">
+                🚀 No teams found
+              </p>
               <p className="text-gray-400 text-sm mt-2">
                 {role === "ADMIN"
                   ? "No teams have been created yet."

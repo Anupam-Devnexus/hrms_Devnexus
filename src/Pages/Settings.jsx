@@ -25,42 +25,29 @@ const Settings = () => {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
 
+  useEffect(() => {
+    (async () => {
+      try {
+        const { data } = await axios.get(
+          "https://hrms-backend-9qzj.onrender.com/api/ticket/",
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
+        console.log(data);
+        setTicket(data.tickets);
+      } catch (error) {
+        console.log(error);
+        toast.error(error.message);
+      }
+    })();
+  }, []);
+
   // Handle form input change
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  // Handle form submit and post to API
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setMessage("");
-
-    try {
-      // Replace with your API endpoint
-      const { data } = await axios.post(
-        "https://hrms-backend-9qzj.onrender.com/api/ticket/",
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        }
-      );
-
-      console.log(data);
-      const newTicket = data.newTicket;
-      setMessage("Ticket Raised Successfully!");
-      // console.log("API Response:", data);
-      setTicket((prev) => ({ ...prev, newTicket }));
-      // Reset form
-      setFormData({ title: "", description: "", priority: "Low" });
-    } catch (error) {
-      console.error("Error raising ticket:", error);
-      setMessage("Failed to raise ticket. Try again.");
-    } finally {
-      setLoading(false);
-    }
   };
 
   // Function to get badge color based on priority
@@ -109,25 +96,39 @@ const Settings = () => {
     }
   };
 
-  useEffect(() => {
-    (async () => {
-      try {
-        const { data } = await axios.get(
-          "https://hrms-backend-9qzj.onrender.com/api/ticket/",
-          {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          }
-        );
-        console.log(data);
-        setTicket(data.tickets);
-      } catch (error) {
-        console.log(error);
-        toast.error(error.message);
-      }
-    })();
-  }, []);
+  // Handle form submit and post to API
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setMessage("");
+
+    try {
+      // Replace with your API endpoint
+      const { data } = await axios.post(
+        "https://hrms-backend-9qzj.onrender.com/api/ticket/",
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+
+      console.log(data);
+      const newTicket = data.newTicket;
+      setMessage("Ticket Raised Successfully!");
+      // console.log("API Response:", data);
+      setTicket((prev) => [...prev, newTicket]);
+      console.log(tickets);
+      // Reset form
+      setFormData({ title: "", description: "", priority: "Low" });
+    } catch (error) {
+      console.error("Error raising ticket:", error);
+      setMessage("Failed to raise ticket. Try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="p-2 max-w-6xl mx-auto space-y-8">
@@ -220,9 +221,10 @@ const Settings = () => {
               <label className="block mb-1 font-medium">Description</label>
               <textarea
                 name="description"
+                rows={5}
                 value={formData.description}
                 onChange={handleChange}
-                className="w-full border p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+                className="w-full border p-2 resize-none rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
                 required
               ></textarea>
             </div>
@@ -253,7 +255,7 @@ const Settings = () => {
               Your Ticket History
             </h3>
             <div className="grid md:grid-cols-2 gap-4">
-              {tickets.map((ticket) => (
+              {tickets?.map((ticket) => (
                 <div
                   key={ticket._id}
                   className="p-4 border rounded-lg shadow hover:shadow-lg transition bg-white"
