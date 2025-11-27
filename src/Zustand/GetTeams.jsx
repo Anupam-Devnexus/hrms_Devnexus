@@ -19,7 +19,7 @@ export const useTeams = create((set) => ({
 
     try {
       const response = await fetch(
-        `https://hrms-backend-9qzj.onrender.com/api/team/joined-by/${userId}`,
+        `${import.meta.env.VITE_BASE_URL}/team/joined-by/${userId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

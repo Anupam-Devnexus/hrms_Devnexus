@@ -20,7 +20,7 @@ export const useTaskStore = create((set) => ({
 
 
             const res = await fetch(
-              `https://hrms-backend-9qzj.onrender.com/api/task/get-tasks`,
+              `${import.meta.env.VITE_BASE_URL}/task/get-tasks`,
               {
                 headers: {
                   Authorization: `Bearer ${token}`,

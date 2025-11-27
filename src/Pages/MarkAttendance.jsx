@@ -33,7 +33,7 @@ const MarkAttendance = () => {
   const handleSubmit = async () => {
     try {
       const { data } = await axios.post(
-        "https://hrms-backend-9qzj.onrender.com/api/attendance/checkin",
+        `${import.meta.env.VITE_BASE_URL}/attendance/checkin`,
         { userId: id, status, date, time },
         {
           headers: {

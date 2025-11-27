@@ -1,4 +1,3 @@
-// Login.jsx
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 
@@ -28,18 +27,15 @@ export default function Login() {
     setError("");
     setLoading(true);
     try {
-      const res = await fetch(
-        "https://hrms-backend-9qzj.onrender.com/api/login",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            Email: formData.email,
-            Password: formData.password,
-            Role: formData.role,
-          }),
-        }
-      );
+      const res = await fetch(`${import.meta.env.VITE_BASE_URL}/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          Email: formData.email,
+          Password: formData.password,
+          Role: formData.role,
+        }),
+      });
 
       const data = await res.json();
       console.log(data);

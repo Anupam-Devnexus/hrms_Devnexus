@@ -64,7 +64,7 @@ const AddPolicies = () => {
       const payload = { policies };
 
       const response = await fetch(
-        "https://hrms-backend-9qzj.onrender.com/api/policy/add-policy",
+        `${import.meta.env.VITE_BASE_URL}/policy/add-policy`,
         {
           method: "POST",
           headers: {

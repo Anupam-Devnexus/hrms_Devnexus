@@ -54,7 +54,7 @@ const Notifications = () => {
         return toast.info("All notifications are already read");
 
       const { data } = await axios.patch(
-        "https://hrms-backend-9qzj.onrender.com/api/notification/read",
+        `${import.meta.env.VITE_BASE_URL}/notification/read`,
         { ids: unReadMessages.map((n) => n._id) },
         {
           headers: {
@@ -84,7 +84,7 @@ const Notifications = () => {
   useEffect(() => {
     (async () => {
       const { data } = await axios(
-        "https://hrms-backend-9qzj.onrender.com/api/notification/",
+        `${import.meta.env.VITE_BASE_URL}/notification/`,
         {
           method: "GET",
           headers: {
@@ -111,7 +111,7 @@ const Notifications = () => {
 
         if (unReadMessages.length > 0) {
           const { data } = await axios.patch(
-            "https://hrms-backend-9qzj.onrender.com/api/notification/read",
+            `${import.meta.env.VITE_BASE_URL}/notification/read`,
             { ids: unReadMessages }, // send only ids or whole objects
             {
               headers: {
@@ -187,14 +187,6 @@ const Notifications = () => {
                     <h3 className="font-semibold text-gray-800">
                       {note.title}
                     </h3>
-                    {/* <span
-                    className={`text-xs font-medium px-2 py-0.5 rounded-full ${
-                      priorityColors[note?.priority] ||
-                      "bg-gray-200 text-gray-600"
-                    }`}
-                  >
-                    {note?.priority}
-                  </span> */}
                   </div>
                   <p className="text-sm text-gray-600 mt-1">{note.message}</p>
                   <p className="text-xs text-gray-400 mt-2">

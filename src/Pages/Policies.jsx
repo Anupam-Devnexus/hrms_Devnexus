@@ -10,7 +10,7 @@ const Policies = () => {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
 
-  const [policy, setpolicy] = useState("");
+  // const [policy, setpolicy] = useState("");
 
   // Fetch the latest uploaded PDF
   useEffect(() => {
@@ -18,7 +18,7 @@ const Policies = () => {
     const fetchPdf = async () => {
       try {
         const { data } = await axios.get(
-          "https://hrms-backend-9qzj.onrender.com/api/policy/get-policy"
+          `${import.meta.env.VITE_BASE_URL}/policy/get-policy`
         );
         // if (!res.ok) throw new Error("Failed to fetch PDF");
         console.log(data);
@@ -36,7 +36,7 @@ const Policies = () => {
     setLoading(true);
     try {
       const { data } = await axios.delete(
-        `https://hrms-backend-9qzj.onrender.com/api/policy/delete-policy/${pdf._id}`,
+        `${import.meta.env.VITE_BASE_URL}/policy/delete-policy/${pdf._id}`,
         {
           headers: {
             Authorization: `Bearer ${authUser.accessToken}`,
@@ -75,7 +75,7 @@ const Policies = () => {
 
     try {
       const res = await fetch(
-        "https://hrms-backend-9qzj.onrender.com/api/policy/add-policy",
+        `${import.meta.env.VITE_BASE_URL}/policy/add-policy`,
         {
           method: "POST",
           headers: {
@@ -107,15 +107,15 @@ const Policies = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6 flex flex-col items-center">
-      <div className="bg-white shadow-lg rounded-2xl p-6 w-full max-w-4xl">
-        {/* Header */}
-        <h1 className="text-3xl font-bold text-gray-800 mb-6 text-center">
+    <div className="min-h-full bg-gray-100 p-6 flex flex-col items-center">
+      {/* <div className="bg-white shadow-lg rounded-2xl p-6 w-full max-w-4xl"> */}
+      {/* Header */}
+      {/* <h1 className="text-3xl font-bold text-gray-800 mb-6 text-center">
           Human Resource Policies
-        </h1>
+        </h1> */}
 
-        {/* Status Indicator */}
-        <div className="text-center mb-6">
+      {/* Status Indicator */}
+      {/* <div className="text-center mb-6">
           {pdf ? (
             <span className="bg-green-100 text-green-700 px-4 py-1 rounded-full text-sm font-medium">
               📄 Policy PDF is available
@@ -125,68 +125,68 @@ const Policies = () => {
               ❌ No Policy PDF uploaded yet
             </span>
           )}
+        </div> */}
+
+      {/* Admin Upload */}
+      {role === "ADMIN" && !pdf ? (
+        <div className="flex flex-col items-center mb-6">
+          <label className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg cursor-pointer transition">
+            {loading ? "Uploading..." : "Upload PDF"}
+            <input
+              type="file"
+              disabled={loading}
+              style={{
+                cursor: loading && "not-allowed",
+              }}
+              accept="application/pdf"
+              onChange={handleFileUpload}
+              className="hidden"
+            />
+          </label>
+          {message && (
+            <p className="mt-3 text-sm font-medium text-gray-600">{message}</p>
+          )}
         </div>
-
-        {/* Admin Upload */}
-        {role === "ADMIN" && !pdf ? (
-          <div className="flex flex-col items-center mb-6">
-            <label className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg cursor-pointer transition">
-              {loading ? "Uploading..." : "Upload PDF"}
-              <input
-                type="file"
-                disabled={loading}
-                style={{
-                  cursor: loading && "not-allowed",
-                }}
-                accept="application/pdf"
-                onChange={handleFileUpload}
-                className="hidden"
-              />
-            </label>
-            {message && (
-              <p className="mt-3 text-sm font-medium text-gray-600">
-                {message}
-              </p>
-            )}
+      ) : (
+        role == "ADMIN" && (
+          <div className="my-4">
+            <button
+              disabled={loading}
+              style={{
+                cursor: loading && "not-allowed",
+              }}
+              onClick={handleFileDelete}
+              className="bg-red-600   hover:bg-red-700 text-white px-6 py-2 rounded-lg cursor-pointer transition"
+            >
+              {loading ? "Deleting..." : "Delete Policy"}
+            </button>
           </div>
-        ) : (
-          role == "ADMIN" && (
-            <div className="my-4">
-              <button
-                disabled={loading}
-                style={{
-                  cursor: loading && "not-allowed",
-                }}
-                onClick={handleFileDelete}
-                className="bg-red-600   hover:bg-red-700 text-white px-6 py-2 rounded-lg cursor-pointer transition"
-              >
-                {loading ? "Deleting..." : "Delete Policy"}
-              </button>
-            </div>
-          )
-        )}
+        )
+      )}
 
-        {/* PDF Preview */}
-        {pdf ? (
-          <div className="space-y-4 ">
-            <div className="w-full h-[90vh]  rounded-xl overflow-hidden shadow">
-              <iframe
-                src={pdf.secure_url}
-                title="Devnexus solutions Pvt. Ltd. Policy PDF"
-                width="100%"
-                height="100%"
-                className="rounded-lg"
-              />
-            </div>
-
-            {/* Download Button */}
+      {/* PDF Preview */}
+      {pdf ? (
+        <div className="space-y-4 w-full max-w-4xl">
+          <div className="w-full h-[90vh]  rounded-xl overflow-hidden shadow">
+            <iframe
+              src={pdf.secure_url}
+              title="Devnexus solutions Pvt. Ltd. Policy PDF"
+              width="100%"
+              height="100%"
+              className="rounded-lg"
+            />
           </div>
-        ) : (
-          <p className="text-gray-500 text-center mt-10">
-            Please contact HR/Admin to upload the latest policy document.
-          </p>
-        )}
-      </div>
+
+          {/* Download Button */}
+        </div>
+      ) : loading ? (
+        <p className="text-gray-500 text-center mt-10">Loading...</p>
+      ) : (
+        <p className="text-gray-500 text-center mt-10">
+          Please contact HR/Admin to upload the latest policy document.
+        </p>
+      )}
+      {/* </div> */}
     </div>
   );
 };

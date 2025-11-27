@@ -65,7 +65,7 @@ const EditUser = () => {
       try {
         setLoading(true);
         const { data } = await axios.get(
-          `https://hrms-backend-9qzj.onrender.com/api/user/${id}`,
+          `${import.meta.env.VITE_BASE_URL}/user/${id}`,
           {
             headers: { Authorization: `Bearer ${accessToken}` },
           }
@@ -111,7 +111,7 @@ const EditUser = () => {
       console.log("data", data);
 
       const { data: res } = await axios.put(
-        `https://hrms-backend-9qzj.onrender.com/api/update-user/${id}`,
+        `${import.meta.env.VITE_BASE_URL}/update-user/${id}`,
         data,
         { headers: { Authorization: `Bearer ${accessToken}` } }
       );

@@ -10,7 +10,7 @@ export const useSalesStore = create((set) => ({
         set({ loading: true, error: null })
         try {
             const data = await fetch(
-              "https://hrms-backend-9qzj.onrender.com/api/sales/",
+              `${import.meta.env.VITE_BASE_URL}/sales/`,
               {
                 headers: {
                   Authorization: `Bearer ${token}`,

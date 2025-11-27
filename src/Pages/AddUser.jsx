@@ -143,7 +143,7 @@ const AddUser = () => {
       console.log(" Final Payload:", Object.fromEntries(data));
       // return;
       const { data: data1 } = await axios.post(
-        "https://hrms-backend-9qzj.onrender.com/api/add-employee",
+        `${import.meta.env.VITE_BASE_URL}/add-employee`,
         data,
         {
           headers: {

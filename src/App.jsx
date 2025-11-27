@@ -25,7 +25,7 @@ import ApplyLeave from "./Pages/ApplyLeave";
 import EditProfile from "./Pages/EditProfile";
 import Task from "./Pages/Task";
 import Sales from "./Pages/TL/Sales";
-import Updates from "./Pages/TL/UpdateSales";
+// import Updates from "./Pages/TL/UpdateSales";
 import Policies from "./Pages/Policies";
 import AddTask from "./Pages/AddTask";
 import Teams from "./Pages/Team";
@@ -46,6 +46,7 @@ import GetPaySlip from "./Pages/GetPaySlip.jsx";
 import axios from "axios";
 import CheckAuth from "./Auth/CheckAuth.js";
 import ResetPassword from "./Pages/ResetPassword.jsx";
+import AddSales from "./Pages/TL/AddSales.jsx";
 
 export default function App() {
   // const navigate = useNavigate();
@@ -144,7 +145,7 @@ export default function App() {
                     <Route path="edit-profile/:id" element={<EditProfile />} />
                     <Route path="tasks" element={<Task />} />
                     <Route path="sales" element={<Sales />} />
-                    <Route path="sales-updates" element={<Updates />} />
+                    <Route path="add" element={<AddSales />} />
                     <Route path="policies" element={<Policies />} />
                     <Route path="add-task" element={<AddTask />} />
                     <Route path="teams" element={<Teams />} />

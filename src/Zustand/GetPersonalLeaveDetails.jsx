@@ -20,7 +20,7 @@ export const useLeavePersonalDetails = create((set) => ({
             set({ loading: true, error: null });
 
             const res = await axios.get(
-              "https://hrms-backend-9qzj.onrender.com/api/leave/get-all-requests",
+              `${import.meta.env.VITE_BASE_URL}/leave/get-all-requests`,
               {
                 headers: {
                   Authorization: `Bearer ${token}`, // sending token in header

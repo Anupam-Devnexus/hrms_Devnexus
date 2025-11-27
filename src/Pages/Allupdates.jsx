@@ -1,50 +1,109 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { useDailyupdate } from "../Zustand/GetDailyUpdates";
 import { ArrowLeft, Calendar, Search } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
-const Allupdates = ({ onBack }) => {
+const Allupdates = () => {
   const { list, loading, error, fetchUpdates } = useDailyupdate();
   const [search, setSearch] = useState("");
   const [dateFilter, setDateFilter] = useState("");
   const navigate = useNavigate();
+
+  const authUser = JSON.parse(localStorage.getItem("authUser"))?.user || {};
+  const role = authUser?.Role?.toUpperCase() || "EMPLOYEE";
+
   useEffect(() => {
     fetchUpdates();
-  }, []);
+  }, [fetchUpdates]);
 
   const updates = list?.prevUpdates || [];
 
-  // Filtering logic
-  const filteredUpdates = updates.filter((update) => {
-    const matchesSearch =
-      update.employee.FirstName?.toLowerCase().includes(search.toLowerCase()) ||
-      update.title?.toLowerCase().includes(search.toLowerCase()) ||
-      update.description?.toLowerCase().includes(search.toLowerCase());
+  const { sortedUpdates, todayCount } = useMemo(() => {
+    const todayLocalStr = new Date().toLocaleDateString();
 
-    const matchesDate = dateFilter
-      ? new Date(update.createdAt).toISOString().slice(0, 10) === dateFilter
-      : true;
+    // filter by search + date
+    const filtered = updates
+      .map((u) => ({
+        ...u,
+        employee: u.employee || {},
+      }))
+      .filter((update) => {
+        const lowerSearch = search.toLowerCase();
 
-    return matchesSearch && matchesDate;
-  });
+        const matchesSearch =
+          update.employee.FirstName?.toLowerCase().includes(lowerSearch) ||
+          update.title?.toLowerCase().includes(lowerSearch) ||
+          update.description?.toLowerCase().includes(lowerSearch);
+
+        const createdDate = update.createdAt
+          ? new Date(update.createdAt)
+          : null;
+
+        const createdIsoDate = createdDate
+          ? createdDate.toISOString().slice(0, 10)
+          : "";
+
+        const matchesDate = dateFilter ? createdIsoDate === dateFilter : true;
+
+        return matchesSearch && matchesDate;
+      })
+      .map((update) => {
+        const createdDate = update.createdAt
+          ? new Date(update.createdAt)
+          : null;
+        const createdLocalStr = createdDate
+          ? createdDate.toLocaleDateString()
+          : "";
+        const isToday = createdLocalStr === todayLocalStr;
+
+        return {
+          ...update,
+          _createdLocalStr: createdLocalStr || "N/A",
+          _isToday: isToday,
+        };
+      });
+
+    const todays = filtered.filter((u) => u._isToday);
+    const others = filtered.filter((u) => !u._isToday);
+
+    const sortByCreatedDesc = (a, b) =>
+      new Date(b.createdAt) - new Date(a.createdAt);
+
+    const sortedToday = [...todays].sort(sortByCreatedDesc);
+    const sortedOthers = [...others].sort(sortByCreatedDesc);
+
+    return {
+      sortedUpdates: [...sortedToday, ...sortedOthers],
+      todayCount: todays.length,
+    };
+  }, [updates, search, dateFilter]);
 
   return (
     <div className="p-6 max-w-5xl mx-auto bg-gray-50 min-h-screen">
       {/* Header */}
-      <div className="flex items-center mb-8">
-        <button
-          onClick={() => navigate("/dashboard/daily-updates")}
-          className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white border border-gray-200 shadow-sm hover:bg-gray-100 transition"
-        >
-          <ArrowLeft size={18} className="text-gray-600" />
-          <span className="text-sm font-medium text-gray-700">Back</span>
-        </button>
-        <h2 className="text-2xl font-bold ml-6 text-gray-800">
-          All Daily Updates
-        </h2>
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-6">
+        <div className="flex items-center">
+          <button
+            onClick={() => navigate("/dashboard/daily-updates")}
+            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white border border-gray-200 shadow-sm hover:bg-gray-100 transition text-sm"
+          >
+            <ArrowLeft size={18} className="text-gray-600" />
+            <span className="font-medium text-gray-700">Back</span>
+          </button>
+          <h2 className="text-2xl font-bold ml-4 text-gray-800">
+            All daily updates
+          </h2>
+        </div>
+
+        <div className="flex flex-col items-start sm:items-end text-sm text-gray-600">
+          <span className="font-medium">Role: {role}</span>
+          <span className="text-xs text-gray-500">
+            Today&apos;s updates: {todayCount}
+          </span>
+        </div>
       </div>
 
-      {/* Search + Filter */}
+      {/* Search + filter */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         {/* Search */}
         <div className="relative w-full sm:w-1/2">
@@ -54,10 +113,10 @@ const Allupdates = ({ onBack }) => {
           />
           <input
             type="text"
-            placeholder="Search updates..."
+            placeholder="Search by title, description or employee name"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-sm"
           />
         </div>
 
@@ -66,65 +125,73 @@ const Allupdates = ({ onBack }) => {
           type="date"
           value={dateFilter}
           onChange={(e) => setDateFilter(e.target.value)}
-          className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+          className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-sm"
         />
       </div>
 
       {/* States */}
       {loading && (
-        <div className="text-blue-600 font-medium bg-blue-50 border border-blue-200 p-3 rounded-lg">
+        <div className="text-blue-600 text-sm bg-blue-50 border border-blue-200 p-3 rounded-lg mb-4">
           Loading updates...
         </div>
       )}
 
       {error && (
-        <div className="text-red-600 font-semibold bg-red-50 border border-red-200 p-3 rounded-lg">
+        <div className="text-red-600 text-sm bg-red-50 border border-red-200 p-3 rounded-lg mb-4">
           Error: {error}
         </div>
       )}
 
-      {!loading && !error && filteredUpdates.length === 0 && (
-        <p className="text-gray-500 text-center py-10">
+      {!loading && !error && sortedUpdates.length === 0 && (
+        <p className="text-gray-500 text-center py-10 text-sm">
           No updates match your search or filter.
         </p>
       )}
 
-      {/* Updates List */}
+      {/* Updates list */}
       <div className="grid gap-5">
-        {filteredUpdates.map((update, index) => {
-          const todaysDate = new Date().toLocaleDateString();
+        {sortedUpdates.map((update, index) => {
+          const isToday = update._isToday;
+          const taskDate = update._createdLocalStr;
 
-          const taskDate = new Date(update.createdAt).toLocaleDateString();
-
-          const isToday = todaysDate == taskDate;
-
-          // console.log( );
+          const employeeFirst = update.employee?.FirstName || "";
+          const employeeLast = update.employee?.LastName || "";
+          const employeeName =
+            `${employeeFirst} ${employeeLast}`.trim() || "Unknown";
 
           return (
             <div
-              className={`p-5   border flex justify-between border-gray-200 rounded-xl shadow-sm hover:shadow-md transition
-            ${isToday && "bg-[#D9E9CF]"}
-          `}
+              key={update._id || index}
+              className={`p-5 border border-gray-400 rounded-xl shadow-sm hover:shadow-md transition flex flex-col sm:flex-row sm:justify-between gap-4 ${
+                isToday ? "bg-[#D9E9CF]" : "bg-white"
+              }`}
             >
-              <div key={update._id || index}>
-                <h3 className="font-semibold text-lg text-gray-800">
-                  {update.title || "Untitled Update"}{" "}
-                  <span className="font-thin text-sm font-serif text-cyan-950 ">
-                   ~ {update.employee.FirstName} {update.employee.LastName}
+              <div className="min-w-0">
+                <h3 className="font-semibold text-lg text-gray-800 break-words">
+                  {update.title || "Untitled update"}{" "}
+                  <span className="font-thin text-sm font-serif text-cyan-950">
+                    {" "}
+                    ~ {employeeName}
                   </span>
                 </h3>
-                <p className="text-gray-600 mt-2">{update.description}</p>
+                <p className="text-gray-600 mt-2 text-sm break-words max-h-32 overflow-y-auto">
+                  {update.description}
+                </p>
                 <div className="flex items-center gap-2 mt-3 text-sm text-gray-500">
                   <Calendar size={16} />
-                  {isToday ? "Today" : taskDate}
+                  <span>{isToday ? "Today" : taskDate}</span>
                 </div>
               </div>
+
               {update?.secure_url && (
-                <div>
-                  <h3 className="font-semibold text-lg text-gray-900">Docs</h3>
+                <div className="sm:text-right">
+                  <h4 className="font-semibold text-sm text-gray-800 mb-1">
+                    Attachment
+                  </h4>
                   <a
-                    className="text-blue-800 underline"
+                    className="text-blue-800 underline text-sm break-all"
                     target="_blank"
+                    rel="noreferrer"
                     href={update.secure_url}
                   >
                     Open

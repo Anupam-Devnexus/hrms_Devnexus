@@ -29,7 +29,7 @@ const Settings = () => {
     (async () => {
       try {
         const { data } = await axios.get(
-          "https://hrms-backend-9qzj.onrender.com/api/ticket/",
+          `${import.meta.env.VITE_BASE_URL}/ticket/`,
           {
             headers: {
               Authorization: `Bearer ${accessToken}`,
@@ -68,7 +68,7 @@ const Settings = () => {
     setLoading(true);
     try {
       const { data } = await axios.patch(
-        `https://hrms-backend-9qzj.onrender.com/api/ticket/${_id}`,
+        `${import.meta.env.VITE_BASE_URL}/ticket/${_id}`,
         { status: "Acknowledged" },
         {
           headers: {
@@ -105,7 +105,7 @@ const Settings = () => {
     try {
       // Replace with your API endpoint
       const { data } = await axios.post(
-        "https://hrms-backend-9qzj.onrender.com/api/ticket/",
+        `${import.meta.env.VITE_BASE_URL}/ticket/`,
         formData,
         {
           headers: {

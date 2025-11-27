@@ -26,16 +26,13 @@ const Payroll = () => {
       const fetchPayments = async () => {
         setLoadingPayments(true);
         try {
-          const res = await fetch(
-            "https://hrms-backend-9qzj.onrender.com/api/payment/",
-            {
-              method: "GET",
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          );
+          const res = await fetch(`${import.meta.env.VITE_BASE_URL}/payment/`, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          });
 
           if (!res.ok) {
             throw new Error(`HTTP error! Status: ${res.status}`);
@@ -61,7 +58,7 @@ const Payroll = () => {
   const updateStatus = async (id, status) => {
     try {
       const res = await fetch(
-        `https://hrms-backend-9qzj.onrender.com/api/payment/${id}`,
+        `${import.meta.env.VITE_BASE_URL}/payment/${id}`,
         {
           method: "PUT",
           headers: {

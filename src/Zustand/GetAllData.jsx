@@ -9,7 +9,7 @@ export const useUserStore = create((set) => ({
     set({ loading: true, error: null });
     try {
       const res = await fetch(
-        "https://hrms-backend-9qzj.onrender.com/api/user"
+        `${import.meta.env.VITE_BASE_URL}/user`
       );
       if (!res.ok) throw new Error("Failed to fetch users");
       const data = await res.json();
@@ -25,7 +25,7 @@ export const useUserStore = create((set) => ({
     set({ loading: true, error: null });
     try {
       const res = await fetch(
-        "https://hrms-backend-9qzj.onrender.com/api/user",
+        `${import.meta.env.VITE_BASE_URL}/user`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -67,7 +67,7 @@ export const useUserStore = create((set) => ({
     set({ loading: true, error: null });
     try {
       const res = await fetch(
-        `https://hrms-backend-9qzj.onrender.com/api/delete-user/${userId}`,
+        `${import.meta.env.VITE_BASE_URL}/delete-user/${userId}`,
         { method: "DELETE" }
       );
       if (!res.ok) throw new Error("Failed to delete user");

@@ -21,7 +21,7 @@ export const useAttendance = create((set) => ({
 
     try {
       const response = await fetch(
-        `https://hrms-backend-9qzj.onrender.com/api/attendance/${userId}`,
+        `${import.meta.env.VITE_BASE_URL}/attendance/${userId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -54,7 +54,7 @@ export const useAttendance = create((set) => ({
 
     try {
       const response = await fetch(
-        `https://hrms-backend-9qzj.onrender.com/api/attendance/`,
+        `${import.meta.env.VITE_BASE_URL}/attendance/`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

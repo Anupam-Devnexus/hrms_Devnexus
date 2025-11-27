@@ -15,7 +15,7 @@ export const useLeaveStore = create((set) => ({
       const token = JSON.parse(localStorage.getItem("authUser"))?.accessToken;
       // console.log(token)
       const res = await fetch(
-        "https://hrms-backend-9qzj.onrender.com/api/leave/get-all-requests",
+        `${import.meta.env.VITE_BASE_URL}/leave/get-all-requests`,
         {
           method: "GET",
           headers: {
@@ -46,7 +46,7 @@ export const useLeaveStore = create((set) => ({
       const token = JSON.parse(localStorage.getItem("authUser"))?.accessToken;
 
       const res = await fetch(
-        `https://hrms-backend-9qzj.onrender.com/api/leave/update-request-status/${id}`,
+        `${import.meta.env.VITE_BASE_URL}/leave/update-request-status/${id}`,
         {
           method: "PATCH",
           headers: {

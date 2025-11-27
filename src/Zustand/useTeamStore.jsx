@@ -41,7 +41,7 @@ export const useTeamStore = create((set, get) => ({
     console.log(token)
     try {
       const response = await fetch(
-        "https://hrms-backend-9qzj.onrender.com/api/team/create-team",
+        `${import.meta.env.VITE_BASE_URL}/team/create-team`,
         {
           method: "POST",
           headers: {

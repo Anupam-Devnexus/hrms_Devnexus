@@ -12,7 +12,7 @@ export const useHistory = create((set) => ({
         try {
             set({ loading: true, error: null })
             const res = await fetch(
-              "https://hrms-backend-9qzj.onrender.com/api/payment",
+              `${import.meta.env.VITE_BASE_URL}/payment`,
               {
                 method: "GET",
                 headers: {

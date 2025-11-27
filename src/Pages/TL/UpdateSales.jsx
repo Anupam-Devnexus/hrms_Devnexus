@@ -47,11 +47,7 @@ const AddSales = () => {
 
     try {
       const xhr = new XMLHttpRequest();
-      xhr.open(
-        "POST",
-        "https://hrms-backend-9qzj.onrender.com/api/sales/",
-        true
-      );
+      xhr.open("POST", `${import.meta.env.VITE_BASE_URL}/sales/`, true);
       xhr.setRequestHeader("Authorization", `Bearer ${token}`);
 
       xhr.upload.onprogress = (event) => {

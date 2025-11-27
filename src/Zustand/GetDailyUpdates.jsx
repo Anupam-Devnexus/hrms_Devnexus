@@ -20,7 +20,7 @@ export const useDailyupdate = create((set) => ({
       set({ loading: true, error: null });
 
       const response = await fetch(
-        "https://hrms-backend-9qzj.onrender.com/api/daily-updates",
+        `${import.meta.env.VITE_BASE_URL}/daily-updates`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

@@ -15,7 +15,7 @@ export default function ForgotPass() {
 
     try {
       const res = await fetch(
-        "https://hrms-backend-9qzj.onrender.com/api/forgotpassword",
+        `${import.meta.env.VITE_BASE_URL}/forgotpassword`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

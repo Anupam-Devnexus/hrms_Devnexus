@@ -27,12 +27,9 @@ const Expenses = () => {
   const fetchExpenses = async () => {
     setLoading(true);
     try {
-      const res = await axios.get(
-        "https://hrms-backend-9qzj.onrender.com/api/expense/",
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+      const res = await axios.get(`${import.meta.env.VITE_BASE_URL}/expense/`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       setExpenses(res?.data?.expenses);
     } catch (err) {
       console.error(err);
@@ -54,7 +51,7 @@ const Expenses = () => {
     setLoading(true);
     try {
       await axios.post(
-        "https://hrms-backend-9qzj.onrender.com/api/expense/",
+        `${import.meta.env.VITE_BASE_URL}/expense/`,
         { ...formData },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -74,7 +71,7 @@ const Expenses = () => {
     setLoading(true);
     try {
       const { data } = await axios.patch(
-        `https://hrms-backend-9qzj.onrender.com/api/expense/${id}`,
+        `${import.meta.env.VITE_BASE_URL}/expense/${id}`,
         { status },
         { headers: { Authorization: `Bearer ${token}` } }
       );

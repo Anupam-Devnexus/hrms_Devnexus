@@ -53,16 +53,12 @@ const PayrollCard = ({ employee }) => {
         submittedAt: new Date().toISOString(),
       };
 
-      await axios.post(
-        "https://hrms-backend-9qzj.onrender.com/api/payment/",
-        payload,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      await axios.post(`${import.meta.env.VITE_BASE_URL}/payment/`, payload, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
 
       setMessage("✅ Payroll sent to Admin for approval!");
       setSubmitted(true); // mark as submitted
@@ -214,7 +210,11 @@ const PayrollCard = ({ employee }) => {
           onClick={handleSubmit}
           disabled={loading || submitted} // disable after submit
           className={`w-full flex items-center justify-center gap-2 py-3 rounded-lg font-medium transition
-            ${submitted ? "bg-gray-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700 text-white"}`}
+            ${
+              submitted
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-blue-600 hover:bg-blue-700 text-white"
+            }`}
         >
           {loading ? <Loader2 className="animate-spin" size={18} /> : null}
           {submitted

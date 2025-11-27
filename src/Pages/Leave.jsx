@@ -13,7 +13,8 @@ const Loader = () => (
 
 const Leave = () => {
   const navigate = useNavigate();
-  const { personalLeave, loading, error, fetchPersonalDetails } = useLeavePersonalDetails();
+  const { personalLeave, loading, error, fetchPersonalDetails } =
+    useLeavePersonalDetails();
 
   const authUser = JSON.parse(localStorage.getItem("authUser"));
   const role = authUser?.user?.Role?.toUpperCase() || "EMPLOYEE";
@@ -26,10 +27,8 @@ const Leave = () => {
   // Calculate approved leave days (only for non-admin)
   const approvedDays = useMemo(() => {
     if (role === "ADMIN") return 0;
-    if (!personalLeave?.leaves) return 0;
-    return personalLeave.leaves
-      .filter((leave) => leave.status === "Approved")
-      .reduce((sum, leave) => sum + (leave.days || 0), 0);
+    if (!personalLeave?.Approved) return 0;
+    return personalLeave.Approved;
   }, [personalLeave, role]);
 
   const remainingDays = Math.max(total_leave - approvedDays, 0);
@@ -65,16 +64,20 @@ const Leave = () => {
       {/* Leave Summary */}
       <section className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-1">
         {role === "ADMIN" ? (
-         ""
+          ""
         ) : (
           <>
             <div className="bg-white shadow rounded-xl p-4 text-center border border-gray-200">
               <p className="text-gray-500 text-sm">Total Leaves</p>
-              <h2 className="text-2xl font-bold text-gray-800">{total_leave}</h2>
+              <h2 className="text-2xl font-bold text-gray-800">
+                {total_leave}
+              </h2>
             </div>
             <div className="bg-white shadow rounded-xl p-4 text-center border border-gray-200">
               <p className="text-gray-500 text-sm">Leaves Taken</p>
-              <h2 className="text-2xl font-bold text-red-500">{approvedDays}</h2>
+              <h2 className="text-2xl font-bold text-red-500">
+                {approvedDays}
+              </h2>
             </div>
             <div className="bg-white shadow rounded-xl p-4 text-center border border-gray-200">
               <p className="text-gray-500 text-sm">Remaining</p>
@@ -123,13 +126,19 @@ const Leave = () => {
               <div className="flex items-center gap-2">
                 <span className="w-4 h-4 bg-red-500 rounded"></span>
                 <p className="text-gray-700">
-                  Taken: <span className="font-semibold text-red-600">{approvedDays} days</span>
+                  Taken:{" "}
+                  <span className="font-semibold text-red-600">
+                    {approvedDays} days
+                  </span>
                 </p>
               </div>
               <div className="flex items-center gap-2">
                 <span className="w-4 h-4 bg-green-500 rounded"></span>
                 <p className="text-gray-700">
-                  Remaining: <span className="font-semibold text-green-600">{remainingDays} days</span>
+                  Remaining:{" "}
+                  <span className="font-semibold text-green-600">
+                    {remainingDays} days
+                  </span>
                 </p>
               </div>
             </div>
@@ -140,13 +149,16 @@ const Leave = () => {
       {/* Leave Cards */}
       <section>
         {loading && <Loader />}
-        {error && <p className="text-center text-red-600 font-medium">{error}</p>}
+        {error && (
+          <p className="text-center text-red-600 font-medium">{error}</p>
+        )}
 
         {!loading &&
           !error &&
           (!personalLeave?.leaves || personalLeave.leaves.length === 0) && (
             <p className="text-center text-gray-500">
-              No leave records found{role !== "ADMIN" && ". Apply for your first leave!"}
+              No leave records found
+              {role !== "ADMIN" && ". Apply for your first leave!"}
             </p>
           )}
 

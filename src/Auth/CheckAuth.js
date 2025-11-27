@@ -1,11 +1,10 @@
- 
 import { useNavigate } from "react-router-dom";
 
 const CheckAuth = async (accessToken) => {
   const navigate = useNavigate();
   try {
     const { data } = await axios.get(
-      "https://hrms-backend-9qzj.onrender.com/api/checkAuth",
+      import.meta.env.VITE_BASE_URL + "/checkAuth",
       {
         headers: {
           Authorization: `Bearer ${accessToken}`,

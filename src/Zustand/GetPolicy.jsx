@@ -9,7 +9,7 @@ export const usePolicy = create((set) => ({
         try {
             set({ loading: true, error: null })
             const resp = await fetch(
-              "https://hrms-backend-9qzj.onrender.com/api/policy/get-policy"
+              `${import.meta.env.VITE_BASE_URL}/policy/get-policy`
             );
             if (!resp.ok) {
                 console.log("error in res", resp)
