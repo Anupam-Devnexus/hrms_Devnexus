@@ -1,44 +1,48 @@
+// useDailyupdate.js
 import { create } from "zustand";
+import axios from "axios";
 
-export const useDailyupdate = create((set) => ({
-  list: [],
+const token = JSON.parse(localStorage.getItem("authUser"))?.accessToken || "";
+
+const axiosInstance = axios.create({
+  baseURL: import.meta.env.VITE_BASE_URL,
+  headers: {
+    Authorization: `Bearer ${token}`,
+  },
+});
+
+export const useDailyupdate = create((set, get) => ({
+  list: null,
   loading: false,
   error: null,
 
   fetchUpdates: async () => {
+    set({ loading: true, error: null });
     try {
-      const storedUser = localStorage.getItem("authUser");
-      if (!storedUser) {
-        throw new Error("User not logged in");
-      }
-
-      const token = JSON.parse(storedUser)?.accessToken;
-      if (!token) {
-        throw new Error("Token not found");
-      }
-
-      set({ loading: true, error: null });
-
-      const response = await fetch(
-        `${import.meta.env.VITE_BASE_URL}/daily-updates`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-          method: "GET",
-        }
+      const { data } = await axiosInstance.get(
+        `${import.meta.env.VITE_BASE_URL}/daily-updates`
       );
+      console.log(data);
+      set({ list: data, loading: false });
+    } catch (err) {
+      set({ error: err.message || "Failed to fetch", loading: false });
+    }
+  },
 
-      if (!response.ok) {
-        throw new Error(`Failed to fetch: ${response.status}`);
-      }
+  // NEW: delete update
+  deleteUpdate: async (id) => {
+    try {
+      await axiosInstance.delete(`/daily-updates/${id}`);
 
-      const data = await response.json();
-
-      set({ loading: false, list: data });
-    } catch (error) {
-      console.error("Error fetching updates:", error);
-      set({ loading: false, error: error.message });
+      set((state) => ({
+        list: {
+          ...state.list,
+          prevUpdates: state.list.prevUpdates.filter((u) => u._id !== id),
+        },
+      }));
+    } catch (err) {
+      console.error(err);
+      throw err;
     }
   },
 }));

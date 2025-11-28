@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 export default function ForgotPass() {
   const [email, setEmail] = useState("");
-  const [status, setStatus] = useState(""); // "success" | "error" | ""
+  const [status, setStatus] = useState(""); 
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();

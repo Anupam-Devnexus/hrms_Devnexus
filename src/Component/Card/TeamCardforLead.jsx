@@ -1,7 +1,13 @@
 import React from "react";
-import { FaUsers, FaCalendarAlt, FaCrown } from "react-icons/fa";
+import {
+  FaUsers,
+  FaCalendarAlt,
+  FaCrown,
+  FaEdit,
+  FaTrash,
+} from "react-icons/fa";
 
-const TeamCardforLead = ({ team }) => {
+const TeamCardforLead = ({ team, onEdit, onDelete, showActions = true }) => {
   if (!team) return null;
 
   const lead = team.lead || {};
@@ -15,12 +21,59 @@ const TeamCardforLead = ({ team }) => {
       lead.FullName || leadFullName || team.name || "Lead"
     )}`;
 
+  const handleEditClick = (e) => {
+    e.stopPropagation();
+    if (onEdit) onEdit(team);
+  };
+
+  const handleDeleteClick = (e) => {
+    e.stopPropagation();
+    if (onDelete) onDelete(team);
+  };
+
   return (
     <div
-      className="bg-white/80 backdrop-blur-md rounded-2xl shadow-lg p-6
+      className="relative group
+                 bg-white/80 backdrop-blur-md rounded-2xl shadow-lg p-6
                  border border-gray-200 hover:shadow-2xl hover:scale-[1.02]
                  transition-all duration-300 flex flex-col"
     >
+      {/* Hover actions (Edit / Delete) */}
+      {showActions && (onEdit || onDelete) && (
+        <div
+          className="absolute top-3 right-3 flex gap-2
+                     opacity-0 group-hover:opacity-100
+                     translate-y-[-4px] group-hover:translate-y-0
+                     transition-all duration-200"
+        >
+          {onEdit && (
+            <button
+              type="button"
+              onClick={handleEditClick}
+              className="p-1.5 rounded-full bg-white shadow border border-gray-200
+                         hover:bg-blue-50 hover:border-blue-400 text-gray-700 hover:text-blue-600
+                         text-xs"
+              title="Edit team"
+            >
+              <FaEdit className="w-3.5 h-3.5" />
+            </button>
+          )}
+
+          {onDelete && (
+            <button
+              type="button"
+              onClick={handleDeleteClick}
+              className="p-1.5 rounded-full bg-white shadow border border-gray-200
+                         hover:bg-red-50 hover:border-red-400 text-gray-700 hover:text-red-600
+                         text-xs"
+              title="Delete team"
+            >
+              <FaTrash className="w-3.5 h-3.5" />
+            </button>
+          )}
+        </div>
+      )}
+
       {/* Team name and description */}
       <div className="min-w-0">
         <h2

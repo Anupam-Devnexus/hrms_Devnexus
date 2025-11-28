@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useTeams } from "../Zustand/GetTeams";
-import TeamCard from "../Component/Card/TeamCardforLead";
+import TeamCardforLead from "../Component/Card/TeamCardforLead";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const Loader = ({ count = 3 }) => (
   <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -15,6 +16,8 @@ const Loader = ({ count = 3 }) => (
 );
 
 const Team = () => {
+  const navigate = useNavigate();
+
   const role =
     JSON.parse(localStorage.getItem("authUser"))?.user?.Role?.toUpperCase() ||
     "EMPLOYEE";
@@ -24,34 +27,68 @@ const Team = () => {
   const [adminLoading, setAdminLoading] = useState(false);
   const [adminError, setAdminError] = useState(null);
 
+  const token = JSON.parse(localStorage.getItem("authUser"))?.accessToken;
+  const BASE_URL = import.meta.env.VITE_BASE_URL;
+
+  // 🔹 reusable function so we can call it after delete as well
+  const fetchAdminTeams = async () => {
+    setAdminLoading(true);
+    setAdminError(null);
+    try {
+      const { data } = await axios.get(`${BASE_URL}/team/get-teams`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setAdminTeams(data.teams || []);
+    } catch (err) {
+      setAdminError(
+        err.response?.data?.message || err.message || "Failed to load teams."
+      );
+    } finally {
+      setAdminLoading(false);
+    }
+  };
+
   useEffect(() => {
     if (role === "ADMIN") {
-      const fetchAllTeams = async () => {
-        setAdminLoading(true);
-        setAdminError(null);
-        try {
-          const token = JSON.parse(
-            localStorage.getItem("authUser")
-          )?.accessToken;
-          const { data } = await axios.get(
-            `${import.meta.env.VITE_BASE_URL}/team/get-teams`,
-            {
-              headers: { Authorization: `Bearer ${token}` },
-            }
-          );
-          setAdminTeams(data.teams || []);
-        } catch (err) {
-          setAdminError(err.message || "Failed to load teams.");
-        } finally {
-          setAdminLoading(false);
-        }
-      };
-
-      fetchAllTeams();
+      fetchAdminTeams();
     } else {
       fetchTeams();
     }
   }, [role, fetchTeams]);
+
+  // 🔥 Delete handler
+  const handleDeleteTeam = async (teamId) => {
+    if (!teamId) {
+      alert("Invalid team ID");
+      return;
+    }
+
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this team? This action cannot be undone."
+    );
+    if (!confirmDelete) return;
+
+    try {
+      await axios.delete(`${BASE_URL}/team/delete-team/${teamId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      // Refresh the list after delete
+      if (role === "ADMIN") {
+        fetchAdminTeams();
+      } else {
+        fetchTeams();
+      }
+
+      alert("Team deleted successfully.");
+    } catch (err) {
+      console.error("Failed to delete team:", err);
+      alert(
+        err.response?.data?.message ||
+          "Something went wrong while deleting the team."
+      );
+    }
+  };
 
   const totalCount =
     role === "ADMIN" ? adminTeams?.length || 0 : teamList?.count || 0;
@@ -87,7 +124,14 @@ const Team = () => {
       {!loading && !adminLoading && !(error || adminError) && (
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {list.length > 0 ? (
-            list.map((team) => <TeamCard key={team._id} team={team} />)
+            list.map((team) => (
+              <TeamCardforLead
+                key={team._id}
+                team={team}
+                onEdit={(t) => navigate(`/teams/${t._id}/edit`)}
+                onDelete={(t) => handleDeleteTeam(t._id)}
+              />
+            ))
           ) : (
             <div className="col-span-full text-center py-16">
               <p className="text-gray-700 text-lg font-semibold">

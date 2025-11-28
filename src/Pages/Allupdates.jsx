@@ -1,10 +1,11 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { useDailyupdate } from "../Zustand/GetDailyUpdates";
-import { ArrowLeft, Calendar, Search } from "lucide-react";
+import { ArrowLeft, Calendar, Search, Trash2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const Allupdates = () => {
-  const { list, loading, error, fetchUpdates } = useDailyupdate();
+  const { list, loading, error, fetchUpdates, deleteUpdate } = useDailyupdate();
   const [search, setSearch] = useState("");
   const [dateFilter, setDateFilter] = useState("");
   const navigate = useNavigate();
@@ -21,7 +22,6 @@ const Allupdates = () => {
   const { sortedUpdates, todayCount } = useMemo(() => {
     const todayLocalStr = new Date().toLocaleDateString();
 
-    // filter by search + date
     const filtered = updates
       .map((u) => ({
         ...u,
@@ -78,6 +78,19 @@ const Allupdates = () => {
     };
   }, [updates, search, dateFilter]);
 
+  const handleDelete = async (id) => {
+    const ok = window.confirm("Delete this update? This cannot be undone.");
+    if (!ok) return;
+
+    try {
+      await deleteUpdate(id);
+      toast.success("Update deleted");
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to delete update");
+    }
+  };
+
   return (
     <div className="p-6 max-w-5xl mx-auto bg-gray-50 min-h-screen">
       {/* Header */}
@@ -105,7 +118,6 @@ const Allupdates = () => {
 
       {/* Search + filter */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-        {/* Search */}
         <div className="relative w-full sm:w-1/2">
           <Search
             size={18}
@@ -120,7 +132,6 @@ const Allupdates = () => {
           />
         </div>
 
-        {/* Date filter */}
         <input
           type="date"
           value={dateFilter}
@@ -129,7 +140,6 @@ const Allupdates = () => {
         />
       </div>
 
-      {/* States */}
       {loading && (
         <div className="text-blue-600 text-sm bg-blue-50 border border-blue-200 p-3 rounded-lg mb-4">
           Loading updates...
@@ -159,6 +169,22 @@ const Allupdates = () => {
           const employeeName =
             `${employeeFirst} ${employeeLast}`.trim() || "Unknown";
 
+          // can delete? (owner OR admin) AND within 12 hours
+          const createdAt = update.createdAt
+            ? new Date(update.createdAt)
+            : null;
+          const twelveHoursMs = 12 * 60 * 60 * 1000;
+          const within12h =
+            createdAt &&
+            new Date().getTime() - createdAt.getTime() <= twelveHoursMs;
+
+          const isOwner =
+            update.employee?._id &&
+            authUser?._id &&
+            update.employee._id === authUser._id;
+
+          const canDelete = within12h && (isOwner || role === "ADMIN");
+
           return (
             <div
               key={update._id || index}
@@ -166,14 +192,28 @@ const Allupdates = () => {
                 isToday ? "bg-[#D9E9CF]" : "bg-white"
               }`}
             >
-              <div className="min-w-0">
-                <h3 className="font-semibold text-lg text-gray-800 break-words">
-                  {update.title || "Untitled update"}{" "}
-                  <span className="font-thin text-sm font-serif text-cyan-950">
-                    {" "}
-                    ~ {employeeName}
-                  </span>
-                </h3>
+              <div className="min-w-0 flex-1">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <h3 className="font-semibold text-lg text-gray-800 break-words">
+                      {update.title || "Untitled update"}{" "}
+                      <span className="font-thin text-sm font-serif text-cyan-950">
+                        ~ {employeeName}
+                      </span>
+                    </h3>
+                  </div>
+
+                  {canDelete && (
+                    <button
+                      onClick={() => handleDelete(update._id)}
+                      className="flex-shrink-0 text-red-600 hover:text-red-800"
+                      title="Delete update"
+                    >
+                      <Trash2 size={18} />
+                    </button>
+                  )}
+                </div>
+
                 <p className="text-gray-600 mt-2 text-sm break-words max-h-32 overflow-y-auto">
                   {update.description}
                 </p>

@@ -1,13 +1,7 @@
 // App.jsx
-import React, { useEffect } from "react";
+import { useEffect, useState } from "react";
 import "./App.css";
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  Navigate,
-  useNavigate,
-} from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Login from "./Auth/Login";
 import ProtectedRoute from "./Auth/ProtectedRoute";
 import Dashboard from "./Pages/Dashboard";
@@ -47,12 +41,13 @@ import axios from "axios";
 import CheckAuth from "./Auth/CheckAuth.js";
 import ResetPassword from "./Pages/ResetPassword.jsx";
 import AddSales from "./Pages/TL/AddSales.jsx";
+import UpdateTeam from "./Pages/TL/TeamUpdate.jsx";
 
 export default function App() {
-  // const navigate = useNavigate();
-  const authUser = JSON.parse(localStorage.getItem("authUser"));
-
-  // console.log("App jsx", authUser);
+  const [authUser, setAuthUser] = useState(() => {
+    const saved = localStorage.getItem("authUser");
+    return saved ? JSON.parse(saved) : null;
+  });
 
   const {
     personalNotifications,
@@ -61,10 +56,6 @@ export default function App() {
     addGeneralNotification,
     // addUserOnline,
   } = useSocketStore();
-
-  // useEffect(() => {
-  //   CheckAuth(authUser.accessToken);
-  // }, []);
 
   useEffect(() => {
     if (!authUser) return;
@@ -110,7 +101,7 @@ export default function App() {
     <Router>
       <Routes>
         {/* Login Page */}
-        <Route path="/" element={<Login />} />
+        <Route path="/" element={<Login setAuthUser={setAuthUser} />} />
         <Route path="forgot-password" element={<ForgotPass />} />
         <Route path="/reset-password" element={<ResetPassword />} />
 
@@ -149,6 +140,7 @@ export default function App() {
                     <Route path="policies" element={<Policies />} />
                     <Route path="add-task" element={<AddTask />} />
                     <Route path="teams" element={<Teams />} />
+                    <Route path="teams/update/:id" element={<UpdateTeam />} />
                     <Route
                       path="leaves-approval"
                       element={<LeavesApproval />}

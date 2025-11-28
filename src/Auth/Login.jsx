@@ -1,7 +1,7 @@
-import React, { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-export default function Login() {
+export default function Login({ setAuthUser }) {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -11,10 +11,16 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  
+  useEffect(() => {
+    const authUser = JSON.parse(localStorage.getItem("authUser"));
+    if (authUser) {
+      navigate("/dashboard", { replace: true });
+    }
+  }, [navigate]);
 
   function handleForgat() {
     navigate("forgot-password");
-    // console.log("Anupams");
   }
 
   const handleChange = (e) => {
@@ -38,14 +44,13 @@ export default function Login() {
       });
 
       const data = await res.json();
-      console.log(data);
 
       if (!res.ok) {
         setError(data.message || "Login failed");
         setLoading(false);
         return;
       }
-
+      setAuthUser(data);
       localStorage.setItem("authUser", JSON.stringify(data));
       navigate("/dashboard");
     } catch (err) {

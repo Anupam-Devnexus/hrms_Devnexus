@@ -1,73 +1,118 @@
+// src/Zustand/useTeamStore.js
 import { create } from "zustand";
+import axios from "axios";
 
 export const useTeamStore = create((set, get) => ({
-  selectedTeam: [],
   teamName: "",
   teamDescription: "",
-  showMyTeam: false,
+  members: [], // array of employee ids
+  currentTeamId: null,
 
-  toggleMember: (id) => {
-    const { selectedTeam } = get();
-    set({
-      selectedTeam: selectedTeam.includes(id)
-        ? selectedTeam.filter((empId) => empId !== id)
-        : [...selectedTeam, id],
-    });
-  },
-
-  isMember: (id) => get().selectedTeam.includes(id),
-
-  removeMember: (id) =>
-    set((state) => ({
-      selectedTeam: state.selectedTeam.filter((empId) => empId !== id),
-    })),
-
-  resetTeam: () => set({ selectedTeam: [], teamName: "", teamDescription: "" }),
-
-  toggleShowMyTeam: () =>
-    set((state) => ({ showMyTeam: !state.showMyTeam })),
+  loadingTeam: false,
+  updatingTeam: false,
+  deletingTeam: false,
+  teamError: null,
 
   setTeamName: (name) => set({ teamName: name }),
   setTeamDescription: (desc) => set({ teamDescription: desc }),
 
-  saveTeam: async () => {
-    const { selectedTeam, teamName, teamDescription } = get();
-    if (!teamName.trim()) {
-      alert("Please enter a team name.");
-      return;
-    }
-    const token = JSON.parse(localStorage.getItem("authUser")).accessToken;
-    const id = JSON.parse(localStorage.getItem("authUser")).user._id;
-    console.log(token)
+  isMember: (empId) => get().members.includes(empId),
+
+  toggleMember: (empId) =>
+    set((state) =>
+      state.members.includes(empId)
+        ? { members: state.members.filter((id) => id !== empId) }
+        : { members: [...state.members, empId] }
+    ),
+
+  resetTeam: () =>
+    set({
+      teamName: "",
+      teamDescription: "",
+      members: [],
+      currentTeamId: null,
+      teamError: null,
+    }),
+
+  // 🔹 Load team for update form
+  loadTeamById: async (teamId) => {
     try {
-      const response = await fetch(
-        `${import.meta.env.VITE_BASE_URL}/team/create-team`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            name: teamName,
-            description: teamDescription,
-            members: selectedTeam,
-            lead: id,
-          }),
-        }
-      );
+      set({ loadingTeam: true, teamError: null });
+      const res = await axios.get(`/api/teams/${teamId}`);
+      const team = res.data.data; // adjust to your API response shape
 
-      if (!response.ok) throw new Error("Failed to save team");
+      set({
+        currentTeamId: team._id,
+        teamName: team.name,
+        teamDescription: team.description || "",
+        members: team.members || [],
+        loadingTeam: false,
+      });
+    } catch (err) {
+      console.error(err);
+      set({
+        loadingTeam: false,
+        teamError: err.response?.data?.message || "Failed to load team",
+      });
+    }
+  },
 
-      console.log(response)
+  // 🔹 Update existing team
+  updateTeam: async (teamIdFromComponent) => {
+    const { currentTeamId, teamName, teamDescription, members } = get();
+    const teamId = teamIdFromComponent || currentTeamId;
 
-      const data = await response.json();
-      console.log("✅ Team saved:", data);
-      alert(`✅ Team "${teamName}" created with ${selectedTeam.length} members`);
-      set({ selectedTeam: [], teamName: "", teamDescription: "" });
-    } catch (error) {
-      console.error("Save team error:", error);
-      alert("❌ Failed to save team. Try again.");
+    if (!teamId) {
+      set({ teamError: "No team selected to update" });
+      return false;
+    }
+
+    try {
+      set({ updatingTeam: true, teamError: null });
+
+      await axios.put(`/api/teams/${teamId}`, {
+        name: teamName,
+        description: teamDescription,
+        members,
+      });
+
+      set({ updatingTeam: false });
+      return true;
+    } catch (err) {
+      console.error(err);
+      set({
+        updatingTeam: false,
+        teamError: err.response?.data?.message || "Failed to update team",
+      });
+      return false;
+    }
+  },
+
+  // 🔹 Delete team
+  deleteTeam: async (teamIdFromComponent) => {
+    const { currentTeamId } = get();
+    const teamId = teamIdFromComponent || currentTeamId;
+
+    if (!teamId) {
+      set({ teamError: "No team selected to delete" });
+      return false;
+    }
+
+    try {
+      set({ deletingTeam: true, teamError: null });
+
+      await axios.delete(`/api/teams/${teamId}`);
+
+      set({ deletingTeam: false });
+      get().resetTeam();
+      return true;
+    } catch (err) {
+      console.error(err);
+      set({
+        deletingTeam: false,
+        teamError: err.response?.data?.message || "Failed to delete team",
+      });
+      return false;
     }
   },
 }));
