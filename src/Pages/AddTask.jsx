@@ -6,7 +6,7 @@ import {
   TextArea,
   SelectInput,
   DateInput,
-} from "../component/form/Inputs";
+} from "../Component/form/Inputs";
 
 const AddTask = () => {
   const authuser = JSON.parse(localStorage.getItem("authUser"));

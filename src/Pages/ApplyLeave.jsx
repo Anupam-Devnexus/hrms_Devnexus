@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Formik, Form, useField } from "formik";
 import * as Yup from "yup";
-import { TextInput, TextArea } from "../component/Form/Inputs"; // adjust path if needed
+import { TextInput, TextArea } from "../Component/Form/Inputs"; // adjust path if needed
 
 // Date helpers: leave must be applied at least 14 days in advance
 const computeMinFromDate = () => {

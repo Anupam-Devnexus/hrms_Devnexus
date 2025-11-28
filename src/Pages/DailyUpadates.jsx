@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaImage, FaTimes, FaCheckCircle, FaBookOpen } from "react-icons/fa";
-import { TextInput, TextArea } from "../component/Form/Inputs";
+import { TextInput, TextArea } from "../Component/Form/Inputs";
 
 const DailyUpdates = () => {
   const user = JSON.parse(localStorage.getItem("authUser")) || {};
