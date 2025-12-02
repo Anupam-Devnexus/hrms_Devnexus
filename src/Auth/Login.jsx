@@ -65,6 +65,7 @@ export default function Login({ setAuthUser }) {
       {/* Left Side - Background Image */}
       <div className="hidden md:flex md:w-1/2 relative">
         <img
+          draggable={false}
           src="https://images.pexels.com/photos/4391612/pexels-photo-4391612.jpeg"
           // draggable={false}
           alt="Office workspace"
@@ -84,6 +85,7 @@ export default function Login({ setAuthUser }) {
           className="bg-white shadow-2xl rounded-2xl p-8 w-full max-w-md border border-gray-200"
         >
           <img
+            draggable={false}
             src="https://res.cloudinary.com/dt4ohfuwc/image/upload/v1754378902/DevNexus_logo-2_gtgade.png"
             alt=""
             className="h-20 w-20"
@@ -101,7 +103,7 @@ export default function Login({ setAuthUser }) {
             name="role"
             value={formData.role}
             onChange={handleChange}
-            className="w-full mb-4 px-3 py-2 rounded-lg border border-gray-300 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full mb-4 px-3 py-2 rounded-lg border border-gray-300 bg-gray-50 focus:outline-none focus:ring"
           >
             <option value="HR">HR</option>
             <option value="ADMIN">Admin</option>
@@ -119,7 +121,7 @@ export default function Login({ setAuthUser }) {
             placeholder="Enter your email"
             value={formData.email}
             onChange={handleChange}
-            className="w-full mb-4 px-3 py-2 rounded-lg border border-gray-300 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full mb-4 px-3 py-2 rounded-lg border border-gray-300 bg-gray-50 focus:outline-none focus:ring"
             required
           />
 
@@ -134,7 +136,7 @@ export default function Login({ setAuthUser }) {
               placeholder="Enter your password"
               value={formData.password}
               onChange={handleChange}
-              className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-gray-50 focus:outline-none focus:ring"
               required
             />
             <button

@@ -1,4 +1,3 @@
-import React from "react";
 import {
   FaUsers,
   FaCalendarAlt,
@@ -7,7 +6,13 @@ import {
   FaTrash,
 } from "react-icons/fa";
 
-const TeamCardforLead = ({ team, onEdit, onDelete, showActions = true }) => {
+const TeamCardforLead = ({
+  isdeleting,
+  team,
+  onEdit,
+  onDelete,
+  showActions = false,
+}) => {
   if (!team) return null;
 
   const lead = team.lead || {};
@@ -33,10 +38,11 @@ const TeamCardforLead = ({ team, onEdit, onDelete, showActions = true }) => {
 
   return (
     <div
-      className="relative group
+      className={`relative group
                  bg-white/80 backdrop-blur-md rounded-2xl shadow-lg p-6
                  border border-gray-200 hover:shadow-2xl hover:scale-[1.02]
-                 transition-all duration-300 flex flex-col"
+                 transition-all duration-300 flex flex-col
+                  ${isdeleting ? "animate-pulse" : ""} `}
     >
       {/* Hover actions (Edit / Delete) */}
       {showActions && (onEdit || onDelete) && (
@@ -94,6 +100,7 @@ const TeamCardforLead = ({ team, onEdit, onDelete, showActions = true }) => {
       {lead && lead.FirstName && (
         <div className="flex items-center gap-3 mb-6 p-3 bg-indigo-50 rounded-xl">
           <img
+            draggable={false}
             src={leadAvatarUrl}
             alt={leadFullName}
             className="w-12 h-12 rounded-full border-2 border-indigo-500 shadow-sm flex-shrink-0"
@@ -151,6 +158,7 @@ const TeamCardforLead = ({ team, onEdit, onDelete, showActions = true }) => {
                   className="flex items-center gap-2 p-2 bg-gray-50 rounded-lg hover:bg-gray-100 transition min-w-0"
                 >
                   <img
+                    draggable={false}
                     src={memberAvatarUrl}
                     alt={memberFullName || memberName}
                     className="w-10 h-10 rounded-full border border-gray-200 flex-shrink-0"

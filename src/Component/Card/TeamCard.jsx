@@ -9,6 +9,7 @@ const TeamCard = ({ employee }) => {
     <div className="p-4 border rounded-xl shadow-md flex items-center justify-between mb-3 bg-white hover:shadow-lg transition">
       <div className="flex items-center gap-4">
         <img
+          draggable={false}
           src={employee.Profile_url}
           alt={employee.FirstName}
           className="w-14 h-14 rounded-full object-cover border"

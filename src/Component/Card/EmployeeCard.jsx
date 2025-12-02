@@ -33,6 +33,7 @@ const EmployeeCard = ({ employee }) => {
       {/* Header with Profile */}
       <div className="flex items-center gap-4 mb-6">
         <img
+          draggable={false}
           src={employee.Profile_url}
           alt={`${employee.FirstName} ${employee.LastName}`}
           className="w-20 h-20 rounded-full border-4 border-indigo-100 object-cover"

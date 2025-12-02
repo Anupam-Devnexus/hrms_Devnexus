@@ -4,126 +4,154 @@ import * as Yup from "yup";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useParams, useNavigate } from "react-router-dom";
-import menuConfig from "../DataStore/NavBar.json";
 import { CustomLoader } from "../Component/CustomLoader";
 
 const validationSchema = Yup.object({
   FirstName: Yup.string().required("First Name is required"),
   Email: Yup.string().email("Invalid email").required("Email is required"),
-  Phone: Yup.string()
-    .matches(/^[0-9]{10}$/, "Phone must be 10 digits")
-    .required("Phone is required"),
+  Phone: Yup.string().matches(/^[0-9]{10}$/, "Phone must be 10 digits"),
+
   Gender: Yup.string().required("Gender is required"),
-  BankName: Yup.string().required("Bank Name is required"),
-  AccountNumber: Yup.string().required("Account Number is required"),
-  IFSC: Yup.string().required("IFSC is required"),
-  Branch: Yup.string().required("Branch is required"),
   Dob: Yup.date().required("Date of Birth is required"),
-  PanNumber: Yup.string().required("PAN Number is required"),
-  AadharNumber: Yup.string().matches(/^[0-9]{12}$/, "Aadhar must be 12 digits"),
+
   Department: Yup.string().required("Department is required"),
   Designation: Yup.string().required("Designation is required"),
-  PermanentAddress: Yup.string().required("Permanent Address is required"),
+
   CurrentAddress: Yup.string().required("Current Address is required"),
+  PermanentAddress: Yup.string().required("Permanent Address is required"),
+
+  AadharNumber: Yup.string()
+    .matches(/^[0-9]{12}$/, "Aadhar must be 12 digits")
+    .required("Aadhar is required"),
+  PanNumber: Yup.string().required("PAN Number is required"),
+
+  BankName: Yup.string().required("Bank Name is required"),
+  AccountNumber: Yup.string().required("Account Number is required"),
+  IFSC: Yup.string().required("IFSC Code is required"),
+  Branch: Yup.string().required("Branch is required"),
+
+  EmergencyName: Yup.string().required("Emergency Name is required"),
+  EmergencyRelation: Yup.string().required("Emergency Relation is required"),
+  EmergencyPhone: Yup.string()
+    .matches(/^[0-9]{10}$/, "Phone must be 10 digits")
+    .required("Emergency Phone required"),
+
   Role: Yup.string().required("Role is required"),
 });
 
 const roles = ["ADMIN", "HR", "TL", "EMPLOYEE"];
 
-const InputField = ({ label, name, type = "text", ...props }) => (
+const InputField = ({ label, name, type = "text" }) => (
   <div className="flex flex-col gap-1">
-    <label className="text-gray-700 font-medium">{label}</label>
-    <Field
-      type={type}
-      name={name}
-      {...props}
-      className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-    />
-    <ErrorMessage
-      name={name}
-      component="div"
-      className="text-red-500 text-sm"
-    />
+    <label className="font-medium">{label}</label>
+    <Field type={type} name={name} className="p-2 border rounded" />
+    <ErrorMessage name={name} component="p" className="text-red-500 text-sm" />
   </div>
 );
 
-const EditUser = () => {
+export default function EditUser() {
+  const imgRef = React.useRef(null);
   const [initialValues, setInitialValues] = useState(null);
   const [preview, setPreview] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  const { id } = useParams(); // user ID from URL
+  const { id } = useParams();
   const navigate = useNavigate();
   const { accessToken } = JSON.parse(localStorage.getItem("authUser"));
 
-  const getRoleMenu = (role) =>
-    role ? menuConfig[role.toLowerCase()] || [] : [];
-
-  // Fetch existing user details
+  // Fetch user details
   useEffect(() => {
     const fetchUser = async () => {
       try {
         setLoading(true);
         const { data } = await axios.get(
           `${import.meta.env.VITE_BASE_URL}/user/${id}`,
-          {
-            headers: { Authorization: `Bearer ${accessToken}` },
-          }
+          { headers: { Authorization: `Bearer ${accessToken}` } }
         );
 
         const user = data.user;
-        console.log(user);
+
         setInitialValues({
           ...user,
           ...user.BankDetails,
-          Profile: null,
+          Profile: null, // file upload
         });
+
         setPreview(user.Profile_url);
-      } catch (err) {
-        toast.error("Failed to fetch user data");
+      } catch (e) {
+        toast.error("Failed to load user");
       } finally {
         setLoading(false);
       }
     };
+
     fetchUser();
   }, [id]);
 
-  const handleImageUpload = (e, setFieldValue) => {
-    const file = e.target.files[0];
-    if (file) {
-      setFieldValue("Profile", file);
-      setPreview(URL.createObjectURL(file));
-    }
-  };
-
   const handleSubmit = async (values) => {
-    console.log("values", values);
-    setLoading(true);
     try {
-      const data = new FormData();
-      Object.entries(values).forEach(([key, val]) => {
-        if (key === "Profile" && val) {
-          data.append("Profile", val);
-        } else {
-          data.append(key, val);
+      setLoading(true);
+
+      const form = new FormData();
+
+      // Include only allowed & schema-specific fields
+      const allowed = [
+        "FirstName",
+        "LastName",
+        "Email",
+        "Phone",
+        "Gender",
+        "Dob",
+        "Department",
+        "Designation",
+        "AadharNumber",
+        "PanNumber",
+        "CurrentAddress",
+        "PermanentAddress",
+        "EmergencyName",
+        "EmergencyRelation",
+        "EmergencyPhone",
+        "Role",
+      ];
+
+      allowed.forEach((field) => {
+        if (values[field] !== undefined) {
+          form.append(field, values[field]);
         }
       });
-      console.log("data", data);
 
-      const { data: res } = await axios.put(
+      // Bank details (flat)
+      form.append("BankName", values.BankName);
+      form.append("AccountNumber", values.AccountNumber);
+      form.append("IFSC", values.IFSC);
+      form.append("Branch", values.Branch);
+
+      // Image
+      if (values.Profile) {
+        form.append("Profile", values.Profile);
+      }
+
+      // PATCH request
+      const { data } = await axios.patch(
         `${import.meta.env.VITE_BASE_URL}/update-user/${id}`,
-        data,
-        { headers: { Authorization: `Bearer ${accessToken}` } }
+        form,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
       );
 
-      console.log("response", res);
-
-      if (!res.success) throw new Error("Failed to update employee");
-      toast.success("Employee updated successfully!");
-      navigate("/employees");
-    } catch (err) {
-      console.log(err);
-      toast.error(err.response?.data?.message || "Update failed");
+      if (data.success) {
+        toast.success("User updated successfully");
+        imgRef.current.value = null; // reset file input
+        navigate(-1);
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Update failed");
     } finally {
       setLoading(false);
     }
@@ -132,181 +160,129 @@ const EditUser = () => {
   if (!initialValues) return <CustomLoader />;
 
   return (
-    <div className="min-h-screen flex justify-center items-center p-2">
-      <div className="bg-white rounded-2xl p-8 w-full max-w-5xl">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold text-gray-800">Edit Employee</h2>
-          <button
-            onClick={() => navigate(-1)}
-            className="text-blue-600 hover:underline"
-          >
-            Back
-          </button>
-        </div>
+    <div className="max-w-4xl mx-auto py-6">
+      <h2 className="text-2xl font-bold mb-4">Edit User</h2>
 
-        <Formik
-          enableReinitialize
-          initialValues={initialValues}
-          validationSchema={validationSchema}
-          onSubmit={handleSubmit}
-        >
-          {({ values, setFieldValue }) => (
-            <Form className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Profile Image */}
-              <div className="md:col-span-2 flex flex-col gap-2">
-                <label className="text-gray-700 font-medium">
-                  Profile Image
-                </label>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => handleImageUpload(e, setFieldValue)}
-                  className="border p-2 rounded-lg cursor-pointer"
+      <Formik
+        enableReinitialize
+        initialValues={initialValues}
+        validationSchema={validationSchema}
+        onSubmit={handleSubmit}
+      >
+        {({ setFieldValue }) => (
+          <Form className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Profile Image */}
+            <div className="md:col-span-2">
+              <label className="font-medium">Profile Image</label>
+              <input
+                type="file"
+                ref={imgRef}
+                className="border p-2 rounded"
+                accept="image/*"
+                onChange={(e) => {
+                  setFieldValue("Profile", e.target.files[0]);
+                  setPreview(URL.createObjectURL(e.target.files[0]));
+                }}
+              />
+              {preview && (
+                <img
+                  draggable={false}
+                  src={preview}
+                  className="w-32 h-32 object-cover rounded mt-2"
                 />
-                {preview && (
-                  <img
-                    src={preview}
-                    alt="Preview"
-                    className="w-full h-48 rounded-md object-cover border"
-                  />
-                )}
-              </div>
+              )}
+            </div>
 
-              {/* Basic Info */}
-              <InputField label="First Name *" name="FirstName" />
-              <InputField label="Last Name" name="LastName" />
-              <InputField label="Email *" name="Email" type="email" />
-              <InputField label="Phone *" name="Phone" />
-              <InputField label="Date of Birth *" name="Dob" type="date" />
+            {/* Basic Fields */}
+            <InputField label="First Name *" name="FirstName" />
+            <InputField label="Last Name" name="LastName" />
+            <InputField label="Email *" name="Email" />
+            <InputField label="Phone" name="Phone" />
+            <InputField label="DOB *" name="Dob" type="date" />
 
-              <div className="flex items-center gap-4">
-                <h2 className="font-semibold mb-2">Gender *</h2>
+            {/* Gender */}
+            <div className="flex flex-col gap-1">
+              <label className="font-medium">Gender *</label>
+              <div className="flex gap-4">
                 {["Male", "Female", "Other"].map((g) => (
                   <label key={g}>
-                    <Field type="radio" name="Gender" value={g} />
-                    {g}
+                    <Field type="radio" name="Gender" value={g} /> {g}
                   </label>
                 ))}
               </div>
+              <ErrorMessage
+                name="Gender"
+                component="p"
+                className="text-red-500 text-sm"
+              />
+            </div>
 
-              <InputField label="Department *" name="Department" />
-              <InputField label="Designation *" name="Designation" />
-              <InputField label="PAN Number *" name="PanNumber" />
-              <InputField label="Aadhar Number *" name="AadharNumber" />
-              <InputField label="Bank Name *" name="BankName" />
-              <InputField label="Account Number *" name="AccountNumber" />
-              <InputField label="IFSC Code *" name="IFSC" />
-              <InputField label="Branch *" name="Branch" />
+            {/* Job */}
+            <InputField label="Department *" name="Department" />
+            <InputField label="Designation *" name="Designation" />
 
-              <InputField as="select" label="Role *" name="Role">
+            {/* Identity */}
+            <InputField label="PAN Number *" name="PanNumber" />
+            <InputField label="Aadhar Number *" name="AadharNumber" />
+
+            {/* Bank */}
+            <InputField label="Bank Name *" name="BankName" />
+            <InputField label="Account Number *" name="AccountNumber" />
+            <InputField label="IFSC *" name="IFSC" />
+            <InputField label="Branch *" name="Branch" />
+
+            {/* Emergency Contact */}
+            <InputField label="Emergency Name *" name="EmergencyName" />
+            <InputField label="Emergency Relation *" name="EmergencyRelation" />
+            <InputField label="Emergency Phone *" name="EmergencyPhone" />
+
+            {/* Role */}
+            <div className="flex flex-col gap-1">
+              <label className="font-medium">Role *</label>
+              <Field as="select" name="Role" className="p-2 border rounded">
                 <option value="">Select Role</option>
-                {roles.map((opt) => (
-                  <option key={opt} value={opt}>
-                    {opt}
+                {roles.map((r) => (
+                  <option value={r} key={r}>
+                    {r}
                   </option>
                 ))}
-              </InputField>
+              </Field>
+              <ErrorMessage
+                name="Role"
+                component="p"
+                className="text-red-500 text-sm"
+              />
+            </div>
 
-              {/* Allowed Tabs
-              <div className="md:col-span-2">
-                <label className="block text-gray-700 font-medium mb-2">
-                  Allowed Tabs (Common)
-                </label>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-                  {menuConfig.common.map((item) => (
-                    <label key={item.label} className="flex items-center gap-2">
-                      <Field
-                        type="checkbox"
-                        name="AllowedTabs"
-                        value={item.label}
-                        className="accent-blue-600"
-                      />
-                      {item.label}
-                    </label>
-                  ))}
-                </div>
-              </div> */}
+            {/* Address */}
+            <div className="md:col-span-2">
+              <InputField
+                label="Current Address *"
+                name="CurrentAddress"
+                as="textarea"
+              />
+            </div>
 
-              {/* Permissions */}
-              {/* {values.Role && (
-                <div className="md:col-span-2">
-                  <label className="block text-gray-700 font-medium mb-2">
-                    Permissions ({values.Role})
-                  </label>
-                  <div className="space-y-2">
-                    {getRoleMenu(values.Role).map((item) => (
-                      <div key={item.label} className="border rounded-lg p-3">
-                        <label className="flex items-center gap-2 font-medium">
-                          <Field
-                            type="checkbox"
-                            name="Permissions"
-                            value={item.label}
-                            className="accent-blue-600"
-                          />
-                          {item.label}
-                        </label>
-                        {item.children && (
-                          <div className="ml-6 mt-2 space-y-1">
-                            {item.children.map((child) => (
-                              <label
-                                key={child.label}
-                                className="flex items-center gap-2"
-                              >
-                                <Field
-                                  type="checkbox"
-                                  name="Permissions"
-                                  value={`${item.label} > ${child.label}`}
-                                  className="accent-blue-600"
-                                />
-                                {child.label}
-                              </label>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )} */}
+            <div className="md:col-span-2">
+              <InputField
+                label="Permanent Address *"
+                name="PermanentAddress"
+                as="textarea"
+              />
+            </div>
 
-              {/* Address */}
-              <div className="md:col-span-2 flex flex-col gap-1">
-                <label className="text-gray-700 font-medium">
-                  Current Address
-                </label>
-                <Field
-                  as="textarea"
-                  name="CurrentAddress"
-                  rows={2}
-                  className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-              <div className="md:col-span-2 flex flex-col gap-1">
-                <label className="text-gray-700 font-medium">
-                  Permanent Address
-                </label>
-                <Field
-                  as="textarea"
-                  name="PermanentAddress"
-                  rows={2}
-                  className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-
-              <div className="md:col-span-2 mt-3">
-                <button
-                  type="submit"
-                  className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
-                >
-                  Update Employee {loading && <CustomLoader />}
-                </button>
-              </div>
-            </Form>
-          )}
-        </Formik>
-      </div>
+            {/* Submit */}
+            <div className="md:col-span-2">
+              <button
+                type="submit"
+                className="w-full bg-blue-600 text-white p-3 rounded"
+              >
+                {loading ? <CustomLoader /> : "Update User"}
+              </button>
+            </div>
+          </Form>
+        )}
+      </Formik>
     </div>
   );
-};
-
-export default EditUser;
+}

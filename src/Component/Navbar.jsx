@@ -127,6 +127,7 @@ const Navbar = () => {
       {/* Header */}
       <div className="p-4 border-b border-gray-700 flex items-center gap-3">
         <img
+          draggable={false}
           src="https://res.cloudinary.com/dt4ohfuwc/image/upload/v1750671563/DevNexus_qqt3p3.png"
           alt="Logo"
           className="w-12 h-12 object-contain"
@@ -210,6 +211,7 @@ const Navbar = () => {
         <div className="flex gap-3 items-center">
           {user?.user?.Profile_url ? (
             <img
+              draggable={false}
               src={user?.user?.Profile_url}
               alt={displayName}
               className="w-10 h-10 rounded-full object-cover border border-gray-600"

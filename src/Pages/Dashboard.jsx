@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import SearchBarComp from "../Component/SearchBarComp";
 import { useUserStore } from "../Zustand/GetAllData";
 import { useTaskStore } from "../Zustand/GetTask";
-import { useTeams } from "../Zustand/GetTeams";
+import { useTeamStore } from "../Zustand/useTeamStore";
 import TaskCard from "../Component/Card/TaskCard";
 import {
   FaUsers,
@@ -54,7 +54,7 @@ export default function Dashboard() {
 
   const { allData, fetchAllData } = useUserStore();
   const { tasks, fetchTasks } = useTaskStore();
-  const { teamList, fetchTeams } = useTeams();
+  const { teamList, fetchTeams } = useTeamStore();
   const [cardValue, setCardValue] = useState({
     appliedLeaves: 0,
     approvedleaves: 0,
@@ -146,6 +146,7 @@ export default function Dashboard() {
       {/* User Info */}
       <div className="flex flex-col sm:flex-row items-center gap-6 p-5 bg-white rounded-3xl shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300">
         <img
+          draggable={false}
           src={userData.Profile_url || "/default-avatar.png"}
           alt="Profile"
           className="w-28 h-28 sm:w-32 sm:h-32 rounded-2xl border-4 border-indigo-500 shadow-xl object-cover"

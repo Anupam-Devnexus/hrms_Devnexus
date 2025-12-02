@@ -67,7 +67,7 @@ const InputField = ({ label, name, type = "text", ...props }) => (
       type={type}
       name={name}
       {...props}
-      className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+      className="w-full p-2 border rounded-lg focus:outline-none focus:ring"
     />
     <ErrorMessage
       name={name}
@@ -81,7 +81,7 @@ const InputField = ({ label, name, type = "text", ...props }) => (
 const AddUser = () => {
   const [preview, setPreview] = useState(null);
   const [loading, setLoading] = useState(false);
-
+  const imgRef = React.useRef(null);
   const { accessToken } = JSON.parse(localStorage.getItem("authUser"));
 
   const initialValues = {
@@ -157,6 +157,7 @@ const AddUser = () => {
       if (!data1.success) throw new Error("Failed to add employee");
 
       // const result = await response.json();
+      imgRef.current.value = null; // reset file input
       toast.success(" Employee added successfully!");
       // console.log("API Response:", result);
       setLoading(false);
@@ -238,96 +239,6 @@ const AddUser = () => {
               <InputField label="IFSC Code*" name="IFSC" />
               <InputField label="Branch *" name="Branch" />
 
-              {/* Dropdowns */}
-              {/* <InputField as="select" label="Department *" name="Department">
-                <option value="">Select Department</option>
-                {departments.map((opt) => (
-                  <option key={opt} value={opt}>
-                    {opt}
-                  </option>
-                ))}
-              </InputField> */}
-
-              {/* <InputField as="select" label="Designation *" name="Designation">
-                <option value="">Select Designation</option>
-                {designations.map((opt) => (
-                  <option key={opt} value={opt}>
-                    {opt}
-                  </option>
-                ))}
-              </InputField> */}
-
-              <InputField as="select" label="Role *" name="Role">
-                <option value="">Select Role</option>
-                {roles.map((opt) => (
-                  <option key={opt} value={opt}>
-                    {opt}
-                  </option>
-                ))}
-              </InputField>
-
-              {/* Allowed Tabs */}
-              {/* <div className="md:col-span-2">
-                <label className="block text-gray-700 font-medium mb-2">
-                  Allowed Tabs (Common)
-                </label>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-                  {menuConfig.common.map((item) => (
-                    <label key={item.label} className="flex items-center gap-2">
-                      <Field
-                        type="checkbox"
-                        name="AllowedTabs"
-                        value={item.label}
-                        className="accent-blue-600"
-                      />
-                      {item.label}
-                    </label>
-                  ))}
-                </div>
-              </div> */}
-
-              {/* Permissions */}
-              {/* {values.Role && (
-                <div className="md:col-span-2">
-                  <label className="block text-gray-700 font-medium mb-2">
-                    Permissions ({values.Role})
-                  </label>
-                  <div className="space-y-2">
-                    {getRoleMenu(values.Role).map((item) => (
-                      <div key={item.label} className="border rounded-lg p-3">
-                        <label className="flex items-center gap-2 font-medium">
-                          <Field
-                            type="checkbox"
-                            name="Permissions"
-                            value={item.label}
-                            className="accent-blue-600"
-                          />
-                          {item.label}
-                        </label>
-                        {item.children && (
-                          <div className="ml-6 mt-2 space-y-1">
-                            {item.children.map((child) => (
-                              <label
-                                key={child.label}
-                                className="flex items-center gap-2"
-                              >
-                                <Field
-                                  type="checkbox"
-                                  name="Permissions"
-                                  value={`${item.label} > ${child.label}`}
-                                  className="accent-blue-600"
-                                />
-                                {child.label}
-                              </label>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )} */}
-
               {/* Address */}
               <div className="md:col-span-2 flex flex-col gap-1">
                 <label className="text-gray-700 font-medium">
@@ -337,7 +248,7 @@ const AddUser = () => {
                   as="textarea"
                   name="CurrentAddress"
                   rows={2}
-                  className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full p-2 border rounded-lg focus:outline-none focus:ring"
                 />
               </div>
               <div className="md:col-span-2 flex flex-col gap-1">
@@ -348,7 +259,7 @@ const AddUser = () => {
                   as="textarea"
                   name="PermanentAddress"
                   rows={2}
-                  className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full p-2 border rounded-lg focus:outline-none focus:ring"
                 />
               </div>
 
@@ -370,12 +281,14 @@ const AddUser = () => {
                 </label>
                 <input
                   type="file"
+                  ref={imgRef}
                   accept="image/*"
                   onChange={(e) => handleImageUpload(e, setFieldValue)}
                   className="border p-2 rounded-lg cursor-pointer"
                 />
                 {preview && (
                   <img
+                    draggable={false}
                     src={preview}
                     alt="Preview"
                     className="w-full h-48 rounded-md object-cover border"

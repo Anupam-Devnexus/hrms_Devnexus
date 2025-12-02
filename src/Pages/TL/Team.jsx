@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useUserStore } from "../../Zustand/GetAllData";
 import { useTeamStore } from "../../Zustand/useTeamStore";
+import { toast } from "react-toastify";
 
 export default function CreateTeam() {
   const { allData, fetchAllData, loading, error } = useUserStore();
@@ -12,15 +13,12 @@ export default function CreateTeam() {
     isMember,
     setTeamName,
     setTeamDescription,
-    saveTeam,
+    loadingTeam,
+    createTeam,
   } = useTeamStore();
-
-  const [role, setRole] = useState("");
 
   useEffect(() => {
     fetchAllData();
-    const authUser = JSON.parse(localStorage.getItem("authUser"));
-    setRole(authUser?.user?.Role || "");
   }, [fetchAllData]);
 
   if (loading) return <div className="text-gray-500">Loading employees...</div>;
@@ -43,10 +41,13 @@ export default function CreateTeam() {
           </label>
           <input
             type="text"
+            disabled={loadingTeam}
+            required
+            maxLength={50}
             value={teamName}
             onChange={(e) => setTeamName(e.target.value)}
             placeholder="Enter team name"
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 outline-none text-sm"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring outline-none text-sm"
           />
         </div>
 
@@ -56,10 +57,13 @@ export default function CreateTeam() {
           </label>
           <textarea
             value={teamDescription}
+            required
+            disabled={loadingTeam}
             onChange={(e) => setTeamDescription(e.target.value)}
             placeholder="Write a short description about this team..."
-            rows={3}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 outline-none text-sm resize-y max-h-48"
+            maxLength={200}
+            rows={4}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring outline-none text-sm resize-none max-h-48"
           />
         </div>
       </div>
@@ -133,6 +137,7 @@ export default function CreateTeam() {
                       <input
                         type="checkbox"
                         checked={selected}
+                        disabled={loadingTeam}
                         onChange={() => toggleMember(emp._id)}
                         onClick={(e) => e.stopPropagation()}
                         className="w-4 h-4 text-blue-600 border-gray-300 rounded"
@@ -149,10 +154,10 @@ export default function CreateTeam() {
       {/* Save Button */}
       <div className="flex justify-end">
         <button
-          onClick={saveTeam}
+          onClick={createTeam}
           className="px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold shadow hover:bg-blue-700 active:scale-95 transition text-sm"
         >
-          💾 Save Team
+          Save Team
         </button>
       </div>
     </div>

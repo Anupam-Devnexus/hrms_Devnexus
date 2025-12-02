@@ -4,6 +4,7 @@ import { FaImage, FaTimes, FaCheckCircle, FaBookOpen } from "react-icons/fa";
 import { TextInput, TextArea } from "../Component/Form/Inputs";
 
 const DailyUpdates = () => {
+  const imgRef = React.useRef(null);
   const user = JSON.parse(localStorage.getItem("authUser")) || {};
   const token = user?.accessToken;
   const navigate = useNavigate();
@@ -138,6 +139,7 @@ const DailyUpdates = () => {
       setShowConfirm(false);
       setErrors({});
       setSuccessMessage("Update posted successfully.");
+      imgRef.current.value = null; // reset file input
     } catch (error) {
       console.error(error);
       setErrors((prev) => ({
@@ -241,6 +243,7 @@ const DailyUpdates = () => {
                 </span>
                 <input
                   type="file"
+                  ref={imgRef}
                   accept="image/*"
                   multiple
                   disabled={submitting}
@@ -259,6 +262,7 @@ const DailyUpdates = () => {
                 {preview.map((src, idx) => (
                   <div key={idx} className="relative">
                     <img
+                      draggable={false}
                       src={src}
                       className="w-28 h-28 object-cover rounded-lg border shadow"
                       alt="preview"
@@ -306,6 +310,7 @@ const DailyUpdates = () => {
                 <div className="flex flex-wrap gap-2 mb-4">
                   {preview.map((src, idx) => (
                     <img
+                      draggable={false}
                       key={idx}
                       src={src}
                       className="w-16 h-16 object-cover rounded-lg border"

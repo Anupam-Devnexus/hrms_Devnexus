@@ -110,6 +110,7 @@ const Profile = () => {
         <div className="relative h-36 sm:h-52 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500">
           <div className="absolute -bottom-16 sm:-bottom-20 left-1/2 transform -translate-x-1/2">
             <img
+              draggable={false}
               src={currentUser.Profile_url}
               alt={`${currentUser.FirstName} ${currentUser.LastName}`}
               className="w-28 h-28 sm:w-40 sm:h-40 rounded-2xl border-4 border-white shadow-xl object-cover"
@@ -137,7 +138,7 @@ const Profile = () => {
 
           {/* Sections */}
           <div className="mt-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <Section    title="Contact" icon={Phone}>
+            <Section title="Contact" icon={Phone}>
               <InfoItem label="Email" value={currentUser.Email} icon={Mail} />
               <InfoItem label="Phone" value={currentUser.Phone} icon={Phone} />
               <InfoItem

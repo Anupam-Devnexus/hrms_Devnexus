@@ -80,6 +80,7 @@ const PayrollCard = ({ employee }) => {
       {/* Header */}
       <div className="flex items-center gap-4 border-b pb-4 mb-6">
         <img
+          draggable={false}
           src={employee?.Profile_url || ""}
           className="w-14 h-14 rounded-full object-cover"
           alt="profile"
@@ -129,7 +130,7 @@ const PayrollCard = ({ employee }) => {
               name="leaveDays"
               value={otherDeductions.leaveDays}
               onChange={handleChange}
-              className="w-full border p-2 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+              className="w-full border p-2 rounded-lg focus:ring outline-none"
               min="0"
               disabled={submitted} // disable if already submitted
             />
@@ -143,7 +144,7 @@ const PayrollCard = ({ employee }) => {
               name="lateComming"
               value={otherDeductions.lateComming}
               onChange={handleChange}
-              className="w-full border p-2 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+              className="w-full border p-2 rounded-lg focus:ring outline-none"
               min="0"
               disabled={submitted} // disable if already submitted
             />
@@ -158,7 +159,7 @@ const PayrollCard = ({ employee }) => {
             name="remarks"
             value={otherDeductions.remarks}
             onChange={handleChange}
-            className="w-full border p-2 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+            className="w-full border p-2 rounded-lg focus:ring outline-none"
             placeholder="Add remarks..."
             disabled={submitted} // disable if already submitted
           />
@@ -178,7 +179,7 @@ const PayrollCard = ({ employee }) => {
                 setYear(y);
                 setMonth(m);
               }}
-              className="w-full border p-2 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+              className="w-full border p-2 rounded-lg focus:ring outline-none"
               disabled={submitted} // disable if already submitted
             />
           </div>
@@ -192,7 +193,7 @@ const PayrollCard = ({ employee }) => {
               max={new Date().getFullYear()}
               value={year}
               onChange={(e) => setYear(e.target.value)}
-              className="w-full border p-2 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+              className="w-full border p-2 rounded-lg focus:ring outline-none"
               disabled={submitted} // disable if already submitted
             />
           </div>

@@ -127,6 +127,28 @@ const Policies = () => {
           )}
         </div> */}
 
+      {pdf ? (
+        <div className="space-y-4 w-full max-w-4xl">
+          <div className="w-full h-[90vh]  rounded-xl overflow-hidden shadow">
+            <iframe
+              src={pdf.secure_url}
+              title="Devnexus solutions Pvt. Ltd. Policy PDF"
+              width="100%"
+              height="100%"
+              className="rounded-lg"
+            />
+          </div>
+
+          {/* Download Button */}
+        </div>
+      ) : loading ? (
+        <p className="text-gray-500 text-center mt-10">Loading...</p>
+      ) : (
+        <p className="text-gray-500 text-center mt-10">
+          Please contact HR/Admin to upload the latest policy document.
+        </p>
+      )}
+
       {/* Admin Upload */}
       {role === "ADMIN" && !pdf ? (
         <div className="flex flex-col items-center mb-6">
@@ -165,27 +187,7 @@ const Policies = () => {
       )}
 
       {/* PDF Preview */}
-      {pdf ? (
-        <div className="space-y-4 w-full max-w-4xl">
-          <div className="w-full h-[90vh]  rounded-xl overflow-hidden shadow">
-            <iframe
-              src={pdf.secure_url}
-              title="Devnexus solutions Pvt. Ltd. Policy PDF"
-              width="100%"
-              height="100%"
-              className="rounded-lg"
-            />
-          </div>
 
-          {/* Download Button */}
-        </div>
-      ) : loading ? (
-        <p className="text-gray-500 text-center mt-10">Loading...</p>
-      ) : (
-        <p className="text-gray-500 text-center mt-10">
-          Please contact HR/Admin to upload the latest policy document.
-        </p>
-      )}
       {/* </div> */}
     </div>
   );

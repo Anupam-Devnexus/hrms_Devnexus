@@ -68,7 +68,7 @@ const Attendance = () => {
     (u) =>
       u.FirstName?.toLowerCase().includes(search.toLowerCase()) ||
       u.LastName?.toLowerCase().includes(search.toLowerCase()) ||
-      u.EmployeeId?.toString().includes(search)
+      u.EmployeeId?.toString().toLowerCase().includes(search)
   );
 
   if (loading) return <Loader />;
@@ -93,7 +93,7 @@ const Attendance = () => {
             >
               {!toggle ? "My Attendence" : "Mark Attendence"}
             </button>
-            {toggle && (
+            {!toggle && (
               <input
                 type="text"
                 placeholder="🔍 Search by name or ID..."
@@ -132,6 +132,7 @@ const Attendance = () => {
                     {/* Employee */}
                     <td className="px-4 py-3 flex items-center gap-3">
                       <img
+                        draggable={false}
                         src={user.Profile_url || "/default-avatar.png"}
                         alt="profile"
                         className="w-10 h-10 rounded-full border border-gray-200 object-cover"
@@ -248,6 +249,7 @@ const Attendance = () => {
                   {/* Employee */}
                   <td className="px-4 py-3 flex items-center gap-3">
                     <img
+                      draggable={false}
                       src={authUser.user.Profile_url || "/default-avatar.png"}
                       alt="profile"
                       className="w-10 h-10 rounded-full border border-gray-200 object-cover"
