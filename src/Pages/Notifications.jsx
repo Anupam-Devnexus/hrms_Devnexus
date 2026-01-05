@@ -51,7 +51,7 @@ const Notifications = () => {
     try {
       const unReadMessages = personalNotifications.filter((n) => !n.isRead);
       if (unReadMessages.length === 0)
-        return toast.info("All notifications are already read");
+        return toast.success("All notifications are already read");
 
       const { data } = await axios.patch(
         `${import.meta.env.VITE_BASE_URL}/notification/read`,
@@ -96,7 +96,7 @@ const Notifications = () => {
 
       addPersonalNotification(data.notifications);
 
-      console.log("all notifications", data);
+      // console.log("all notifications", data);
     })();
 
     if (!personalNotifications?.length) return;
@@ -127,7 +127,7 @@ const Notifications = () => {
             toast.error(data.message);
           }
 
-          console.log(" Marked as read:", data);
+          // console.log(" Marked as read:", data);
         }
       } catch (err) {
         if (err.name === "CanceledError") {

@@ -11,7 +11,7 @@ export default function Login({ setAuthUser }) {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  
+
   useEffect(() => {
     const authUser = JSON.parse(localStorage.getItem("authUser"));
     if (authUser) {
@@ -33,6 +33,8 @@ export default function Login({ setAuthUser }) {
     setError("");
     setLoading(true);
     try {
+
+      // console.log(import.meta.env.VITE_BASE_URL)
       const res = await fetch(`${import.meta.env.VITE_BASE_URL}/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -152,9 +154,8 @@ export default function Login({ setAuthUser }) {
           <button
             type="submit"
             disabled={loading}
-            className={`w-full bg-blue-600 text-white py-2 rounded-lg font-medium hover:bg-blue-700 transition duration-200 shadow-md ${
-              loading ? "cursor-not-allowed opacity-70" : ""
-            }`}
+            className={`w-full bg-blue-600 text-white py-2 rounded-lg font-medium hover:bg-blue-700 transition duration-200 shadow-md ${loading ? "cursor-not-allowed opacity-70" : ""
+              }`}
           >
             {loading ? "Logging in..." : "Login"}
           </button>

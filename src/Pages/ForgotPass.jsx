@@ -15,6 +15,7 @@ export default function ForgotPass() {
 
     try {
       const res = await fetch(
+        console.log(import.meta.env.VITE_BASE_URL)
         `${import.meta.env.VITE_BASE_URL}/forgotpassword`,
         {
           method: "POST",

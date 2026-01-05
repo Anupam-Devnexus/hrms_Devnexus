@@ -80,6 +80,7 @@ const menuConfig = {
         { label: "User Management", path: "/dashboard/user-management" },
         // { label: "Policies", path: "/dashboard/policies" },
         { label: "Leaves Approval", path: "/dashboard/leaves-approval" },
+        {label:"All Leaves" , path:"/dashboard/all-leaves"},
         { label: "Generate Payslips", path: "/dashboard/generate-slip" },
         { label: "Payroll", path: "/dashboard/payroll" },
         { label: "Expenses", path: "/dashboard/expenses" },
