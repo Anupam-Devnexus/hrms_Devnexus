@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useLeavePersonalDetails } from "../Zustand/GetPersonalLeaveDetails";
 import PersonalLeaveCard from "../Component/Card/PersonalLeaveCard";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
+import { useAttendance } from "../Zustand/PersonalAttendance";
 
 // Loader component
 const Loader = () => (
@@ -15,9 +16,10 @@ const Leave = () => {
   const navigate = useNavigate();
   const { personalLeave, loading, error, fetchPersonalDetails } =
     useLeavePersonalDetails();
+  const { user } = useAttendance();
 
-  const authUser = JSON.parse(localStorage.getItem("authUser"));
-  const role = authUser?.user?.Role?.toUpperCase() || "EMPLOYEE";
+
+  const role = user?.Role?.toUpperCase() || "EMPLOYEE";
   const total_leave = 14;
 
   useEffect(() => {
@@ -47,7 +49,7 @@ const Leave = () => {
         <h1 className="text-gray-800 font-semibold text-xl sm:text-2xl">
           Leave Dashboard for{" "}
           <span className="text-2xl sm:text-3xl text-blue-600 font-bold">
-            {authUser?.user?.FirstName} {authUser?.user?.LastName}
+            {user?.FirstName} {user?.LastName}
           </span>
         </h1>
 
@@ -82,9 +84,8 @@ const Leave = () => {
             <div className="bg-white shadow rounded-xl p-4 text-center border border-gray-200">
               <p className="text-gray-500 text-sm">Remaining</p>
               <h2
-                className={`text-2xl font-bold ${
-                  remainingDays > 0 ? "text-green-600" : "text-red-600"
-                }`}
+                className={`text-2xl font-bold ${remainingDays > 0 ? "text-green-600" : "text-red-600"
+                  }`}
               >
                 {remainingDays}
               </h2>

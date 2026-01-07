@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import PayrollCard from "../../Component/Card/PayrollCard";
 import { useUserStore } from "../../Zustand/GetAllData";
 import { User, IndianRupee, Calendar } from "lucide-react";
+import { useAttendance } from "../../Zustand/PersonalAttendance";
 
 const Payroll = () => {
   const [paymentData, setPaymentData] = useState([]); // API data for ADMIN
@@ -12,9 +13,10 @@ const Payroll = () => {
   const { allData, fetchAllData, loading, error } = useUserStore();
   const navigate = useNavigate();
 
-  const authUser = JSON.parse(localStorage.getItem("authUser"));
-  const Role = authUser?.user?.Role;
-  const token = authUser?.accessToken;
+  const { user } = useAttendance();
+
+  const Role = user?.Role;
+  const token = localStorage.getItem("hrmsAuthToken");
 
   useEffect(() => {
     fetchAllData();
@@ -86,8 +88,8 @@ const Payroll = () => {
     allData?.data && Array.isArray(allData.data)
       ? allData.data
       : allData?.data
-      ? Object.values(allData.data).flat()
-      : [];
+        ? Object.values(allData.data).flat()
+        : [];
 
   const counts = {
     ADMIN: users.filter((u) => u.Role?.toUpperCase() === "ADMIN").length,
@@ -163,13 +165,12 @@ const Payroll = () => {
                   <p>
                     Status:{" "}
                     <span
-                      className={`font-semibold ${
-                        p.status === "Confirmed"
-                          ? "text-green-600"
-                          : p.status === "Rejected"
+                      className={`font-semibold ${p.status === "Confirmed"
+                        ? "text-green-600"
+                        : p.status === "Rejected"
                           ? "text-red-600"
                           : "text-yellow-600"
-                      }`}
+                        }`}
                     >
                       {p.status}
                     </span>

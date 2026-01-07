@@ -26,10 +26,7 @@ export default function SalarySlipForm() {
     deductions: [],
   });
 
-  const {
-    user: { Role },
-    accessToken,
-  } = JSON.parse(localStorage.getItem("authUser"));
+  const accessToken = localStorage.getItem("hrmsAuthToken")
 
   const [employees, setEmployees] = useState([]);
   const [disable, setDisable] = useState(true);

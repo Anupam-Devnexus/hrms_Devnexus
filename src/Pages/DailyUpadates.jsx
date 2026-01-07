@@ -2,11 +2,14 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaImage, FaTimes, FaCheckCircle, FaBookOpen } from "react-icons/fa";
 import { TextInput, TextArea } from "../Component/Form/Inputs";
+import { useAttendance } from "../Zustand/PersonalAttendance";
 
 const DailyUpdates = () => {
+
+  const { user } = useAttendance();
+
   const imgRef = React.useRef(null);
-  const user = JSON.parse(localStorage.getItem("authUser")) || {};
-  const token = user?.accessToken;
+  const token = localStorage.getItem("hrmsAuthToken");
   const navigate = useNavigate();
 
   const [title, setTitle] = useState("");
@@ -168,9 +171,9 @@ const DailyUpdates = () => {
             <p className="text-gray-600 text-sm mt-1">
               Logged in as{" "}
               <span className="font-semibold text-blue-700">
-                {user?.user?.FirstName || "User"}
+                {user?.FirstName || "User"}
               </span>{" "}
-              ({user?.user?.Role || "Guest"})
+              ({user?.Role || "Guest"})
             </p>
           </div>
 
@@ -201,7 +204,7 @@ const DailyUpdates = () => {
           <form onSubmit={handleFormSubmit} className="space-y-6">
             {/* Title */}
             <TextInput
-              label="Title"
+              label="Project Title"
               required
               maxLength={TITLE_MAX}
               showCounter
@@ -215,7 +218,7 @@ const DailyUpdates = () => {
 
             {/* Description */}
             <TextArea
-              label="Description"
+              label="Write your update"
               required
               maxLength={DESC_MAX}
               showCounter

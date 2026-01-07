@@ -2,7 +2,7 @@
 import { create } from "zustand";
 import axios from "axios";
 
-const token = JSON.parse(localStorage.getItem("authUser"))?.accessToken || "";
+const token = localStorage.getItem("hrmsAuthToken")
 
 const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_BASE_URL,

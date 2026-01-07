@@ -4,6 +4,7 @@ import EmployeeCard from "../Component/Card/EmployeeCard";
 import { useNavigate } from "react-router-dom";
 import { AiFillEdit } from "react-icons/ai";
 import { MdDelete } from "react-icons/md";
+import { useAttendance } from "../Zustand/PersonalAttendance";
 
 const UserManagement = () => {
   const navigate = useNavigate();
@@ -15,8 +16,11 @@ const UserManagement = () => {
     fetchAllData();
   }, []);
   console.log(allData);
-  const authUser = JSON.parse(localStorage.getItem("authUser"));
-  const currentUserRole = authUser?.user?.Role?.toUpperCase();
+
+  const { user } = useAttendance();
+
+
+  const currentUserRole = user?.Role?.toUpperCase();
 
   if (loading)
     return (

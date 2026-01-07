@@ -15,14 +15,14 @@ const PayrollCard = ({ employee }) => {
   const [message, setMessage] = useState("");
   const [submitted, setSubmitted] = useState(false); // Track submission
 
-  const authUser = JSON.parse(localStorage.getItem("authUser"));
-  const token = authUser?.accessToken;
+
+  const token = localStorage.getItem("hrmsAuthToken");
 
   // Safely calculate final salary
   const finalSalary = Math.max(
     (employee?.Salary || 0) -
-      (Number(otherDeductions.leaveDays) || 0) * 500 -
-      (Number(otherDeductions.lateComming) || 0) * 200,
+    (Number(otherDeductions.leaveDays) || 0) * 500 -
+    (Number(otherDeductions.lateComming) || 0) * 200,
     0
   );
 
@@ -107,11 +107,10 @@ const PayrollCard = ({ employee }) => {
       {/* API Message */}
       {message && (
         <div
-          className={`mb-4 p-3 rounded-lg text-center text-sm font-medium ${
-            message.includes("✅")
+          className={`mb-4 p-3 rounded-lg text-center text-sm font-medium ${message.includes("✅")
               ? "bg-green-100 text-green-700 border border-green-200"
               : "bg-red-100 text-red-700 border border-red-200"
-          }`}
+            }`}
         >
           {message}
         </div>
@@ -211,18 +210,17 @@ const PayrollCard = ({ employee }) => {
           onClick={handleSubmit}
           disabled={loading || submitted} // disable after submit
           className={`w-full flex items-center justify-center gap-2 py-3 rounded-lg font-medium transition
-            ${
-              submitted
-                ? "bg-gray-400 cursor-not-allowed"
-                : "bg-blue-600 hover:bg-blue-700 text-white"
+            ${submitted
+              ? "bg-gray-400 cursor-not-allowed"
+              : "bg-blue-600 hover:bg-blue-700 text-white"
             }`}
         >
           {loading ? <Loader2 className="animate-spin" size={18} /> : null}
           {submitted
             ? "Sent to Admin for Approval"
             : loading
-            ? "Submitting..."
-            : "Send to Admin for Approval"}
+              ? "Submitting..."
+              : "Send to Admin for Approval"}
         </button>
       </div>
     </div>

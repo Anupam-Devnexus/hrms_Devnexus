@@ -11,9 +11,9 @@ const AddSales = () => {
   const [submitting, setSubmitting] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
 
-  const token = JSON.parse(localStorage.getItem("authUser"))?.accessToken;
+  const token = localStorage.getItem("hrmsAuthToken")
   const fileInputRef = useRef(null);
-// console.log(token)
+  // console.log(token)
   // Handle files (drag-and-drop or file input)
   const handleFiles = (selectedFiles) => {
     const newFiles = Array.from(selectedFiles);

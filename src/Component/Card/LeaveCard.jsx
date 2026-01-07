@@ -1,7 +1,10 @@
 import React, { useState } from "react";
+import { useAttendance } from "../../Zustand/PersonalAttendance";
 
 const LeaveCard = ({ leave, onStatusChange }) => {
-  const authUser = JSON.parse(localStorage.getItem("authUser"))?.user?.Role;
+  const { user } = useAttendance();
+
+  const Role = user?.Role;
   const [loading, setLoading] = useState(false);
 
   const handleAction = async (status) => {
@@ -50,8 +53,8 @@ const LeaveCard = ({ leave, onStatusChange }) => {
               ${leave.status === "Pending"
                 ? "bg-yellow-500"
                 : leave.status === "Approved"
-                ? "bg-green-500"
-                : "bg-red-500"}`}
+                  ? "bg-green-500"
+                  : "bg-red-500"}`}
           >
             {leave.status}
           </span>
@@ -59,7 +62,7 @@ const LeaveCard = ({ leave, onStatusChange }) => {
       </div>
 
       {/* Show Action Buttons only for ADMIN */}
-      {authUser === "ADMIN" && leave.status === "Pending" && (
+      {Role === "ADMIN" && leave.status === "Pending" && (
         <div className="flex gap-4 mt-4">
           <button
             disabled={loading}

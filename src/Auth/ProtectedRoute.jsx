@@ -1,17 +1,52 @@
 // ProtectedRoute.jsx
-import React from "react";
-import { Navigate } from "react-router-dom";
 
-export default function ProtectedRoute({ children, role }) {
-  const user = JSON.parse(localStorage.getItem("authUser"));
+import { useEffect } from "react";
+import { Navigate, useNavigate } from "react-router-dom";
+import { useAttendance } from "../Zustand/PersonalAttendance"
+import { toast } from "react-toastify";
 
-  if (!user) {
-    return <Navigate to="/" replace />;
-  }
+export default function ProtectedRoute({ children }) {
 
-  if (role && user.role !== role) {
-    return <Navigate to="/" replace />;
-  }
+  const { fetchUser } = useAttendance();
+  const token = localStorage.getItem("hrmsAuthToken");
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    console.log("protected route ")
+    if (!token) {
+      toast.error("Please login to continue");
+      navigate("/", { replace: true });
+      return;
+    }
+
+    // const getProfile = async () => {
+    //   try {
+    //     const { data } = await axios.get(
+    //       "https://backend.mastersaab.co.in/api/profile/get",
+    //       {
+    //         headers: {
+    //           Authorization: `Bearer ${localStorage.getItem("hrmsAuthToken")}`,
+    //         },
+    //       }
+    //     );
+
+    //   } catch (error) {
+    //     toast.error("Session expired, please login again");
+    //     localStorage.removeItem("hrmsAuthToken");
+    //     navigate("/logout", { replace: true });
+    //   } finally {
+    //     setChecking(false);
+    //   }
+    // };
+
+    fetchUser(token);
+  }, []);
+
+
+  // if (!user) {
+  //   return <Navigate to="/" replace />;
+  // }
 
   return children;
 }

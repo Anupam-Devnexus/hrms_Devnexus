@@ -1,7 +1,12 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAttendance } from "../Zustand/PersonalAttendance";
 
-export default function Login({ setAuthUser }) {
+
+export default function Login() {
+
+  const { setUser } = useAttendance();
+
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -12,12 +17,16 @@ export default function Login({ setAuthUser }) {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e52a65 (changed auth logic and other changes)
   useEffect(() => {
-    const authUser = JSON.parse(localStorage.getItem("authUser"));
-    if (authUser) {
-      navigate("/dashboard", { replace: true });
+    const token = localStorage.getItem("token");
+    if (token) {
+      navigate("/dashboard/", { replace: true });
     }
-  }, [navigate]);
+  }, []);
 
   function handleForgat() {
     navigate("forgot-password");
@@ -47,17 +56,18 @@ export default function Login({ setAuthUser }) {
 
       const data = await res.json();
 
+
+
       if (!res.ok) {
         setError(data.message || "Login failed");
         setLoading(false);
         return;
       }
-      setAuthUser(data);
-      localStorage.setItem("authUser", JSON.stringify(data));
-      navigate("/dashboard");
+      setUser(data.user, data.accessToken);
+      navigate("/dashboard", { replace: true });
     } catch (err) {
       console.error(err);
-      setError("Something went wrong. Please try again.");
+      setError(err.message || "Something went wrong. Please try again.");
       setLoading(false);
     }
   };

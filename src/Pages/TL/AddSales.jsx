@@ -13,7 +13,7 @@ const AddSales = () => {
   const [showConfirm, setShowConfirm] = useState(false);
   const [errors, setErrors] = useState({});
 
-  const token = JSON.parse(localStorage.getItem("authUser"))?.accessToken;
+  const token = localStorage.getItem("hrmsAuthToken")
   const fileInputRef = useRef(null);
 
   const HEADING_MAX = 120;

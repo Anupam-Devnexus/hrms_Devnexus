@@ -1,14 +1,17 @@
 import React, { useEffect } from "react";
 import { useTaskStore } from "../Zustand/GetTask";
 import { useNavigate } from "react-router-dom";
+import { useAttendance } from "../Zustand/PersonalAttendance";
 
 const Task = () => {
   const { fetchTasks, tasks, loading, error } = useTaskStore();
+  const { user } = useAttendance();
+
   const navigate = useNavigate();
   useEffect(() => {
-    fetchTasks();
+    fetchTasks(user?._id);
   }, []);
- 
+
 
   return (
     <div className="min-h-screen bg-gray-100 py-8 px-6">

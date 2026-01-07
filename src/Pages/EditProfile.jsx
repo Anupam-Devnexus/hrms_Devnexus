@@ -57,7 +57,7 @@ export default function EditUser() {
 
   const { id } = useParams();
   const navigate = useNavigate();
-  const { accessToken } = JSON.parse(localStorage.getItem("authUser"));
+  const accessToken = localStorage.getItem("hrmsAuthToken")
 
   // Fetch user details
   useEffect(() => {

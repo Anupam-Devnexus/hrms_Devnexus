@@ -3,15 +3,17 @@ import { useDailyupdate } from "../Zustand/GetDailyUpdates";
 import { ArrowLeft, Calendar, Search, Trash2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { useAttendance } from "../Zustand/PersonalAttendance";
 
 const Allupdates = () => {
   const { list, loading, error, fetchUpdates, deleteUpdate } = useDailyupdate();
   const [search, setSearch] = useState("");
   const [dateFilter, setDateFilter] = useState("");
   const navigate = useNavigate();
+  const { user } = useAttendance();
 
-  const authUser = JSON.parse(localStorage.getItem("authUser"))?.user || {};
-  const role = authUser?.Role?.toUpperCase() || "EMPLOYEE";
+
+  const role = user?.Role?.toUpperCase() || "Unknown";
 
   useEffect(() => {
     fetchUpdates();
@@ -180,17 +182,16 @@ const Allupdates = () => {
 
           const isOwner =
             update.employee?._id &&
-            authUser?._id &&
-            update.employee._id === authUser._id;
+            user?._id &&
+            update.employee._id === user._id;
 
           const canDelete = within12h && (isOwner || role === "ADMIN");
 
           return (
             <div
               key={update._id || index}
-              className={`p-5 border border-gray-400 rounded-xl shadow-sm hover:shadow-md transition flex flex-col sm:flex-row sm:justify-between gap-4 ${
-                isToday ? "bg-[#D9E9CF]" : "bg-white"
-              }`}
+              className={`p-5 border border-gray-400 rounded-xl shadow-sm hover:shadow-md transition flex flex-col sm:flex-row sm:justify-between gap-4 ${isToday ? "bg-[#D9E9CF]" : "bg-white"
+                }`}
             >
               <div className="min-w-0 flex-1">
                 <div className="flex items-start justify-between gap-3">

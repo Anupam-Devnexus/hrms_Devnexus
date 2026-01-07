@@ -1,30 +1,32 @@
 import { useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSalesStore } from "../../Zustand/GetSales";
+import { useAttendance } from "../../Zustand/PersonalAttendance";
 
 const Sales = () => {
   const { salesList, error, loading, fetchSales } = useSalesStore();
   const navigate = useNavigate();
+  const { user } = useAttendance();
+
 
   useEffect(() => {
     fetchSales();
   }, [fetchSales]);
 
-  const authUser = JSON.parse(localStorage.getItem("authUser"))?.user;
   const rawSales = salesList?.sales || [];
 
   const visibleSales = useMemo(() => {
     let data = rawSales;
 
-    if (authUser?.Role === "SALES") {
-      data = data.filter((item) => item.employee?.Email === authUser?.Email);
+    if (user?.Role === "SALES") {
+      data = data.filter((item) => item.employee?.Email === user?.Email);
     }
 
     // sort newest first
     return [...data].sort(
       (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
     );
-  }, [rawSales, authUser]);
+  }, [rawSales, user]);
 
   if (loading) {
     return (
@@ -70,17 +72,16 @@ const Sales = () => {
     const updatedAt = item.updatedAt ? new Date(item.updatedAt) : null;
 
     const isSalesOrTl =
-      authUser?.Department === "SALES" || authUser?.Role === "TL";
-    const isAdmin = authUser?.Role === "ADMIN";
+      user?.Department === "SALES" || user?.Role === "TL";
+    const isAdmin = user?.Role === "ADMIN";
 
     // Shared base card
     const BaseCard = ({ children, highlight }) => (
       <article
-        className={`p-5 rounded-xl shadow-sm hover:shadow-md transition border ${
-          highlight
-            ? "bg-gradient-to-r from-purple-50 to-white border-purple-100"
-            : "bg-white border-gray-200"
-        } flex flex-col h-full overflow-hidden`}
+        className={`p-5 rounded-xl shadow-sm hover:shadow-md transition border ${highlight
+          ? "bg-gradient-to-r from-purple-50 to-white border-purple-100"
+          : "bg-white border-gray-200"
+          } flex flex-col h-full overflow-hidden`}
       >
         {children}
       </article>
@@ -243,7 +244,7 @@ const Sales = () => {
           </p>
         </div>
 
-        {(authUser?.Role === "TL" || authUser?.Role === "ADMIN") && (
+        {(user?.Role === "TL" || user?.Role === "ADMIN") && (
           <button
             onClick={() => navigate("/dashboard/add")}
             className="px-4 py-2 text-sm sm:text-base text-white bg-blue-600 hover:bg-blue-700 transition rounded-lg shadow"

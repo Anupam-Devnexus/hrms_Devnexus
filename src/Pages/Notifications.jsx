@@ -1,5 +1,4 @@
 import { useEffect } from "react";
-import { mockNotifications } from "../DataStore/mockNotifications";
 import useSocketStore from "../Zustand/NotificationAndOnlineUsers";
 import {
   Bell,
@@ -13,6 +12,7 @@ import {
 } from "lucide-react";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { useAttendance } from "../Zustand/PersonalAttendance";
 
 const typeIcons = {
   user: <UserPlus className="w-5 h-5 text-blue-500" />,
@@ -34,12 +34,13 @@ const priorityColors = {
 };
 
 const Notifications = () => {
-  const { accessToken: token } = JSON.parse(localStorage.getItem("authUser"));
+  const { user } = useAttendance();
+
+  const token = localStorage.getItem("hrmsAuthToken")
   // console.warn(token);
   const { personalNotifications, addPersonalNotification } = useSocketStore();
 
-  const user = JSON.parse(localStorage.getItem("authUser")) || {};
-  const role = user.Role?.toUpperCase() || "EMPLOYEE";
+  const role = user?.Role?.toUpperCase() || "EMPLOYEE";
 
   // Merge role + common notifications
   // const notifications = [
@@ -147,7 +148,7 @@ const Notifications = () => {
   }, []);
 
   useEffect(() => {
-    // console.log("empty effect");
+    console.log("empty effect");
   }, [personalNotifications]);
 
   return (
@@ -155,7 +156,7 @@ const Notifications = () => {
       <div className="flex justify-between my-4 w-full ">
         <h2 className="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
           <Bell className="w-6 h-6 text-indigo-600" /> Notifications for -{" "}
-          {user.user.FirstName}
+          {user?.FirstName}
         </h2>
 
         <button onClick={handleMarkAllRead} className="bg-blue-500 text-white ">
@@ -173,12 +174,11 @@ const Notifications = () => {
             .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
             .map((note) => (
               <li
-                key={note._id} // ✅ use correct key
-                className={`flex items-start gap-4 p-4 rounded-xl transition ${
-                  note.isRead ? "bg-gray-50" : "bg-indigo-50" //  use correct field
-                } hover:shadow-md`}
+                key={note._id} // use correct key
+                className={`flex items-start gap-4 p-4 rounded-xl transition ${note.isRead ? "bg-gray-50" : "bg-indigo-50" //  use correct field
+                  } hover:shadow-md`}
               >
-                <div className="flex-shrink-0">
+                <div className="flex-shrink-0 ">
                   {typeIcons[note?.type] || typeIcons.default}
                 </div>
 

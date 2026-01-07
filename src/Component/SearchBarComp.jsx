@@ -17,11 +17,13 @@ import {
 import { data, useNavigate } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
 import useSocketStore from "../Zustand/NotificationAndOnlineUsers.jsx";
+import { useAttendance } from "../Zustand/PersonalAttendance.jsx";
 
 const SearchBarComp = () => {
+  const { user } = useAttendance();
+
   const navigate = useNavigate();
-  const authUser = JSON.parse(localStorage.getItem("authUser"));
-  const { Role, _id } = authUser.user;
+  const { Role, _id } = user;
 
   const { generalNotifications } = useSocketStore.getState();
 

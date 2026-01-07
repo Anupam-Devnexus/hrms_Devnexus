@@ -7,12 +7,14 @@ import {
   SelectInput,
   DateInput,
 } from "../Component/Form/Inputs";
+import { useAttendance } from "../Zustand/PersonalAttendance";
 
 const AddTask = () => {
-  const authuser = JSON.parse(localStorage.getItem("authUser"));
-  const userId = authuser?.user?._id || "";
-  const name = authuser?.user?.FirstName || "User";
-  const role = authuser?.user?.Role?.toUpperCase() || "EMPLOYEE";
+  const { user } = useAttendance();
+
+  const userId = user?._id || "";
+  const name = user?.FirstName || "User";
+  const role = user?.Role?.toUpperCase() || "EMPLOYEE";
 
   const { fetchAllData, allData } = useUserStore();
   const navigate = useNavigate();
@@ -276,9 +278,8 @@ const AddTask = () => {
           <button
             type="submit"
             disabled={loading}
-            className={`w-full flex items-center justify-center gap-2 bg-blue-600 text-white py-3 rounded-xl font-bold text-base sm:text-lg hover:bg-blue-700 active:scale-95 transition-all ${
-              loading ? "opacity-80 cursor-not-allowed" : ""
-            }`}
+            className={`w-full flex items-center justify-center gap-2 bg-blue-600 text-white py-3 rounded-xl font-bold text-base sm:text-lg hover:bg-blue-700 active:scale-95 transition-all ${loading ? "opacity-80 cursor-not-allowed" : ""
+              }`}
           >
             {loading ? (
               <>

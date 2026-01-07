@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { FileDown, Search } from "lucide-react";
 import { toast } from "react-toastify";
+import { useAttendance } from "../Zustand/PersonalAttendance";
 
 const GetPaySlip = () => {
   const [month, setMonth] = useState("");
@@ -11,10 +12,10 @@ const GetPaySlip = () => {
 
   const [disable, setDisable] = useState(false);
 
-  const {
-    user: { _id },
-    accessToken,
-  } = JSON.parse(localStorage.getItem("authUser"));
+  // const { user } = useAttendance();
+
+
+  const token = localStorage.getItem("hrmsAuthToken")
 
   //  Fetch all payslips on mount
   useEffect(() => {
@@ -24,7 +25,7 @@ const GetPaySlip = () => {
           `${import.meta.env.VITE_BASE_URL}/getAllSlips`,
           {
             headers: {
-              Authorization: `Bearer ${accessToken}`,
+              Authorization: `Bearer ${token}`,
             },
           }
         );
@@ -97,9 +98,8 @@ const GetPaySlip = () => {
 
         <button
           onClick={handleSearch}
-          className={`flex items-center gap-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition ${
-            loading ? "opacity-70 cursor-not-allowed" : ""
-          }`}
+          className={`flex items-center gap-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition ${loading ? "opacity-70 cursor-not-allowed" : ""
+            }`}
         >
           <Search size={18} />
           Search

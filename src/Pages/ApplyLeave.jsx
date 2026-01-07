@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Formik, Form, useField } from "formik";
 import * as Yup from "yup";
 import { TextInput, TextArea } from "../Component/Form/Inputs"; // adjust path if needed
+import { useAttendance } from "../Zustand/PersonalAttendance";
 
 // Date helpers: leave must be applied at least 14 days in advance
 const computeMinFromDate = () => {
@@ -64,11 +65,10 @@ const FormikSelect = ({ label, children, ...props }) => {
       <select
         {...field}
         {...props}
-        className={`w-full border rounded-lg px-4 py-2 text-sm focus:ring-2 focus:outline-none ${
-          meta.touched && meta.error
-            ? "border-red-400 focus:ring-red-300"
-            : "border-gray-300 focus:ring-indigo-400"
-        }`}
+        className={`w-full border rounded-lg px-4 py-2 text-sm focus:ring-2 focus:outline-none ${meta.touched && meta.error
+          ? "border-red-400 focus:ring-red-300"
+          : "border-gray-300 focus:ring-indigo-400"
+          }`}
       >
         {children}
       </select>
@@ -80,8 +80,9 @@ const FormikSelect = ({ label, children, ...props }) => {
 };
 
 const ApplyLeave = () => {
-  const authUser = JSON.parse(localStorage.getItem("authUser"));
-  const token = authUser?.accessToken;
+  const { user } = useAttendance();
+
+  const token = localStorage.getItem("hrmsAuthToken");
 
   const [loading, setLoading] = useState(false);
   const [submitError, setSubmitError] = useState("");
@@ -94,7 +95,7 @@ const ApplyLeave = () => {
     reason: "",
   };
 
-  if (!authUser) {
+  if (!user) {
     return (
       <div className="p-6 text-center text-red-500 font-semibold">
         You must be logged in to apply for leave.
@@ -145,7 +146,7 @@ const ApplyLeave = () => {
     }
   };
 
-  const user = authUser.user || {};
+
 
   return (
     <div className="p-4 sm:p-6 max-w-4xl mx-auto">
@@ -246,11 +247,10 @@ const ApplyLeave = () => {
                 <button
                   type="submit"
                   disabled={isSubmitting || loading}
-                  className={`px-6 py-2 rounded-lg shadow-md font-medium text-white text-sm sm:text-base transition ${
-                    isSubmitting || loading
-                      ? "bg-gray-400 cursor-not-allowed"
-                      : "bg-indigo-600 hover:bg-indigo-700"
-                  }`}
+                  className={`px-6 py-2 rounded-lg shadow-md font-medium text-white text-sm sm:text-base transition ${isSubmitting || loading
+                    ? "bg-gray-400 cursor-not-allowed"
+                    : "bg-indigo-600 hover:bg-indigo-700"
+                    }`}
                 >
                   {isSubmitting || loading ? "Submitting..." : "Apply leave"}
                 </button>

@@ -15,6 +15,7 @@ import {
   XCircle,
   Handshake,
 } from "lucide-react";
+import { useAttendance } from "../Zustand/PersonalAttendance";
 
 // Spinner Component
 const Loader = () => (
@@ -52,13 +53,14 @@ const Section = ({ title, icon: Icon, children }) => (
 );
 
 const Profile = () => {
+  const { user } = useAttendance();
+
   const { allData, fetchAllData, loading, error } = useUserStore();
   const [currentUser, setCurrentUser] = useState(null);
   const [isActive, setIsActive] = useState(false);
 
-  const authUser = JSON.parse(localStorage.getItem("authUser"));
-  const username = authUser.user?.FirstName;
-  const role = authUser.user?.Role?.toUpperCase() || "EMPLOYEE";
+  const username = user?.FirstName;
+  const role = user?.Role?.toUpperCase() || "EMPLOYEE";
 
   useEffect(() => {
     fetchAllData();
@@ -95,12 +97,12 @@ const Profile = () => {
       ? Array.isArray(currentUser.Permissions[0])
         ? currentUser.Permissions[0]
         : (() => {
-            try {
-              return JSON.parse(currentUser.Permissions[0]);
-            } catch {
-              return [currentUser.Permissions[0]];
-            }
-          })()
+          try {
+            return JSON.parse(currentUser.Permissions[0]);
+          } catch {
+            return [currentUser.Permissions[0]];
+          }
+        })()
       : [];
 
   return (
@@ -202,7 +204,7 @@ const Profile = () => {
               />
             </Section>
 
-            <Section title="Permissions" icon={Shield}>
+            {/* <Section title="Permissions" icon={Shield}>
               <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-thin">
                 {permissions.length > 0 && permissions[0] !== "" ? (
                   permissions.map((perm, idx) => (
@@ -212,9 +214,9 @@ const Profile = () => {
                   <span className="text-gray-400 text-sm">No permissions</span>
                 )}
               </div>
-            </Section>
+            </Section> */}
 
-            <Section title="Allowed Tabs" icon={FileText}>
+            {/* <Section title="Allowed Tabs" icon={FileText}>
               <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-thin">
                 {currentUser.AllowedTabs?.length > 0 ? (
                   currentUser.AllowedTabs.map((tab, idx) => (
@@ -224,7 +226,7 @@ const Profile = () => {
                   <span className="text-gray-400 text-sm">No access</span>
                 )}
               </div>
-            </Section>
+            </Section> */}
 
             <Section title="Tasks" icon={Settings}>
               {currentUser.Tasks?.length > 0 ? (

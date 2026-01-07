@@ -12,7 +12,7 @@ export const useLeaveStore = create((set) => ({
     try {
       set({ loading: true, error: null });
 
-      const token = JSON.parse(localStorage.getItem("authUser"))?.accessToken;
+      const token = localStorage.getItem("hrmsAuthToken")
       // console.log(token)
       const res = await fetch(
         `${import.meta.env.VITE_BASE_URL}/leave/get-all-requests`,
@@ -43,7 +43,7 @@ export const useLeaveStore = create((set) => ({
   // -----------------------------
   updateLeaveStatus: async (id, status) => {
     try {
-      const token = JSON.parse(localStorage.getItem("authUser"))?.accessToken;
+      const token = localStorage.getItem("hrmsAuthToken")
 
       const res = await fetch(
         `${import.meta.env.VITE_BASE_URL}/leave/update-request-status/${id}`,

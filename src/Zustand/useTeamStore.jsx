@@ -2,15 +2,29 @@
 import { create } from "zustand";
 import ax from "axios";
 import { toast } from "react-toastify";
+import { useAttendance } from "./PersonalAttendance";
 
-const token = JSON.parse(localStorage.getItem("authUser"))?.accessToken || "";
+const token = localStorage.getItem("hrmsAuthToken")
 
-const axios = ax.create({
-  baseURL: import.meta.env.VITE_BASE_URL || "http://localhost:8909/api",
-  headers: {
-    Authorization: `Bearer ${token}`,
-  },
+const api = ax.create({
+  baseURL: import.meta.env.VITE_BASE_URL || "http://localhost:8909/api"
+
 });
+
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem("hrmsAuthToken");
+
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
+
 
 export const useTeamStore = create((set, get) => ({
   teamName: "",
@@ -63,7 +77,7 @@ export const useTeamStore = create((set, get) => ({
     try {
       set({ loadingTeam: true, teamError: null });
 
-      const { data } = await axios.post("/team", {
+      const { data } = await api.post("/team", {
         name: teamName,
         description: teamDescription,
         members,
@@ -97,7 +111,7 @@ export const useTeamStore = create((set, get) => ({
     try {
       set({ loadingTeam: true, teamError: null });
 
-      const { data } = await axios.get(`/team/${teamId}`);
+      const { data } = await api.get(`/team/${teamId}`);
       const team = data.team;
 
       // console.log(team);
@@ -131,7 +145,7 @@ export const useTeamStore = create((set, get) => ({
     try {
       set({ updatingTeam: true, teamError: null });
 
-      await axios.put(`/team/${teamId}`, {
+      await api.put(`/team/${teamId}`, {
         name: teamName,
         description: teamDescription,
         members,
@@ -165,7 +179,7 @@ export const useTeamStore = create((set, get) => ({
     try {
       set({ deletingTeam: true, teamError: null });
 
-      await axios.delete(`/team/${teamIdFromComponent}`);
+      await api.delete(`/team/${teamIdFromComponent}`);
 
       set({ deletingTeam: false });
       get().fetchTeams();
@@ -187,10 +201,10 @@ export const useTeamStore = create((set, get) => ({
 
   // FETCH TEAM ------------------------------------------------------
 
-  fetchTeams: async () => {
-    const authUser = JSON.parse(localStorage.getItem("authUser"));
-    const token = authUser?.accessToken;
-    const userId = authUser?.user?._id;
+  fetchTeams: async (userId) => {
+
+    const token = localStorage.getItem("hrmsAuthToken")
+
 
     if (!token || !userId) {
       set({ error: "Please login again.", teamList: null, loadingTeam: false });
@@ -200,7 +214,7 @@ export const useTeamStore = create((set, get) => ({
     set({ loadingTeam: true, error: null });
 
     try {
-      const { data } = await axios.get(`/team/get-teams`);
+      const { data } = await api.get(`/team/get-teams`);
       console.log(data);
       set({ loadingTeam: false, teamList: data.teams, error: null });
     } catch (error) {

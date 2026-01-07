@@ -4,11 +4,13 @@ import axios from "axios";
 import { Loader2 } from "lucide-react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useAttendance } from "../Zustand/PersonalAttendance";
 
 const Expenses = () => {
-  const authUser = JSON.parse(localStorage.getItem("authUser"))?.user;
-  const Role = authUser?.Role;
-  const token = JSON.parse(localStorage.getItem("authUser"))?.accessToken;
+  const { user } = useAttendance();
+
+  const Role = user?.Role;
+  const token = localStorage.getItem("hrmsAuthToken")
 
   const [expenses, setExpenses] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -210,13 +212,12 @@ const Expenses = () => {
                             style={{
                               cursor: "text",
                             }}
-                            className={`  ${
-                              exp.status == "REJECTED"
-                                ? "bg-red-500"
-                                : exp.status == "PAID"
+                            className={`  ${exp.status == "REJECTED"
+                              ? "bg-red-500"
+                              : exp.status == "PAID"
                                 ? "bg-green-500"
                                 : "bg-yellow-500"
-                            }`}
+                              }`}
                           >
                             {exp.status}
                           </button>
@@ -310,13 +311,12 @@ const Expenses = () => {
                             style={{
                               cursor: "text",
                             }}
-                            className={` text-white ${
-                              exp.status == "REJECTED"
+                              className={` text-white ${exp.status == "REJECTED"
                                 ? "bg-red-500"
                                 : exp.status == "PAID"
                                 ? "bg-green-500"
                                 : "bg-yellow-500"
-                            }`}
+                              }`}
                           >
                             {exp.status}
                           </button>

@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 export default function ForgotPass() {
   const [email, setEmail] = useState("");
-  const [status, setStatus] = useState(""); 
+  const [status, setStatus] = useState("");
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
@@ -36,6 +36,7 @@ export default function ForgotPass() {
       } else {
         setStatus("success");
         setEmail("");
+        navigate(-1);
       }
     } catch (err) {
       console.error(err);

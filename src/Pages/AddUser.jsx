@@ -82,7 +82,7 @@ const AddUser = () => {
   const [preview, setPreview] = useState(null);
   const [loading, setLoading] = useState(false);
   const imgRef = React.useRef(null);
-  const { accessToken } = JSON.parse(localStorage.getItem("authUser"));
+  const accessToken = localStorage.getItem("hrmsAuthToken")
 
   const initialValues = {
     FirstName: "",

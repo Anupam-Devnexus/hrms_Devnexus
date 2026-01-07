@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { useAttendance } from "../Zustand/PersonalAttendance";
 
 const Settings = () => {
   // Get logged-in user
-  const {
-    user,
-    user: { Role },
-    accessToken,
-  } = JSON.parse(localStorage.getItem("authUser"));
-  // const Role = user?.Role;
+  const { user } = useAttendance();
+
+
+  const accessToken = localStorage.getItem("hrmsAuthToken");
+  const Role = user?.Role;
 
   // console.log("User Role:", accessToken );
 
@@ -192,11 +192,10 @@ const Settings = () => {
 
           {message && (
             <div
-              className={`p-2 rounded text-center ${
-                message.includes("Successfully")
+                className={`p-2 rounded text-center ${message.includes("Successfully")
                   ? "bg-green-100 text-green-800"
                   : "bg-red-100 text-red-800"
-              }`}
+                  }`}
             >
               {message}
             </div>

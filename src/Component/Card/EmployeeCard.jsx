@@ -104,7 +104,7 @@ const EmployeeCard = ({ employee }) => {
         </div>
       </div>
       {/* Permissions */}
-      <div className="mb-4">
+      {/* <div className="mb-4">
         <h3 className="text-sm font-semibold text-gray-700 flex items-center gap-1">
           <Shield size={16} className="text-indigo-500" />
           Permissions
@@ -123,7 +123,7 @@ const EmployeeCard = ({ employee }) => {
             <span className="text-xs text-gray-400">No permissions</span>
           )}
         </div>
-      </div>
+      </div> */}
 
       {/* Dates */}
       <div className="flex  justify-between text-xs text-gray-500 border-t pt-3 mt-auto">

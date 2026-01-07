@@ -13,8 +13,9 @@ import {
   ReceiptIndianRupee,
   Scale,
 } from "lucide-react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { FaPowerOff } from "react-icons/fa";
+import { useAttendance } from "../Zustand/PersonalAttendance";
 
 // Config-driven menu
 const menuConfig = {
@@ -35,6 +36,11 @@ const menuConfig = {
       label: "Teams",
       icon: <ClipboardList size={18} />,
       path: "/dashboard/teams",
+    },
+    {
+      label: "Task",
+      icon: <ClipboardList size={18} />,
+      path: "/dashboard/tasks",
     },
     {
       label: "Notifications",
@@ -107,8 +113,11 @@ const menuConfig = {
 };
 
 const Navbar = () => {
-  const user = JSON.parse(localStorage.getItem("authUser")) || {};
-  const role = user.user?.Role || user?.user?.role || "EMPLOYEE";
+  const navigator = useNavigate();
+
+  const { removeUser, user } = useAttendance();
+
+  const role = user?.Role || "Unknown";
 
   const [openMenus, setOpenMenus] = useState({});
 
@@ -120,7 +129,7 @@ const Navbar = () => {
     ...menuConfig.common,
     ...(menuConfig[role.toLowerCase()] || []),
   ];
-  const displayName = user?.user?.FirstName || user?.user?.Email || "User";
+  const displayName = user?.FirstName || user?.Email || "User";
   const roleName = role.toUpperCase();
 
   return (
@@ -164,21 +173,19 @@ const Navbar = () => {
 
               {/* Submenu */}
               <div
-                className={`ml-8  flex flex-col gap-1 mb-4 transition-all duration-300 ${
-                  openMenus[item.label]
-                    ? "max-h-40 opacity-100"
-                    : "max-h-0 opacity-0"
-                }`}
+                className={`ml-8  flex flex-col gap-1 mb-4 transition-all duration-300 ${openMenus[item.label]
+                  ? "max-h-40 opacity-100"
+                  : "max-h-0 opacity-0"
+                  }`}
               >
                 {item.children.map((child, cidx) => (
                   <NavLink
                     key={cidx}
                     to={child.path}
                     className={({ isActive }) =>
-                      `px-2 py-1 rounded-md text-xs transition-all duration-200 ${
-                        isActive
-                          ? "bg-blue-600 text-white"
-                          : "hover:bg-gray-700 hover:text-blue-400"
+                      `px-2 py-1 rounded-md text-xs transition-all duration-200 ${isActive
+                        ? "bg-blue-600 text-white"
+                        : "hover:bg-gray-700 hover:text-blue-400"
                       }`
                     }
                   >
@@ -193,10 +200,9 @@ const Navbar = () => {
               to={item.path}
               end //  important for exact match
               className={({ isActive }) =>
-                `flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                  isActive
-                    ? "bg-blue-600 text-white shadow-md"
-                    : "hover:bg-gray-700 hover:text-blue-400"
+                `flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${isActive
+                  ? "bg-blue-600 text-white shadow-md"
+                  : "hover:bg-gray-700 hover:text-blue-400"
                 }`
               }
             >
@@ -230,8 +236,8 @@ const Navbar = () => {
 
         <button
           onClick={() => {
-            localStorage.removeItem("authUser");
-            window.location.href = "/";
+            removeUser();
+            navigator("/", { replace: true });
           }}
           className="bg-red-600 hover:bg-red-700 transition-all duration-200 text-white rounded-full shadow-md"
         >

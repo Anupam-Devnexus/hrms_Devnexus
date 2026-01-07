@@ -15,6 +15,7 @@ import {
   FaBell,
   FaTasks,
 } from "react-icons/fa";
+import { useAttendance } from "../Zustand/PersonalAttendance";
 
 // Icon mapping
 const iconMap = {
@@ -46,22 +47,23 @@ const Loader = () => (
 );
 
 export default function Dashboard() {
+  const { user } = useAttendance();
+
   const [loadingState, setLoadingState] = useState(true);
 
-  const authUser = JSON.parse(localStorage.getItem("authUser"));
-  const role = authUser?.user?.Role || "EMPLOYEE";
-  const userId = authUser?.user?._id;
+  const role = user?.Role || "EMPLOYEE";
+  const userId = user?._id;
 
   const { allData, fetchAllData } = useUserStore();
   const { tasks, fetchTasks } = useTaskStore();
   const { teamList, fetchTeams } = useTeamStore();
-  const [cardValue, setCardValue] = useState({
-    appliedLeaves: 0,
-    approvedleaves: 0,
-  });
+  // const [cardValue, setCardValue] = useState({
+  //   appliedLeaves: 0,
+  //   approvedleaves: 0,
+  // });
 
   useEffect(() => {
-    Promise.all([fetchAllData(), fetchTasks(), fetchTeams()]).finally(() =>
+    Promise.all([fetchAllData(), fetchTasks(userId), fetchTeams()]).finally(() =>
       setLoadingState(false)
     );
   }, []);

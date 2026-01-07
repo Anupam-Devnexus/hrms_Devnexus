@@ -3,6 +3,7 @@ import TeamCardforLead from "../Component/Card/TeamCardforLead";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useTeamStore } from "../Zustand/useTeamStore";
+import { useAttendance } from "../Zustand/PersonalAttendance";
 
 const Loader = ({ count = 3 }) => (
   <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -17,9 +18,10 @@ const Loader = ({ count = 3 }) => (
 
 const Team = () => {
   const navigate = useNavigate();
+  const { user } = useAttendance();
 
-  const role =
-    JSON.parse(localStorage.getItem("authUser"))?.user?.Role?.toUpperCase() ||
+
+  const role = user?.Role?.toUpperCase() ||
     "EMPLOYEE";
 
   const { loadingTeam, error, teamList, fetchTeams } = useTeamStore();
@@ -28,7 +30,7 @@ const Team = () => {
   const { deleteTeam } = useTeamStore();
 
   useEffect(() => {
-    fetchTeams();
+    fetchTeams(user?._id);
   }, [role, fetchTeams]);
 
   //  Delete handler
