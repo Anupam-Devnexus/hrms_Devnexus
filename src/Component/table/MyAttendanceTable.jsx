@@ -1,4 +1,6 @@
 const MyAttendanceTable = ({ user, data }) => {
+
+
     return (
         <div className="overflow-x-auto rounded-2xl shadow-lg  not-last-of-type:">
             <table className="min-w-full bg-white">
@@ -38,8 +40,8 @@ const MyAttendanceTable = ({ user, data }) => {
                             <td className="px-4 py-3">
                                 <span
                                     className={`px-3 py-1 rounded-full text-xs ${attend.status === "Present"
-                                            ? "bg-green-100 text-green-700"
-                                            : "bg-red-100 text-red-700"
+                                        ? "bg-green-100 text-green-700"
+                                        : "bg-red-100 text-red-700"
                                         }`}
                                 >
                                     {attend.status}

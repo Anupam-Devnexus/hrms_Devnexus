@@ -1,7 +1,7 @@
 import { create } from "zustand";
 
 export const useUserStore = create((set) => ({
-  allData: { data: {} },
+  allData: null,
   loading: false,
   error: null,
 
@@ -53,7 +53,6 @@ export const useUserStore = create((set) => ({
       set({ error: err.message, loading: false });
     }
   },
-
   // Delete a user (admin only)
   deleteUser: async (userId, role, currentUserRole) => {
     if (currentUserRole !== "ADMIN") {
@@ -87,7 +86,6 @@ export const useUserStore = create((set) => ({
     } catch (err) {
       set({ error: err.message, loading: false });
     }
-  },
+  }
 
-  
 }));

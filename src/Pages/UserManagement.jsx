@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useUserStore } from "../Zustand/GetAllData";
 import EmployeeCard from "../Component/Card/EmployeeCard";
 import { useNavigate } from "react-router-dom";

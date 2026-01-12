@@ -3,12 +3,14 @@ import { Suspense, lazy, useEffect, useMemo, useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import BounceLoader from "react-spinners/BounceLoader";
 
 import "./App.css";
 import socket from "./socket";
 import useSocketStore from "./Zustand/NotificationAndOnlineUsers";
 
 import ProtectedRoute from "./Auth/ProtectedRoute";
+import { Loader } from "./Component/Loader";
 
 // ---------------- Lazy Loaded Pages ----------------
 const Login = lazy(() => import("./Auth/Login"));
@@ -36,7 +38,7 @@ const Teams = lazy(() => import("./Pages/Team"));
 const LeavesApproval = lazy(() => import("./Pages/LeavesApproval"));
 const Adminisration = lazy(() => import("./Pages/Adminisration"));
 const Allupdates = lazy(() => import("./Pages/Allupdates"));
-const AddPolicies = lazy(() => import("./Pages/Admin/AddPolicies"));
+// const AddPolicies = lazy(() => import("./Pages/Admin/AddPolicies"));
 const Settings = lazy(() => import("./Pages/Settings"));
 const Payroll = lazy(() => import("./Pages/HR/Payroll"));
 const HistoryPayment = lazy(() => import("./Pages/HistoryPayment"));
@@ -44,6 +46,7 @@ const Expenses = lazy(() => import("./Pages/Expenses"));
 const PayslipForm = lazy(() => import("./Pages/SalarySlip"));
 const GetPaySlip = lazy(() => import("./Pages/GetPaySlip"));
 const AddSales = lazy(() => import("./Pages/TL/AddSales"));
+const UpdateTask = lazy(() => import("./Pages/UpdateTask"));
 const UpdateTeam = lazy(() => import("./Pages/TL/TeamUpdate"));
 const EditLeaves = lazy(() => import('./Pages/HR/Leaves/EditLeaves'))
 const CreateLeaves = lazy(() =>
@@ -80,6 +83,7 @@ export default function App() {
     };
 
     const handleGeneral = (data) => {
+      console.log("notification", data)
       const incoming = Array.isArray(data) ? data : [data];
       const fresh = filterNew(incoming, generalNotifications);
 
@@ -88,6 +92,8 @@ export default function App() {
     };
 
     const handlePersonal = (data) => {
+      console.log("personal notification", data)
+
       const incoming = Array.isArray(data) ? data : [data];
       const fresh = filterNew(incoming, personalNotifications);
 
@@ -126,6 +132,7 @@ export default function App() {
         <Route path="add" element={<AddSales />} />
         <Route path="policies" element={<Policies />} />
         <Route path="add-task" element={<AddTask />} />
+        <Route path="tasks/update-task/:id" element={<UpdateTask />} />
         <Route path="teams" element={<Teams />} />
         <Route path="teams/update/:id" element={<UpdateTeam />} />
         <Route path="leaves-approval" element={<LeavesApproval />} />
@@ -133,7 +140,7 @@ export default function App() {
         <Route path="payslips" element={<GetPaySlip />} />
         <Route path="administration" element={<Adminisration />} />
         <Route path="allupdates" element={<Allupdates />} />
-        <Route path="Add-policy" element={<AddPolicies />} />
+        {/* <Route path="Add-policy" element={<AddPolicies />} /> */}
         <Route path="settings" element={<Settings />} />
         <Route path="payroll" element={<Payroll />} />
         <Route path="history" element={<HistoryPayment />} />
@@ -148,7 +155,7 @@ export default function App() {
 
   return (
     <Router>
-      <Suspense fallback={<div className="p-4">Loading...</div>}>
+      <Suspense fallback={<div className="w-[100vw] h-[100vh] flex items-start justify-center p-4"><Loader /></div>}>
         <Routes>
           {/* Public Routes */}
           <Route path="/" element={<Login setAuthUser={setAuthUser} />} />

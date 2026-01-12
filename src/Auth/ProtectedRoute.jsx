@@ -39,8 +39,12 @@ export default function ProtectedRoute({ children }) {
     //     setChecking(false);
     //   }
     // };
+    try {
 
-    fetchUser(token);
+      fetchUser(token);
+    } catch (error) {
+      navigate("/", { replace: true });
+    }
   }, []);
 
 

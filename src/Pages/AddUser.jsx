@@ -198,7 +198,7 @@ const AddUser = () => {
               {/* Basic Info */}
               <InputField label="First Name *" name="FirstName" />
               <InputField label="Last Name *" name="LastName" />
-              <InputField label="Email *" name="Email" type="email" />
+              <InputField label="Email *" autoComplete={false} name="Email" type="email" />
               <InputField label="Salary " name="Salary" type="number" />
               <InputField label="Phone *" name="Phone" />
               <InputField label="Date of Birth *" name="Dob" type="date" />

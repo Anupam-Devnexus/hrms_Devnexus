@@ -46,8 +46,10 @@ export const useAttendance = create((set, get) => ({
       }
 
     } catch (error) {
-      toast.error("Session expired, please login again");
-      // localStorage.removeItem("hrmsAuthToken");
+      toast.error(error.message || "Session expired, please login again");
+      localStorage.removeItem("hrmsAuthToken");
+      set({ user: null });
+      throw new Error("Failed to fetch user");
       console.log(error)
     }
   },
@@ -60,7 +62,6 @@ export const useAttendance = create((set, get) => ({
   setUser: (user, token) => {
     set({ user });
     localStorage.setItem("hrmsAuthToken", token);
-
   },
 
   fetchAttendance: async () => {
@@ -83,7 +84,7 @@ export const useAttendance = create((set, get) => ({
       if (!data.success) throw new Error("Failed to get attendance");
 
 
-      console.log("fetchattendance", data);
+      // console.log("fetchattendance", data);
       set({ loading: false, myAttendance: data.records, error: null });
     } catch (error) {
       set({ loading: false, error: error.message, myAttendance: [] });
@@ -110,7 +111,7 @@ export const useAttendance = create((set, get) => ({
 
       if (!data.success) throw new Error("Failed to fetch teams");
 
-      console.log("fetchAllattendance", data);
+      // console.log("fetchAllattendance", data);
 
       set({
         loading: false,

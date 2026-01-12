@@ -12,7 +12,7 @@ const MarkAttendance = () => {
   const [employee, setEmployee] = useState(null);
   const [status, setStatus] = useState("Present");
   const [showCalendar, setShowCalendar] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   // Get today's date (YYYY-MM-DD) and current time (HH:MM)
   const today = new Date().toISOString().split("T")[0];
@@ -28,8 +28,9 @@ const MarkAttendance = () => {
       await fetchAllData();
       setLoading(false);
     };
-    fetchData();
-  }, []);
+    !allData && fetchData();
+    console.log(allData)
+  }, [allData]);
 
   // Set current employee based on ID
   useEffect(() => {
@@ -61,7 +62,7 @@ const MarkAttendance = () => {
 
   if (loading) return <div className="p-6">Loading data...</div>;
   if (!employee) return <div className="p-6">Employee not found</div>;
-console.log("ALL dat", employee?.Leaves)
+  console.log("ALL dat", employee?.Leaves)
   return (
     <div className="max-w-5xl mx-auto mt-10 p-6 bg-white rounded-xl shadow-md">
       <button
@@ -73,7 +74,7 @@ console.log("ALL dat", employee?.Leaves)
 
       {showCalendar ? (
         <EmployeeAttendanceCalendar
-          leaves={employee?.Leaves || 2 }
+          leaves={employee?.Leaves || 2}
           joiningDate={employee?.JoiningDate || ""}
         />
       ) : (

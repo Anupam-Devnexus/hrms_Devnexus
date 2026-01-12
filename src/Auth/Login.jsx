@@ -17,12 +17,8 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 5e52a65 (changed auth logic and other changes)
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("hrmsAuthToken");
     if (token) {
       navigate("/dashboard/", { replace: true });
     }
@@ -42,8 +38,6 @@ export default function Login() {
     setError("");
     setLoading(true);
     try {
-
-      // console.log(import.meta.env.VITE_BASE_URL)
       const res = await fetch(`${import.meta.env.VITE_BASE_URL}/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },

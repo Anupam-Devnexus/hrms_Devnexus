@@ -4,13 +4,9 @@ import { useUserStore } from "../Zustand/GetAllData";
 import { useAttendance } from "../Zustand/PersonalAttendance";
 import MyAttendanceTable from "../Component/table/MyAttendanceTable";
 import AttendanceTable from "../Component/table/AttendanceTable";
+import { Loader } from "../Component/Loader";
 
 // Loader
-const Loader = () => (
-  <div className="flex justify-center items-center py-20">
-    <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-indigo-500"></div>
-  </div>
-);
 
 const Attendance = () => {
   const navigate = useNavigate();
@@ -34,11 +30,13 @@ const Attendance = () => {
   useEffect(() => {
     if (!user || !role) return;
 
-    fetchAttendance();
 
     if (role === "ADMIN" || role === "HR") {
       fetchAllAttendance();
       fetchAllData();
+    } else {
+      fetchAttendance();
+
     }
   }, [user, role, fetchAttendance, fetchAllAttendance, fetchAllData]);
 
@@ -117,7 +115,7 @@ const Attendance = () => {
 
 
       {/*  EMPLOYEE TABLE */}
-      {role === "EMPLOYEE" && (
+      {role === "EMPLOYEE" || role === "TL" && (
         myAttendance.length ? (
           <MyAttendanceTable user={user} data={myAttendance} />
         ) : (

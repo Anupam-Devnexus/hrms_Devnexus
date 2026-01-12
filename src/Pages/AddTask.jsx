@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useUserStore } from "../Zustand/GetAllData";
 import {
@@ -12,18 +12,31 @@ import { useAttendance } from "../Zustand/PersonalAttendance";
 const AddTask = () => {
   const { user } = useAttendance();
 
-  const userId = user?._id || "";
-  const name = user?.FirstName || "User";
-  const role = user?.Role?.toUpperCase() || "EMPLOYEE";
+
 
   const { fetchAllData, allData } = useUserStore();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
+  let userId = user?._id;
+  let name = user?.FirstName || "User";
+  let role = user?.Role?.toUpperCase() || "EMPLOYEE";
 
   useEffect(() => {
     fetchAllData();
-  }, [fetchAllData]);
+    userId = user?._id;
+    name = user?.FirstName || "User";
+    role = user?.Role?.toUpperCase() || "EMPLOYEE";
+
+    setFormData((prev => ({
+      ...prev,
+      assignee: role === "EMPLOYEE" ? [userId] : [],
+      assigner: userId,
+    })));
+
+  }, [fetchAllData, user]);
+
+  // console.log(userId)
 
   const Employee_Data = allData?.data?.EMPLOYEE || [];
 
@@ -109,6 +122,8 @@ const AddTask = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // console.log(formData)
+
     if (!validateForm()) return;
 
     setLoading(true);
@@ -141,7 +156,7 @@ const AddTask = () => {
         assigner: userId,
       });
       setErrors({});
-      navigate("/dashboard/tasks");
+      navigate(-1);
     } catch (err) {
       console.error("❌ Error adding task:", err);
       setErrors((prev) => ({
@@ -179,12 +194,6 @@ const AddTask = () => {
           </button>
         </div>
 
-        {/* Global error */}
-        {errors.submit && (
-          <div className="mb-4 rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
-            {errors.submit}
-          </div>
-        )}
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -290,6 +299,13 @@ const AddTask = () => {
               <>Add Task</>
             )}
           </button>
+          {/* Global error */}
+          {errors.submit && (
+            <div className="mb-4 rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
+              {errors.submit}
+            </div>
+          )}
+
         </form>
       </div>
     </div>

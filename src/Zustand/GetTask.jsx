@@ -11,10 +11,8 @@ export const useTaskStore = create((set) => ({
     set({ loading: true, error: null });
 
     try {
-
-
       const token = localStorage.getItem("hrmsAuthToken");
-      // console.log(token, userId)
+
       if (!userId || !token) {
         throw new Error("User not authenticated");
       }
@@ -39,5 +37,14 @@ export const useTaskStore = create((set) => ({
       set({ error: err.message, loading: false });
     }
   },
+
+  addTask: async (task) => {
+    try {
+      
+    } catch (error) {
+      console.log(error)
+      throw new Error(error.message);
+    }
+  }
 }
 ));
