@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import useSocketStore from "../Zustand/NotificationAndOnlineUsers";
 import {
   Bell,
@@ -26,180 +26,146 @@ const typeIcons = {
   default: <AlertTriangle className="w-5 h-5 text-gray-400" />,
 };
 
-const priorityColors = {
-  high: "bg-red-100 text-red-600",
-  medium: "bg-yellow-100 text-yellow-600",
-  low: "bg-green-100 text-green-600",
-  critical: "bg-purple-100 text-purple-600",
-};
-
 const Notifications = () => {
   const { user } = useAttendance();
+  const token = localStorage.getItem("hrmsAuthToken");
 
-  const token = localStorage.getItem("hrmsAuthToken")
-  // console.warn(token);
   const { personalNotifications, addPersonalNotification } = useSocketStore();
 
-  const role = user?.Role?.toUpperCase() || "EMPLOYEE";
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [loading, setLoading] = useState(false);
 
-  // Merge role + common notifications
-  // const notifications = [
-  //   ...(mockNotifications[role] || []),
-  //   ...(mockNotifications.COMMON || []),
-  // ].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+  const loaderRef = useRef(null);
 
-  const handleMarkAllRead = async () => {
+  // Fetch notifications
+  const fetchNotifications = async () => {
+    if (loading || !hasMore) return;
+
     try {
-      const unReadMessages = personalNotifications.filter((n) => !n.isRead);
-      if (unReadMessages.length === 0)
-        return toast.success("All notifications are already read");
+      setLoading(true);
 
-      const { data } = await axios.patch(
-        `${import.meta.env.VITE_BASE_URL}/notification/read`,
-        { ids: unReadMessages.map((n) => n._id) },
+      const { data } = await axios.get(
+        `${import.meta.env.VITE_BASE_URL}/notification?page=${page}&limit=10`,
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         }
       );
 
-      if (data.success) {
-        addPersonalNotification(
-          personalNotifications.map((n) =>
-            unReadMessages.some((u) => u._id === n._id)
-              ? { ...n, isRead: true }
-              : n
-          )
-        );
-        toast.success("All marked as read!");
-      } else {
-        toast.error(data.message);
-      }
+      addPersonalNotification([
+        ...data.notifications,
+        ...personalNotifications,
+      ]);
+
+      setHasMore(data.hasMore);
+      setPage((prev) => prev + 1);
     } catch (err) {
-      toast.error("Failed to mark as read");
-      console.error(err);
+      toast.error("Failed to load notifications");
+    } finally {
+      setLoading(false);
     }
   };
 
+  // Initial load
   useEffect(() => {
-    (async () => {
-      const { data } = await axios(
-        `${import.meta.env.VITE_BASE_URL}/notification/`,
-        {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      // const data = await response.json();
-
-      addPersonalNotification(data.notifications);
-
-      // console.log("all notifications", data);
-    })();
-
-    if (!personalNotifications?.length) return;
-
-    const controller = new AbortController();
-
-    const timeoutId = setTimeout(async () => {
-      try {
-        const unReadMessages = personalNotifications.filter((noti) => {
-          if (noti.isRead === false) return noti._id;
-        });
-
-        if (unReadMessages.length > 0) {
-          const { data } = await axios.patch(
-            `${import.meta.env.VITE_BASE_URL}/notification/read`,
-            { ids: unReadMessages }, // send only ids or whole objects
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-              signal: controller.signal,
-            }
-          );
-
-          if (data.success) {
-            addPersonalNotification(data.notifications);
-          } else {
-            toast.error(data.message);
-          }
-
-          // console.log(" Marked as read:", data);
-        }
-      } catch (err) {
-        if (err.name === "CanceledError") {
-          console.log("Request aborted");
-        } else {
-          toast.error(err.message);
-
-          console.error("Failed to mark read", err);
-        }
-      }
-    }, 5000); // wait 5s before marking as read
-
-    return () => {
-      controller.abort();
-      clearTimeout(timeoutId);
-    };
+    fetchNotifications();
+    // eslint-disable-next-line
   }, []);
 
+  // Infinite scroll observer
   useEffect(() => {
-    console.log("empty effect");
-  }, [personalNotifications]);
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          fetchNotifications();
+        }
+      },
+      { threshold: 1 }
+    );
+
+    if (loaderRef.current) observer.observe(loaderRef.current);
+
+    return () => observer.disconnect();
+  }, [fetchNotifications]);
+
+  // Mark all as read
+  const handleMarkAllRead = async () => {
+    const unreadIds = personalNotifications
+      .filter((n) => !n.isRead)
+      .map((n) => n._id);
+
+    if (!unreadIds.length) {
+      return toast.info("All notifications already read");
+    }
+
+    try {
+      await axios.patch(
+        `${import.meta.env.VITE_BASE_URL}/notification/read`,
+        { ids: unreadIds },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      addPersonalNotification(
+        personalNotifications.map((n) => ({ ...n, isRead: true }))
+      );
+
+      toast.success("All notifications marked as read");
+    } catch {
+      toast.error("Failed to mark notifications");
+    }
+  };
 
   return (
-    <div className="max-w-4xl mx-auto mt-8 p-4 bg-white shadow-xl rounded-2xl border border-gray-100">
-      <div className="flex justify-between my-4 w-full ">
-        <h2 className="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
-          <Bell className="w-6 h-6 text-indigo-600" /> Notifications for -{" "}
-          {user?.FirstName}
+    <div className="max-w-4xl mx-auto mt-8 p-4 bg-white shadow-xl rounded-2xl">
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-xl font-bold flex items-center gap-2">
+          <Bell className="w-6 h-6 text-indigo-600" />
+          Notifications – {user?.FirstName}
         </h2>
 
-        <button onClick={handleMarkAllRead} className="bg-blue-500 text-white ">
-          Mark All Read
+        <button
+          onClick={handleMarkAllRead}
+          className="px-4 py-2 text-sm bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
+        >
+          Mark all read
         </button>
       </div>
 
-      {personalNotifications.length === 0 ? (
-        <p className="text-gray-500 text-center py-6">
-          No notifications found.
+      {personalNotifications.length === 0 && !loading && (
+        <p className="text-center text-gray-500 py-10">
+          No notifications yet.
         </p>
-      ) : (
-        <ul className="divide-y divide-gray-100 space-y-4">
-          {[...personalNotifications]
-            .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-            .map((note) => (
-              <li
-                key={note._id} // use correct key
-                className={`flex items-start gap-4 p-4 rounded-xl transition ${note.isRead ? "bg-gray-50" : "bg-indigo-50" //  use correct field
-                  } hover:shadow-md`}
-              >
-                <div className="flex-shrink-0 ">
-                  {typeIcons[note?.type] || typeIcons.default}
-                </div>
+      )}
 
-                <div className="flex-1">
-                  <div className="flex justify-between items-center">
-                    <h3 className="font-semibold text-gray-800">
-                      {note.title}
-                    </h3>
-                  </div>
-                  <p className="text-sm text-gray-600 mt-1">{note.message}</p>
-                  <p className="text-xs text-gray-400 mt-2">
-                    {new Date(note.createdAt).toLocaleString()}
-                  </p>
-                </div>
+      <ul className="space-y-3">
+        {personalNotifications.map((note) => (
+          <li
+            key={note._id}
+            className={`flex gap-4 p-4 rounded-xl transition ${note.isRead ? "bg-gray-50" : "bg-indigo-50"
+              }`}
+          >
+            {typeIcons[note.type] || typeIcons.default}
 
-                {!note.isRead && (
-                  <span className="w-3 h-3 bg-indigo-500 rounded-full mt-2"></span>
-                )}
-              </li>
-            ))}
-        </ul>
+            <div className="flex-1">
+              <h3 className="font-semibold">{note.title}</h3>
+              <p className="text-sm text-gray-600">{note.message}</p>
+              <p className="text-xs text-gray-400 mt-1">
+                {new Date(note.createdAt).toLocaleString()}
+              </p>
+            </div>
+
+            {!note.isRead && (
+              <span className="w-3 h-3 bg-indigo-500 rounded-full mt-2" />
+            )}
+          </li>
+        ))}
+      </ul>
+
+      {/* Loader */}
+      {hasMore && (
+        <div ref={loaderRef} className="py-6 text-center text-gray-400">
+          {loading ? "Loading..." : "Scroll to load more"}
+        </div>
       )}
     </div>
   );

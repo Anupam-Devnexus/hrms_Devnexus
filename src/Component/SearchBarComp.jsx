@@ -120,7 +120,7 @@ const SearchBarComp = () => {
 
   // Initialize menu based on role
   useEffect(() => {
-    const roleMenus = menuConfig[Role.toLowerCase()] || [];
+    const roleMenus = menuConfig[Role?.toLowerCase()] || [];
     setMenuItems([...menuConfig.common, ...roleMenus]);
   }, [Role]);
 

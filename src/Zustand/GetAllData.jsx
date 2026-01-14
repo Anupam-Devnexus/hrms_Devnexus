@@ -1,9 +1,12 @@
+import axios from "axios";
+import { toast } from "react-toastify";
 import { create } from "zustand";
 
 export const useUserStore = create((set) => ({
   allData: null,
   loading: false,
   error: null,
+  stats: null,
 
   fetchAllData: async () => {
     set({ loading: true, error: null });
@@ -18,6 +21,21 @@ export const useUserStore = create((set) => ({
       set({ allData: data, loading: false });
     } catch (err) {
       set({ error: err.message, loading: false });
+    }
+  },
+
+  fetchDashboardStats: async () => {
+    try {
+      const { data } = await axios.get(import.meta.env.VITE_BASE_URL + '/stats', {
+        headers: {
+          Authorization: 'Bearer ' + localStorage.getItem("hrmsAuthToken")
+        }
+      })
+      console.log(data.data)
+      set({ stats: data.data })
+    } catch (error) {
+      console.log(error)
+      toast.error(error.message)
     }
   },
 

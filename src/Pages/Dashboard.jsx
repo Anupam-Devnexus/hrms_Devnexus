@@ -51,10 +51,10 @@ export default function Dashboard() {
 
   const [loadingState, setLoadingState] = useState(true);
 
-  const role = user?.Role || "EMPLOYEE";
+  const role = user?.Role;
   const userId = user?._id;
 
-  const { allData, fetchAllData } = useUserStore();
+  const { allData,stats, fetchAllData, fetchDashboardStats } = useUserStore();
   const { tasks, fetchTasks } = useTaskStore();
   const { teamList, fetchTeams } = useTeamStore();
   // const [cardValue, setCardValue] = useState({
@@ -62,8 +62,12 @@ export default function Dashboard() {
   //   approvedleaves: 0,
   // });
 
+  // useEffect(() => {
+  //   if (!user) console.log("user not found")
+  // }, [user])
+
   useEffect(() => {
-    Promise.all([fetchAllData(), fetchTasks(userId), fetchTeams()]).finally(() =>
+    Promise.all([fetchAllData(), fetchTasks(userId), fetchTeams(), fetchDashboardStats()]).finally(() =>
       setLoadingState(false)
     );
   }, []);
@@ -71,13 +75,13 @@ export default function Dashboard() {
   // Filter userData
   const userData = useMemo(() => {
     if (!allData?.data) return null;
-    const roleArray = allData.data[role.toUpperCase()] || [];
+    const roleArray = allData.data[role?.toUpperCase()] || [];
     return roleArray.find((user) => user._id === userId) || null;
   }, [allData, role, userId]);
 
   // Filter tasks based on role
   const filteredTasks = useMemo(() => {
-    if (["ADMIN", "TL", "MANAGER"].includes(role.toUpperCase())) {
+    if (["ADMIN", "TL", "MANAGER"].includes(role?.toUpperCase())) {
       return tasks; // Elevated roles see all
     }
     return tasks?.filter((task) =>
@@ -91,7 +95,7 @@ export default function Dashboard() {
 
   const cardData = [
     {
-      label: "Leaves Taken",
+      label: role == "ADMIN" ? "Leave Requests" : "Leaves Taken",
       value: userData?.Leaves?.length ?? 0,
       // value: 0,
       icon: "calendar",
@@ -107,15 +111,15 @@ export default function Dashboard() {
       description: "Tasks you need to complete",
     },
     {
-      label: "Teams Joined",
+      label: role === "EMPLOYEE" ? "Teams Joined" : "Active Teams",
       value:
-        role.toUpperCase() === "EMPLOYEE"
+        role?.toUpperCase() === "EMPLOYEE"
           ? userData?.JoinedTeams?.length ?? 0
           : teamList?.length ?? 0,
       icon: "users",
       color: "yellow",
       description:
-        role.toUpperCase() === "EMPLOYEE"
+        role?.toUpperCase() === "EMPLOYEE"
           ? "Teams you are in"
           : "Total teams in system",
     },
@@ -231,7 +235,7 @@ export default function Dashboard() {
       {/* Tasks */}
       <div className="mt-6">
         <h2 className="text-2xl sm:text-3xl font-semibold text-gray-800 mb-4">
-          {["ADMIN", "TL", "MANAGER"].includes(role.toUpperCase())
+          {["ADMIN", "TL", "MANAGER"].includes(role?.toUpperCase())
             ? "All Tasks"
             : "Your Tasks"}
         </h2>

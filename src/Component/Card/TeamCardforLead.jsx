@@ -132,7 +132,7 @@ const TeamCardforLead = ({
       <div className="mt-2">
         <h3 className="font-semibold text-gray-700 mb-3 flex items-center gap-2">
           <FaUsers className="text-indigo-500" />
-          <span className="truncate">Team members ({members.length})</span>
+          <span className="truncate">Team members </span>
         </h3>
 
         {members.length === 0 ? (
