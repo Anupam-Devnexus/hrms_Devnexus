@@ -1,12 +1,17 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaImage, FaTimes, FaCheckCircle, FaBookOpen } from "react-icons/fa";
 import { TextInput, TextArea } from "../Component/Form/Inputs";
 import { useAttendance } from "../Zustand/PersonalAttendance";
+import { useTaskStore } from "../Zustand/GetTask";
 
 const DailyUpdates = () => {
 
   const { user } = useAttendance();
+
+  const { fetchTaskList, tasks, loading, error } = useTaskStore()
+
+
 
   const imgRef = React.useRef(null);
   const token = localStorage.getItem("hrmsAuthToken");
@@ -16,16 +21,25 @@ const DailyUpdates = () => {
   const [description, setDescription] = useState("");
   const [images, setImages] = useState([]);
   const [preview, setPreview] = useState([]);
-  const [showConfirm, setShowConfirm] = useState(false);
+  // const [showConfirm, setShowConfirm] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [errors, setErrors] = useState({});
   const [successMessage, setSuccessMessage] = useState("");
+
+  const [taskId, setTaskId] = useState("");
+  const [progress, setProgress] = useState("");
+  const [statusAfterUpdate, setStatusAfterUpdate] = useState("IN_PROGRESS");
+
 
   const TITLE_MAX = 120;
   const DESC_MAX = 800;
   const DESC_MIN = 10;
   const MAX_IMAGES = 6;
   const MAX_IMAGE_SIZE_MB = 5;
+
+  useEffect(() => {
+    fetchTaskList()
+  }, [])
 
   const validateForm = () => {
     const newErrors = {};
@@ -107,7 +121,8 @@ const DailyUpdates = () => {
 
     if (!validateForm()) return;
 
-    setShowConfirm(true);
+    // setShowConfirm(true);
+    confirmSubmit()
   };
 
   const confirmSubmit = async () => {
@@ -139,7 +154,7 @@ const DailyUpdates = () => {
       setDescription("");
       setImages([]);
       setPreview([]);
-      setShowConfirm(false);
+
       setErrors({});
       setSuccessMessage("Update posted successfully.");
       imgRef.current.value = null; // reset file input
@@ -230,6 +245,73 @@ const DailyUpdates = () => {
               disabled={submitting}
               placeholder="Write your update details"
             />
+
+            {/* Task Selection */}
+            <div className="flex gap-1 " >
+
+              <div className="flex-1" >
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Select Task
+                </label>
+                <select
+                  value={taskId}
+                  onChange={(e) => setTaskId(e.target.value)}
+                  disabled={submitting}
+                  className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                >
+                  <option value="">{loading ? "loading..." : '-- Select Task --'}</option>
+                  {!loading ? tasks?.map((task) => (
+                    <option key={task._id} value={task._id}>
+                      {task.title} ({task.progress}%)
+                    </option>
+                  )
+                  )
+                    :
+                    <option value="">Loading tasks</option>
+                  }
+                </select>
+                {errors.task && (
+                  <p className="text-xs text-red-600 mt-1">{errors.task}</p>
+                )}
+              </div>
+              {/* Progress */}
+              <div className="flex-1" >
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Progress Added (%)
+                </label>
+                <input
+                  type="number"
+                  min="1"
+                  max="100"
+                  value={progress}
+                  onChange={(e) => setProgress(e.target.value)}
+                  disabled={submitting}
+                  className="w-full p-3 border rounded-lg"
+                  placeholder="e.g. 10"
+                />
+                {errors.progress && (
+                  <p className="text-xs text-red-600 mt-1">{errors.progress}</p>
+                )}
+              </div>
+              {/* Status */}
+              <div className="flex-1" >
+
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Status After Update
+                </label>
+                <select
+                  value={statusAfterUpdate}
+                  onChange={(e) => setStatusAfterUpdate(e.target.value)}
+                  disabled={submitting}
+                  className="w-full p-3 border rounded-lg"
+                >
+                  <option value="IN_PROGRESS">In Progress</option>
+                  <option value="BLOCKED">Blocked</option>
+                  <option value="COMPLETED">Completed</option>
+                </select>
+              </div>
+
+            </div>
 
             {/* Image Upload */}
             <div>

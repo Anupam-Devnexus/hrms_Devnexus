@@ -1,48 +1,85 @@
-// useDailyupdate.js
 import { create } from "zustand";
-import axios from "axios";
-
-const token = localStorage.getItem("hrmsAuthToken")
-
-const axiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_BASE_URL,
-  headers: {
-    Authorization: `Bearer ${token}`,
-  },
-});
+import { axiosInstance } from "../utils/axiosInstance";
 
 export const useDailyupdate = create((set, get) => ({
-  list: null,
+  updates: [],          // ALWAYS array
   loading: false,
   error: null,
 
-  fetchUpdates: async () => {
+  // 🔹 POST DAILY UPDATE
+  postDailyUpdate: async (formData) => {
+    if (!formData) {
+      toast.error("Update data missing");
+      return;
+    }
+
     set({ loading: true, error: null });
+
     try {
-      const { data } = await axiosInstance.get(
-        `${import.meta.env.VITE_BASE_URL}/daily-updates`
+      const { data } = await axiosInstance.post(
+        "/daily-updates",
+        formData
       );
-      console.log(data);
-      set({ list: data, loading: false });
+
+      if (data.success) {
+        set((state) => ({
+          updates: [data.update, ...state.updates],
+          loading: false,
+        }));
+        toast.success("Daily update posted");
+        return true;
+      }
     } catch (err) {
-      set({ error: err.message || "Failed to fetch", loading: false });
+      const message =
+        err.response?.data?.message || "Failed to post update";
+      set({ error: message, loading: false });
+      toast.error(message);
+      return false;
     }
   },
 
-  // NEW: delete update
-  deleteUpdate: async (id) => {
+  // 🔹 FETCH UPDATES (BY TASK)
+  fetchUpdates: async (taskId) => {
+    if (!taskId) return;
+
+    set({ loading: true, error: null });
+
     try {
-      await axiosInstance.delete(`/daily-updates/${id}`);
+      const { data } = await axiosInstance.get(
+        `/daily-updates/task/${taskId}`
+      );
+
+      set({
+        updates: data.updates || [],
+        loading: false,
+      });
+    } catch (err) {
+      set({
+        error: err.response?.data?.message || "Failed to fetch updates",
+        loading: false,
+      });
+    }
+  },
+
+
+  // 🔹 DELETE UPDATE
+  deleteUpdate: async (updateId) => {
+    if (!updateId) return;
+
+    try {
+      await axiosInstance.delete(`/daily-updates/${updateId}`);
 
       set((state) => ({
-        list: {
-          ...state.list,
-          prevUpdates: state.list.prevUpdates.filter((u) => u._id !== id),
-        },
+        updates: state.updates.filter((u) => u._id !== updateId),
       }));
+
+      toast.success("Update deleted");
     } catch (err) {
-      console.error(err);
+      toast.error("Failed to delete update");
       throw err;
     }
   },
+
+  // 🔹 RESET (optional)
+  resetUpdates: () => set({ updates: [], error: null }),
 }));

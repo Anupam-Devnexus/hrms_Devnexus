@@ -1,4 +1,6 @@
 import { create } from "zustand";
+import { axiosInstance } from "../utils/axiosInstance";
+import { toast } from "react-toastify";
 
 
 
@@ -38,9 +40,24 @@ export const useTaskStore = create((set) => ({
     }
   },
 
+  fetchTaskList: async () => {
+    set({ loading: true, error: null });
+
+    try {
+      const { data } = await axiosInstance.get(
+        `/task/task-list`)
+
+      set({ tasks: data.data, loading: false });
+    } catch (err) {
+      set({ error: err.message, loading: false });
+      toast.error(err.message)
+      console.log(err)
+    }
+  },
+
   addTask: async (task) => {
     try {
-      
+
     } catch (error) {
       console.log(error)
       throw new Error(error.message);

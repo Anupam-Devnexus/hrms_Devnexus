@@ -54,9 +54,10 @@ export default function Dashboard() {
   const role = user?.Role;
   const userId = user?._id;
 
-  const { allData,stats, fetchAllData, fetchDashboardStats } = useUserStore();
+  const { allData, stats, fetchAllData, fetchDashboardStats } = useUserStore();
   const { tasks, fetchTasks } = useTaskStore();
   const { teamList, fetchTeams } = useTeamStore();
+  
   // const [cardValue, setCardValue] = useState({
   //   appliedLeaves: 0,
   //   approvedleaves: 0,
